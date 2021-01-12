@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1012</width>
+    <height>678</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Projektdialog</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="6" column="1">
+    <layout class="QGridLayout" name="gridLayout_5">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMaximumSize</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="checkBox_execution_period">
+       <property name="text">
+        <string>&amp;Ausführungszeitraum</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QDateEdit" name="dateEdit_execution_period_date_1">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_to">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>bis</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QDateEdit" name="dateEdit_execution_period_date_2">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Auftraggeber*in</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_client_last_name">
+          <property name="text">
+           <string>Nachname</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_client_first_name">
+          <property name="text">
+           <string>Vorname</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_client_street_a_number">
+          <property name="text">
+           <string>Straße, Nr.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label_client_zip_a_state">
+          <property name="text">
+           <string>PLZ, Ort</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="pushButton_add_client">
+          <property name="text">
+           <string>Auswählen</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="pushButton_add_new_client">
+          <property name="text">
+           <string>Neu hinzufügen</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="2" rowspan="3">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Daten</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="6" column="2">
+       <widget class="QPushButton" name="pushButton_billed_date_set_today">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>heute</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="pushButton_planning_finished_date_set_today">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>heute</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="checkBox_billed">
+        <property name="text">
+         <string>&amp;Abgerechnet</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_commissioned_date_set_today">
+        <property name="text">
+         <string>heute</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QDateEdit" name="dateEdit_planning_finished_date">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QDateEdit" name="dateEdit_commissioned_date"/>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="QDateEdit" name="dateEdit_billed_date">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_commissioned">
+        <property name="text">
+         <string>&amp;Beauftragt</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBox_planning_finished">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>&amp;Planung abgeschlossen</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_uid">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>5</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>uid: -</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" rowspan="4">
+    <widget class="QGroupBox" name="groupBox_reductions">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <italic>false</italic>
+       <underline>false</underline>
+      </font>
+     </property>
+     <property name="title">
+      <string>Projektdaten</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_usable_floor_space_nuf">
+        <property name="text">
+         <string>&amp;Nutzfläche (NUF)</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_usable_floor_space_nuf</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QLineEdit" name="lineEdit_commissioned_services"/>
+      </item>
+      <item row="4" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_usable_floor_space_nuf">
+        <property name="suffix">
+         <string>m²</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>9999999999999999932209486743616279764617084419440640.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_property_size">
+        <property name="text">
+         <string>&amp;Grundstückgröße</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_property_size</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_building_class">
+        <property name="text">
+         <string>&amp;Gebäudeklasse</string>
+        </property>
+        <property name="buddy">
+         <cstring>comboBox_building_class</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_production_costs">
+        <property name="suffix">
+         <string>€</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000000000044885712678075916785549312.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_usable_floor_space_bgf">
+        <property name="suffix">
+         <string>m²</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>9999999999999999455752309870428160.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QComboBox" name="comboBox_building_class"/>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="label_contract_fee">
+        <property name="text">
+         <string>&amp;Honorar</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_contract_fee</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_usable_floor_space_bgf">
+        <property name="text">
+         <string>&amp;Nutzfläche (BGF)</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_usable_floor_space_bgf</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_production_costs">
+        <property name="text">
+         <string>&amp;Produktionskosten</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_production_costs</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_property_size">
+        <property name="suffix">
+         <string>m²</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>99999999999999997168788049560464200849936328366177157906432.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_construction_costs_kg300_400">
+        <property name="text">
+         <string>&amp;Baukosten KG300 und KG400</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_construction_costs_kg300_400</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_contract_fee">
+        <property name="suffix">
+         <string>€</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000000000044885712678075916785549312.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_construction_costs_kg300_400">
+        <property name="suffix">
+         <string>€</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000000000044885712678075916785549312.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QLabel" name="label_commissioned_services">
+        <property name="text">
+         <string>&amp;Beauftragte Leistungen</string>
+        </property>
+        <property name="buddy">
+         <cstring>lineEdit_commissioned_services</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="baseSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Planungsstand</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QComboBox" name="comboBox_planning_status">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="currentText">
+         <string/>
+        </property>
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContents</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_planning_status">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <italic>true</italic>
+         </font>
+        </property>
+        <property name="text">
+         <string>-</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Daten</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_id">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>&amp;Projektkennung*</string>
+        </property>
+        <property name="buddy">
+         <cstring>lineEdit_id</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLineEdit" name="lineEdit_construction_scheme">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="placeholderText">
+         <string>z.B. Neubau eines Flughafens</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_construction_scheme">
+        <property name="text">
+         <string>&amp;Bauvorhaben</string>
+        </property>
+        <property name="buddy">
+         <cstring>lineEdit_construction_scheme</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLineEdit" name="lineEdit_id">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="placeholderText">
+         <string>z.B. BER</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Adresse</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_street">
+          <property name="text">
+           <string>&amp;Straße</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_street</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEdit_street"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_house_number">
+          <property name="text">
+           <string>&amp;Hausnummer</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_house_number</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEdit_house_number"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_city">
+          <property name="text">
+           <string>&amp;Stadt</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_city</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEdit_city"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_state">
+          <property name="text">
+           <string>&amp;Bundesland</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_state</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEdit_state"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_zipcode">
+          <property name="text">
+           <string>&amp;Postleitzahl</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_zipcode</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineEdit_zipcode"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_country">
+          <property name="text">
+           <string>&amp;Land</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_country</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="lineEdit_country"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_id</tabstop>
+  <tabstop>lineEdit_construction_scheme</tabstop>
+  <tabstop>lineEdit_street</tabstop>
+  <tabstop>lineEdit_house_number</tabstop>
+  <tabstop>lineEdit_city</tabstop>
+  <tabstop>lineEdit_state</tabstop>
+  <tabstop>lineEdit_zipcode</tabstop>
+  <tabstop>lineEdit_country</tabstop>
+  <tabstop>lineEdit_commissioned_services</tabstop>
+  <tabstop>doubleSpinBox_property_size</tabstop>
+  <tabstop>doubleSpinBox_usable_floor_space_nuf</tabstop>
+  <tabstop>doubleSpinBox_usable_floor_space_bgf</tabstop>
+  <tabstop>comboBox_building_class</tabstop>
+  <tabstop>doubleSpinBox_construction_costs_kg300_400</tabstop>
+  <tabstop>doubleSpinBox_production_costs</tabstop>
+  <tabstop>doubleSpinBox_contract_fee</tabstop>
+  <tabstop>checkBox_execution_period</tabstop>
+  <tabstop>dateEdit_execution_period_date_1</tabstop>
+  <tabstop>dateEdit_execution_period_date_2</tabstop>
+  <tabstop>pushButton_add_new_client</tabstop>
+  <tabstop>pushButton_add_client</tabstop>
+  <tabstop>checkBox_commissioned</tabstop>
+  <tabstop>dateEdit_commissioned_date</tabstop>
+  <tabstop>pushButton_commissioned_date_set_today</tabstop>
+  <tabstop>checkBox_planning_finished</tabstop>
+  <tabstop>dateEdit_planning_finished_date</tabstop>
+  <tabstop>pushButton_planning_finished_date_set_today</tabstop>
+  <tabstop>checkBox_billed</tabstop>
+  <tabstop>dateEdit_billed_date</tabstop>
+  <tabstop>pushButton_billed_date_set_today</tabstop>
+  <tabstop>comboBox_planning_status</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1187</x>
+     <y>580</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1187</x>
+     <y>580</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

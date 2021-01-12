@@ -1,0 +1,177 @@
+QMainWindow
+{
+    background-color: #FFF;
+}
+/*
+*   BUTTONS
+*/
+QPushButton
+{
+    color: #666;
+    background-color: white;
+    padding: 7px;
+
+    border: .5px solid #666;
+    /* border-radius: 5px; */
+    border-style: outset;
+
+    font: bold 12px;
+    min-width: 6em;
+}
+
+QPushButton::hover
+{
+    background-color: #00CCCC;
+}
+
+QPushButton::pressed
+{
+    background-color: #BBB;
+}
+
+QPushButton::disabled
+{
+    color: lightgrey;
+}
+
+QPushButton#pushButton_delete
+{
+    color: #666;
+    border-style: dotted;
+    background-color: transparent;
+    padding: 3px;
+    padding-left: 1px;
+    padding-right: 1px;
+    font-size: 9px;
+}
+QPushButton#pushButton_delete::hover
+{
+    color: #FFF;
+    background-color: #C12C2C;
+}
+/*
+*   TABLE AND TABS
+*/
+QTableWidget
+{
+    background-color: white;
+
+    selection-background-color: #CCFFFF;
+    selection-color: #000;
+    /* background-color: qlineargradient(x1: 0, y1: 0, x2: 0.5, y2: 0.5,
+                            stop: 0 #FF92BB, stop: 1 #CCFFFF);*/
+}
+
+QTabBar
+{
+    font-size: 15pt;
+}
+
+QTabBar::tab
+{
+    color: #222;
+    background-color: #EEE;
+
+    border-color: #666;
+    border-style: outset;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-left: .5px solid lightgray;
+    border-bottom: .5px solid lightgray;
+    border-top: .5px solid lightgray;
+
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+QTabBar::tab:hover
+{
+    color: #222;
+    background: #DDD;
+    margin-bottom: -1px;
+}
+
+QTabBar::tab:selected
+{
+    color: #222;
+    background: #FFF;
+    margin-bottom: -1px;
+}
+
+QTabBar::tab::disabled
+{
+    color: lightgrey;
+}
+
+/*
+*   GroupBox
+
+
+QGroupBox {
+  border: 1px solid gray;
+  border-radius: 9px;
+  margin-top: 0.5em;
+}
+
+QGroupBox::title {
+  background-color: transparent;
+  padding-top: -24px;
+  padding-left: 8px;
+}
+QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+QGroupBox::title{
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 5 5px;
+    font-size: 18px;
+    font-weight: bold;
+}*/
+/*
+*   COST STAND
+*/
+QGridLayout#gridLayout_cost_stand
+{
+    border: 2px solid green;
+}
+/*
+QLabel {
+    border: 2px solid green;
+}
+*/
+
+/*
+*   INVOICE INFO
+*/
+QGroupBox#groupBox_invoice_info
+{
+    width: 10px;
+}
+
+[accessibleName="groupBox_invoice_info_amounts"]
+{
+    width: 5px;
+}
+
+/*
+*   INPUTS
+*/
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QDateEdit
+{
+    padding:7px;
+
+    border: .5px solid lightgray;
+    /* border-radius: 5px; */
+    border-style: outset;
+}
+
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus, QDateEdit:focus
+{
+    background-color: #CCFFFF;
+    border: 1px solid #000;
+}

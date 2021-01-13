@@ -167,7 +167,7 @@ def edit_person(app_data, person):
             """ logging """
             debug.log(f"Person deleted: {person.first_name}, {person.last_name}")
         else:
-            person.update(**person_args)
+            person.update(**person_args, company=person.company)
             """ logging """
             debug.log(f"Existing person edited: {person.first_name}, {person.last_name}")
         return person
@@ -238,6 +238,17 @@ def edit_job(app_data, job):
             debug.log(f"Existing job edited: {company_name}, {job.id}, {job.uid}")
         return job
 
+@debug.log
+def pay_safety_deposit(job):
+        paid_safety_deposit_args = dlg.open_pay_safety_deposit_dialog()
+        if paid_safety_deposit_args:
+            job.pay_safety_deposit(**paid_safety_deposit_args)
+
+@debug.log
+def add_job_addition(job):
+        job_addition_args = dlg.open_add_job_addition_dialog()
+        if job_addition_args:
+            job.add_job_addition(**job_addition_args)
 """ i,a&e
 #
 #   COMPANY
@@ -377,6 +388,9 @@ def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], 
     # set column titles
     header_labels = ["UID"]+[titles[col["title"]] for col in cols]
     table.setHorizontalHeaderLabels(header_labels)
+    # set title height
+    table.horizontalHeader().setFixedHeight(50)
+
     # hide the UID column
     table.setColumnHidden(0, True)
     if set_width:
@@ -455,10 +469,15 @@ def select_table_item(table, content_item):
 """
 def delete(dialog, object):
     # TODO: object not needed. maybe remove or delete here...
-    reply = dlg.open_delete_prompt(dialog)
-    if reply == QtWidgets.QMessageBox.Yes:
+    reply = delete_prompt(dialog)
+    if reply:
         dialog.done(-1)
 
+def delete_prompt(dialog):
+    reply = dlg.open_delete_prompt(dialog)
+    if reply == QtWidgets.QMessageBox.Yes:
+        return True
+    return False
 """
 #
 #   INPUT MANAGEMENT

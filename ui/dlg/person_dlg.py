@@ -54,12 +54,24 @@ class PersonDialog(QtWidgets.QDialog):
         self.lineEdit_fax.setText(fax)
         self.lineEdit_mobile.setText(mobile)
         self.lineEdit_email.setText(email)
-        # address
+        """ address """
         if address:
-            # fill out address part
-            pass
+            self.lineEdit_street.setText(address.street)
+            self.lineEdit_house_number.setText(address.house_number)
+            self.lineEdit_city.setText(address.city)
+            self.lineEdit_state.setText(address.state)
+            self.lineEdit_zipcode.setText(address.zipcode)
+            self.lineEdit_country.setText(address.country)
 
     def get_input(self):
+        address = {
+                "street": self.lineEdit_street.text(),
+                "house_number": self.lineEdit_house_number.text(),
+                "city": self.lineEdit_city.text(),
+                "state": self.lineEdit_state.text(),
+                "zipcode": self.lineEdit_zipcode.text(),
+                "country": self.lineEdit_country.text()
+            }
         args = {
             "first_name": self.lineEdit_first_name.text(),
             "last_name": self.lineEdit_last_name.text(),
@@ -67,7 +79,7 @@ class PersonDialog(QtWidgets.QDialog):
             "fax": self.lineEdit_fax.text(),
             "mobile": self.lineEdit_mobile.text(),
             "email": self.lineEdit_email.text(),
-            "address": self.address
+            "address": corp.Address(**address),
             }
         return args
 

@@ -96,6 +96,12 @@ def open_pay_safety_deposit_dialog():
     if pay_safety_deposit_args:
         return pay_safety_deposit_args
 
+def open_add_job_addition_dialog():
+    add_job_addition_dlg = dlg.AddJobAdditionDialog()
+    add_job_addition_args = add_job_addition_dlg.exec_()
+    if add_job_addition_args:
+        return add_job_addition_args
+
 def open_delete_prompt(dialog):
     reply = QtWidgets.QMessageBox.question(dialog, 'Löschen', 'Sicher löschen?',
     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)

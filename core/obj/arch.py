@@ -13,16 +13,25 @@ class ArchJob(corp.Job):
     """docstring for ArchJob"""
 
     TITLE_DE = corp.Job.TITLE_DE.copy()
-    TITLE_DE.update({"trade": "Gewerk"})
+    TITLE_DE.update({"trade": "Gewerk",
+                    "paid_safety_deposits": "gezahlte Sicherheitseinbehalte"})
 
-    def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None, company_uid=None, trade=None, trade_uid=None, paid_safety_deposits=None):
+    def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None, company_uid=None, trade=None, trade_uid=None, job_additions=None, paid_safety_deposits=None):
         super(ArchJob, self).__init__(id, uid=uid, deleted=deleted, company=company, job_sum=job_sum, company_uid=company_uid)
         self.trade = trade
         """
+        #   job_additions
+        #   List containing dicts d with d.keys() = ["date", "amount", "comment"], where d["date"]  = "date of addition" and  d["amount"] = "amount added".
+        #   These are to extend the job_sum. The final job_sum then, is the initial job_sum plus sum of the amounts in this dict.
+        #
+        """
+        self._job_additions = job_additions if job_additions else list()
+
+        """
         #   payed_safety_deposits
-        #   List containing dicts d = (d["date"], d["amount"]) where d["date"]  = "date of payment" and  d["amount"] = "payment amount"
+        #   List containing dicts d with d.keys() = ["date", "amount", "comment"], where d["date"]  = "date of payment" and  d["amount"] = "payment amount".
         #   Then, the sum of these should eventually equal the sum of safety deposits of the invoices of the
-        #   ArchJob. This would mean, that the safety deposit is fully payed.
+        #   ArchJob. This would indicate, that the safety deposit is fully payed.
         #
         """
         self._paid_safety_deposits = paid_safety_deposits if paid_safety_deposits else list()
@@ -37,6 +46,24 @@ class ArchJob(corp.Job):
     #
     """
     @property
+    def job_additions(self):
+        return self._job_additions
+
+    @job_additions.setter
+    def job_additions(self, list):
+        raise Exception("You can't set job_additions. Use add_job_addition(date, amount) instead!")
+
+    @property
+    def job_sum_w_additions(self):
+        return self.job_sum+sum([job_addition["amount"] for job_addition in self._job_additions])
+
+    def add_job_addition(self, date, amount, comment=""):
+        self._job_additions.append({"date": date, "amount": amount, "comment": comment})
+
+    def remove_job_addition(self, job_addition):
+        self._job_additions.remove(job_addition)
+
+    @property
     def paid_safety_deposits(self):
         return self._paid_safety_deposits
 
@@ -48,8 +75,11 @@ class ArchJob(corp.Job):
     def paid_safety_deposits_sum(self):
         return sum([psd["amount"] for psd in self._paid_safety_deposits])
 
-    def pay_safety_deposit(self, date, amount):
-        self._paid_safety_deposits.append({"date": date, "amount": amount})
+    def pay_safety_deposit(self, date, amount, comment=""):
+        self._paid_safety_deposits.append({"date": date, "amount": amount, "comment": comment})
+
+    def remove_psd(self, psd):
+        self._paid_safety_deposits.remove(psd)
 
     """
     #

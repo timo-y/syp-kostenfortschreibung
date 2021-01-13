@@ -2,6 +2,7 @@ QMainWindow
 {
     background-color: #FFF;
 }
+
 /*
 *   BUTTONS
 */
@@ -29,11 +30,6 @@ QPushButton::pressed
     background-color: #BBB;
 }
 
-QPushButton::disabled
-{
-    color: lightgrey;
-}
-
 QPushButton#pushButton_delete
 {
     color: #666;
@@ -50,7 +46,7 @@ QPushButton#pushButton_delete::hover
     background-color: #C12C2C;
 }
 /*
-*   TABLE AND TABS
+*   TABLE
 */
 QTableWidget
 {
@@ -61,17 +57,119 @@ QTableWidget
     /* background-color: qlineargradient(x1: 0, y1: 0, x2: 0.5, y2: 0.5,
                             stop: 0 #FF92BB, stop: 1 #CCFFFF);*/
 }
+/*
+* Standard QTabBar
+*/
+QTabWidget::pane {
+    border: 1px solid black;
+    background: white;
+}
 
-QTabBar
+QTabWidget::tab-bar:top {
+    top: 1px;
+}
+
+QTabWidget::tab-bar:bottom {
+    bottom: 1px;
+}
+
+QTabWidget::tab-bar:left {
+    right: 1px;
+}
+
+QTabWidget::tab-bar:right {
+    left: 1px;
+}
+
+QTabBar::tab {
+    border: 1px solid black;
+}
+
+QTabBar::tab:selected {
+    background: white;
+}
+
+QTabBar::tab:!selected {
+    background: #DDD;
+}
+
+QTabBar::tab:!selected:hover {
+    background: #EEE;
+}
+
+
+QTabBar::tab:top:!selected {
+    margin-top: 3px;
+}
+
+QTabBar::tab:bottom:!selected {
+    margin-bottom: 3px;
+}
+QTabBar::tab:top, QTabBar::tab:bottom {
+    min-width: 8ex;
+    margin-right: -1px;
+    padding: 5px 10px 5px 10px;
+}
+
+QTabBar::tab:top:selected {
+    border-bottom-color: none;
+}
+
+QTabBar::tab:bottom:selected {
+    border-top-color: none;
+}
+
+QTabBar::tab:top:last, QTabBar::tab:bottom:last,
+QTabBar::tab:top:only-one, QTabBar::tab:bottom:only-one {
+    margin-right: 0;
+}
+
+QTabBar::tab:left:!selected {
+    margin-right: 3px;
+}
+
+QTabBar::tab:right:!selected {
+    margin-left: 3px;
+}
+
+QTabBar::tab:left, QTabBar::tab:right {
+    min-height: 8ex;
+    margin-bottom: -1px;
+    padding: 10px 5px 10px 5px;
+}
+
+QTabBar::tab:left:selected {
+    border-left-color: none;
+}
+
+QTabBar::tab:right:selected {
+    border-right-color: none;
+}
+
+QTabBar::tab:left:last, QTabBar::tab:right:last,
+QTabBar::tab:left:only-one, QTabBar::tab:right:only-one {
+    margin-bottom: 0;
+}
+
+/*
+*   Main TabBar displaying the content
+*/
+TabWidget::pane {
+    border: none;
+}
+
+TabBar
 {
+    border:none;
     font-size: 15pt;
 }
 
-QTabBar::tab
+TabBar::tab
 {
     color: #222;
-    background-color: #EEE;
+    background-color: #DDD;
 
+    border:none;
     border-color: #666;
     border-style: outset;
     border-top-left-radius: 5px;
@@ -86,52 +184,67 @@ QTabBar::tab
     padding-bottom: 50px;
 }
 
-QTabBar::tab:hover
+TabBar::tab:hover
 {
     color: #222;
-    background: #DDD;
+    background: #EEE;
     margin-bottom: -1px;
 }
 
-QTabBar::tab:selected
+TabBar::tab:selected
 {
     color: #222;
     background: #FFF;
     margin-bottom: -1px;
 }
 
-QTabBar::tab::disabled
+TabBar::tab::disabled
 {
-    color: lightgrey;
+    color: #999;
+    background-color: #CCC;
+}
+
+TabBar::tab {
+    color: #222;
+    background-color: #EEE;
+
+    border-color: #666;
+    border-style: outset;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-left: .5px solid lightgray;
+    border-bottom: .5px solid lightgray;
+    border-top: .5px solid lightgray;
+
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 /*
 *   GroupBox
-
-
+*/
 QGroupBox {
-  border: 1px solid gray;
-  border-radius: 9px;
-  margin-top: 0.5em;
+    /* font: bold; */
+    border: 1px solid #999;
+    border-radius: 6px;
+    margin-top: 6px;
+}
+
+QGroupBox:flat {
+    border: none; /* no border for a flat groupbox */
+    border-top: 1px dotted black;
+    border-radius: 0px;
+    padding-top: 15px;
 }
 
 QGroupBox::title {
-  background-color: transparent;
-  padding-top: -24px;
-  padding-left: 8px;
-}
-QGroupBox {
-    border: 1px solid gray;
-    border-radius: 9px;
-    margin-top: 0.5em;
-}
-QGroupBox::title{
     subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 5 5px;
-    font-size: 18px;
-    font-weight: bold;
-}*/
+    left: 7px;
+    padding: 0px 5px 0px 5px;
+}
+
 /*
 *   COST STAND
 */
@@ -139,11 +252,6 @@ QGridLayout#gridLayout_cost_stand
 {
     border: 2px solid green;
 }
-/*
-QLabel {
-    border: 2px solid green;
-}
-*/
 
 /*
 *   INVOICE INFO
@@ -153,7 +261,7 @@ QGroupBox#groupBox_invoice_info
     width: 10px;
 }
 
-[accessibleName="groupBox_invoice_info_amounts"]
+[objectName^="groupBox_invoice_info_amounts"]
 {
     width: 5px;
 }
@@ -163,6 +271,7 @@ QGroupBox#groupBox_invoice_info
 */
 QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QDateEdit
 {
+    background-color: #FFF;
     padding:7px;
 
     border: .5px solid lightgray;
@@ -174,4 +283,11 @@ QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus, QDateEdi
 {
     background-color: #CCFFFF;
     border: 1px solid #000;
+}
+
+
+QPushButton:disabled, QLineEdit:disabled, QComboBox:disabled, QSpinBox:disabled, QDoubleSpinBox:disabled, QDateEdit:disabled
+{
+    color: #999;
+    background-color: #CCC;
 }

@@ -398,6 +398,9 @@ class Project(IdObject):
     def input_new_company(self, company_args):
         new_company = corp.Company(**company_args)
         self.add_company(new_company)
+        if new_company.contact_person:
+            new_company.contact_person.company = new_company
+            self.add_person(new_company.contact_person)
         return new_company
 
     @debug.log
@@ -537,7 +540,8 @@ class Project(IdObject):
 
     @debug.log
     def restore_people(self):
-        pass
+        for person in self.people:
+            person.restore(self)
 
     @debug.log
     def restore_companies(self):

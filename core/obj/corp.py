@@ -44,6 +44,8 @@ class Company(IdObject):
         self.service_type = service_type
         self.budget = budget
         self.contact_person = contact_person
+        if contact_person:
+            contact_person.company = self
         """ set edited date """
         self.edited()
 
@@ -105,12 +107,12 @@ class Person(IdObject):
         "telephone": "Telefon",
         "fax": "Fax",
         "mobile": "Mobiltelefon",
-        "email": "E-Mail"
+        "email": "E-Mail",
+        "company": "Firma"
     }
 
     def __init__(self,*, first_name="", last_name="", uid=None, deleted=False,  address=None,
-                telephone=None, fax=None, mobile=None, email=None,
-                address_uid=None
+                telephone=None, fax=None, mobile=None, email=None, company=None, company_uid=None
                 ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.first_name = first_name
@@ -121,9 +123,10 @@ class Person(IdObject):
         self.fax = fax
         self.mobile = mobile
         self.email = email
+        self.company = company
 
         """ for restoration only """
-        self._address_uid = address_uid
+        self._company_uid = company_uid
 
     """
     #
@@ -142,7 +145,7 @@ class Person(IdObject):
     """
     @debug.log
     def update(self, first_name, last_name, address,
-                telephone, fax, mobile, email):
+                telephone, fax, mobile, email, company):
         self.first_name = first_name
         self.last_name = last_name
         # kwargs
@@ -151,8 +154,27 @@ class Person(IdObject):
         self.fax = fax
         self.mobile = mobile
         self.email = email
+        self.company = company
         """ set edited date """
         self.edited()
+
+    """
+    #
+    #   RESTORE
+    #
+    #
+    """
+    @debug.log
+    def restore(self, project):
+        self.restore_company(project.companies)
+
+    @debug.log
+    def restore_company(self, companies):
+        if self._company_uid and not(self.company):
+            self.company = [company for company in companies if company.uid == self._company_uid][0]
+            self._company_uid = None
+        elif self._company_uid and self.company:
+            raise Exception(f"Cannot restore company: company_uid ({self._company_uid}) stored and the company (uid: {self.company.uid}) was already set.")
 
     """
     #

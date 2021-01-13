@@ -8,7 +8,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QDate
 
-from ui import dlg
+from ui import dlg, helper
 from core.obj import (proj, corp)
 
 class ProjectDialog(QtWidgets.QDialog):
@@ -36,6 +36,7 @@ class ProjectDialog(QtWidgets.QDialog):
 
         if self.loaded_project:
             """ load invoice data to input """
+            self.sel_client = self.loaded_project.client if self.loaded_project.client else None
             loaded_args = vars(self.loaded_project).copy()
             self.set_input(**loaded_args)
 
@@ -73,7 +74,8 @@ class ProjectDialog(QtWidgets.QDialog):
             self.comboBox_planning_status.addItem(planning_phase[0], planning_phase)
 
     def update_ui(self):
-        pass
+        if self.sel_client:
+            self.set_labels(client=self.sel_client)
 
     """
     #
@@ -88,7 +90,6 @@ class ProjectDialog(QtWidgets.QDialog):
         self.pushButton_billed_date_set_today.clicked.connect(lambda:self.dateEdit_billed_date.setDate(QDate.currentDate()))
 
         """ add client """
-        self.pushButton_add_client.clicked.connect(self.choose_client)
         self.pushButton_add_new_client.clicked.connect(self.add_new_client)
 
     def set_check_box_actions(self):
@@ -118,14 +119,11 @@ class ProjectDialog(QtWidgets.QDialog):
     #   Functions that let the dialog do something
     #
     """
-    def choose_client(self):
-        # open project.people and choose person
-        pass
-
     def add_new_client(self):
-        input_client_args = dlg.open_person_dialog()
-        if input_client_args:
-            self.sel_client = self.app_data.project.input_new_person(input_client_args)
+        input_person_args = dlg.open_person_dialog()
+        if input_person_args:
+            self.sel_client = corp.Person(**input_person_args)
+            self.update_ui()
 
     """
     #

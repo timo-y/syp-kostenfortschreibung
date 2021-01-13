@@ -38,11 +38,11 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "project_budget_w_VAT", "width": 130},
             {"title": "trade_budget", "width": 130},
             {"title": "trade_budget_w_VAT", "width": 130},
-            {"title": "difference_proj_to_trades_budget", "width": 130},
+            {"title": "difference_proj_to_trades_budget", "width": 230},
             {"title": "job_sums", "width": 130},
             {"title": "job_sums_w_VAT", "width": 130},
-            {"title": "approved_invoices_w_VAT", "width": 130},
-            {"title": "approved_invoices_w_VAT_by_tradebudgets", "width": 130},
+            {"title": "approved_invoices_w_VAT", "width": 150},
+            {"title": "approved_invoices_w_VAT_by_tradebudgets", "width": 150},
             ]
 
         self.invoice_cols = [
@@ -50,12 +50,12 @@ class MainWindow(QtWidgets.QMainWindow):
             #{"title": "internal_index", "width": 100},
             #{"title": "cumulative", "width": 100},
             {"title": "company", "width": 120},
-            {"title": "job", "width": 45},
+            {"title": "job", "width": 60},
             {"title": "invoice_date", "width": 100},
             {"title": "inbox_date", "width": 95},
             {"title": "checked_date", "width": 95},
             {"title": "trade", "width": 105},
-            {"title": "cost_group", "width": 60},
+            {"title": "cost_group", "width": 90},
             #{"title": "amount", "width": 100},
             #{"title": "verified_amount", "width": 100},
             #{"title": "rebate", "width": 100},
@@ -67,10 +67,12 @@ class MainWindow(QtWidgets.QMainWindow):
             #{"title": "discount", "width": 100},
         ]
         self.job_cols = [
-            {"title": "id", "width": 50},
-            {"title": "company", "width": 150},
-            {"title": "job_sum", "width": 120},
-            #"paid_safety_deposits", "width": 100},
+            {"title": "id", "width": 80},
+            {"title": "company", "width": 200},
+            {"title": "job_sum", "width": 200},
+            {"title": "job_sum_w_additions", "width": 200},
+            #{"title": "job_additions", "width": 100},
+            #{"title": "paid_safety_deposits", "width": 100},
             {"title": "trade", "width": 100},
         ]
         self.company_cols = [
@@ -93,13 +95,14 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "budget", "width": 120},
         ]
         self.person_cols = [
-            {"title": "first_name", "width": 80},
+            {"title": "first_name", "width": 150},
             {"title": "last_name", "width": 150},
-            {"title": "address", "width": 180},
-            {"title": "telephone", "width": 80},
-            {"title": "fax", "width": 80},
-            {"title": "mobile", "width": 80},
-            {"title": "email", "width": 100},
+            #{"title": "address", "width": 180},
+            {"title": "telephone", "width": 150},
+            #{"title": "fax", "width": 150},
+            {"title": "mobile", "width": 150},
+            {"title": "email", "width": 150},
+            {"title": "company", "width": 150}
         ]
 
         self.initialize_ui()
@@ -124,26 +127,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def initialize_ui(self):
         uic.loadUi('ui/mainwindow.ui', self) # Load the .ui file
         self.initialize_tabwidget()
-
-        """ TODO: figure out where to put this """
-        company_tree_view_cols = ["job", "invoice", "verified_amount"] # maybe put on top of file
-        self.treeWidget_company_invoices_by_job.setHeaderLabels([self.app_data.titles[col] for col in company_tree_view_cols])
-        job_tree_view_cols = ["date", "id"] # maybe put on top of file
-        self.treeWidget_invoices_of_curr_job.setHeaderLabels([self.app_data.titles[col] for col in job_tree_view_cols])
+        self.init_tree_widget_columns()
 
     def initialize_tabwidget(self):
-        self.tabWidget.clear()
-        self.tabWidget.setTabBar(customqt.TabBar(self))
-        self.tabWidget.setTabPosition(QtWidgets.QTabWidget.West)
-        self.tabWidget.addTab(self.tab_overview, "Übersicht")
-        self.tabWidget.addTab(self.tab_cost_stand, "Kostenstand")
-        self.tabWidget.addTab(self.tab_invoice_table, "Rechnungen")
-        self.tabWidget.addTab(self.tab_jobs_table, "Aufträge")
-        self.tabWidget.addTab(self.tab_companies_table, "Firmen")
-        self.tabWidget.addTab(self.tab_trades_table, "Gewerke")
-        self.tabWidget.addTab(self.tab_cost_groups_table, "Kostengruppen")
-        self.tabWidget.addTab(self.tab_people, "Beteiligten")
-        self.tabWidget.addTab(self.tab_invoice_check, "???")
+        self.tabWidget_content.clear()
+        self.tabWidget_content.setTabBar(customqt.TabBar(self))
+        self.tabWidget_content.setTabPosition(QtWidgets.QTabWidget.West)
+        #self.tabWidget_content.addTab(self.tab_overview, "Übersicht")
+        self.tabWidget_content.addTab(self.tab_cost_stand, "Kostenstand")
+        self.tabWidget_content.addTab(self.tab_invoice_table, "Rechnungen")
+        self.tabWidget_content.addTab(self.tab_jobs_table, "Aufträge")
+        self.tabWidget_content.addTab(self.tab_companies_table, "Firmen")
+        self.tabWidget_content.addTab(self.tab_trades_table, "Gewerke")
+        self.tabWidget_content.addTab(self.tab_cost_groups_table, "Kostengruppen")
+        self.tabWidget_content.addTab(self.tab_people, "Beteiligten")
+        #self.tabWidget_content.addTab(self.tab_invoice_check, "???")
 
     def init_column_width(self):
         self.render_cost_stand(set_width=True)
@@ -154,14 +152,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.render_cost_groups(set_width=True)
         self.render_people(set_width=True)
 
+    def init_tree_widget_columns(self):
+        """ TODO: figure out where to put this """
+        company_tree_view_cols = ["job", "invoice", "verified_amount"] # maybe put on top of file
+        self.treeWidget_company_invoices_by_job.setHeaderLabels([self.app_data.titles[col] for col in company_tree_view_cols])
+        job_tree_view_cols = ["date", "id"] # maybe put on top of file
+        self.treeWidget_invoices_of_curr_job.setHeaderLabels([self.app_data.titles[col] for col in job_tree_view_cols])
+        paid_safety_deposits_cols = ["date", "amount", "comment"]
+        self.treeWidget_paid_safety_desposits.setHeaderLabels([self.app_data.titles[col] for col in paid_safety_deposits_cols])
+        job_additions_cols = ["date", "amount", "comment"]
+        self.treeWidget_job_additions.setHeaderLabels([self.app_data.titles[col] for col in job_additions_cols])
+
+
     def enable_ui(self):
-        self.groupBox_content.setEnabled(True)
-        self.groupBox_quicklinks.setEnabled(True)
+        self.centralwidget.setEnabled(True)
         self.menuProjekt.setEnabled(True)
 
     def disable_ui(self):
-        self.groupBox_content.setEnabled(False)
-        self.groupBox_quicklinks.setEnabled(False)
+        self.centralwidget.setEnabled(False)
         self.menuProjekt.setEnabled(False)
 
     def center_window(self):
@@ -215,10 +223,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_button_actions(self):
         """ quick links """
         self.pushButton_quick_new_invoice.clicked.connect(lambda:self.input_invoice_to_project())
-        self.pushButton_quick_invoice_check_view.clicked.connect(lambda:self.tabWidget.setCurrentWidget(self.tabWidget.findChild(QtWidgets.QWidget, "tab_invoice_check")))
         self.pushButton_quick_new_job.clicked.connect(lambda:self.input_job_to_project())
-        self.pushButton_4.clicked.connect(lambda:dlg.open_person_dialog())
-        self.pushButton_5.clicked.connect(lambda:self.input_project_address())
+        self.pushButton_quick_invoice_check_dir.clicked.connect(lambda:self.app_data.open_invoice_check_dir())
+        self.pushButton_quick_syp_dir.clicked.connect(lambda:self.app_data.open_syp_dir())
+        self.pushButton_quick_proj_dir.clicked.connect(lambda:self.app_data.open_project_dir())
         #self.pushButton_6.clicked.connect()
 
         """ invoice buttons """
@@ -231,6 +239,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_new_job.clicked.connect(lambda:self.input_job_to_project())
         self.pushButton_edit_job.clicked.connect(self.button_edit_job)
         self.pushButton_add_invoice_for_curr_job.clicked.connect(self.button_input_invoice_w_curr_job)
+        self.pushButton_pay_safety_deposit.clicked.connect(self.button_pay_safety_deposit)
+        self.pushButton_remove_safety_deposit.clicked.connect(self.button_remove_psd)
+        self.pushButton_add_job_addition.clicked.connect(self.button_add_job_addition)
+        self.pushButton_remove_job_addition.clicked.connect(self.button_remove_job_addition)
         """ company buttons """
         self.pushButton_new_company.clicked.connect(lambda:self.input_company_to_project())
         self.pushButton_edit_company.clicked.connect(self.button_edit_company)
@@ -250,6 +262,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tableWidget_jobs.itemDoubleClicked.connect(self.double_click_job)
         self.tableWidget_jobs.itemClicked.connect(self.click_job)
         self.treeWidget_invoices_of_curr_job.itemDoubleClicked.connect(self.double_click_invoice_tree)
+        self.treeWidget_paid_safety_desposits.itemClicked.connect(self.activate_job_buttons)
+        self.treeWidget_job_additions.itemClicked.connect(self.activate_job_buttons)
         """ company signals """
         self.tableWidget_companies.itemDoubleClicked.connect(self.double_click_company)
         self.tableWidget_companies.itemClicked.connect(self.click_company)
@@ -339,6 +353,62 @@ class MainWindow(QtWidgets.QMainWindow):
         if item:
             sel_job = item.data(1)
             self.input_invoice_to_project(sel_job=sel_job)
+        else:
+            raise Exception("No job selected!")
+
+    def button_pay_safety_deposit(self):
+        item = self.tableWidget_jobs.currentItem()
+        if item:
+            sel_job = item.data(1)
+            helper.pay_safety_deposit(sel_job)
+            self.render_job_info(sel_job)
+            self.update_ui()
+        else:
+            raise Exception("No job selected!")
+
+    def button_remove_psd(self):
+        item = self.tableWidget_jobs.currentItem()
+        if item:
+            sel_job = item.data(1)
+            psd_items = self.treeWidget_paid_safety_desposits.selectedItems()
+            if psd_items:
+                reply = helper.delete_prompt(self)
+                if reply:
+                    sel_psd = psd_items[0].data(1, QtCore.Qt.UserRole)
+                    sel_job.remove_psd(sel_psd)
+                    self.render_job_info(sel_job)
+                    self.update_ui()
+            else:
+                raise Exception("No paid_safety_deposit selected!")
+
+        else:
+            raise Exception("No job selected!")
+
+    def button_add_job_addition(self):
+        item = self.tableWidget_jobs.currentItem()
+        if item:
+            sel_job = item.data(1)
+            helper.add_job_addition(sel_job)
+            self.render_job_info(sel_job)
+            self.update_ui()
+        else:
+            raise Exception("No job selected!")
+
+    def button_remove_job_addition(self):
+        item = self.tableWidget_jobs.currentItem()
+        if item:
+            sel_job = item.data(1)
+            job_addition_items = self.treeWidget_job_additions.selectedItems()
+            if job_addition_items:
+                reply = helper.delete_prompt(self)
+                if reply:
+                    sel_job_addition = job_addition_items[0].data(1, QtCore.Qt.UserRole)
+                    sel_job.remove_job_addition(sel_job_addition)
+                    self.render_job_info(sel_job)
+                    self.update_ui()
+            else:
+                raise Exception("No job_addition selected!")
+
         else:
             raise Exception("No job selected!")
 
@@ -436,7 +506,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "job_sums": "Auftragssummen netto",
             "job_sums_w_VAT": "Auftragssummen brutto",
             "approved_invoices_w_VAT": "Freigegebene Rechnungen brutto",
-            "approved_invoices_w_VAT_by_tradebudgets": "Freigegebene Rechnungen/ Gewerkebudgets"
+            "approved_invoices_w_VAT_by_tradebudgets": "Freigegebene Rechnungen / Gewerkebudgets"
         }
 
         self.tableWidget_cost_stand.setSortingEnabled(False) # disable sorting when filling the table (to avoid bugs with data field)
@@ -450,6 +520,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # set column titles
         self.tableWidget_cost_stand.setHorizontalHeaderLabels([self.app_data.titles[col["title"]] for col in self.cost_stand_cols])
+        # set title height
+        self.tableWidget_cost_stand.horizontalHeader().setFixedHeight(100)
 
         row = 0
         for cost_group in self.app_data.project.cost_groups:
@@ -482,6 +554,7 @@ class MainWindow(QtWidgets.QMainWindow):
         col = 0
         for attr in self.cost_stand_cols:
             table_item = QtWidgets.QTableWidgetItem(str(cost_group_attr[attr["title"]]))
+            table_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
             self.tableWidget_cost_stand.setItem(row, col, table_item)
             col += 1
@@ -612,7 +685,7 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def render_job_view(self, set_width=False):
         self.activate_job_buttons()
-        amount_cols = ["job_sum"]
+        amount_cols = ["job_sum", "job_sum_w_additions"]
         helper.render_to_table(content=self.app_data.project.jobs,
                                 table=self.tableWidget_jobs,
                                 cols=self.job_cols,
@@ -647,6 +720,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                 safety_deposits_sum=safety_deposits_sum,
                                 paid_safety_deposits_sum=paid_safety_deposits_sum)
             self.set_verified_sum_info(verified_sum, verified_sum_w_VAT, verified_sum_VAT_amount)
+            self.set_paid_safety_deposits_of_job(paid_safety_deposits=job.paid_safety_deposits)
+            self.set_job_additions_of_job(job_additions=job.job_additions)
             self.set_invoices_of_job(invoices_of_job=invoices_of_job)
             self.activate_job_buttons()
         else:
@@ -656,9 +731,25 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.tableWidget_jobs.currentItem():
             self.pushButton_edit_job.setEnabled(True)
             self.pushButton_add_invoice_for_curr_job.setEnabled(True)
+            """ paid safety deposits """
+            self.pushButton_pay_safety_deposit.setEnabled(True)
+            if self.treeWidget_paid_safety_desposits.selectedItems():
+                self.pushButton_remove_safety_deposit.setEnabled(True)
+            else:
+                self.pushButton_remove_safety_deposit.setEnabled(False)
+            """ job additions """
+            self.pushButton_add_job_addition.setEnabled(True)
+            if self.treeWidget_job_additions.selectedItems():
+                self.pushButton_remove_job_addition.setEnabled(True)
+            else:
+                self.pushButton_remove_job_addition.setEnabled(False)
         else:
             self.pushButton_edit_job.setEnabled(False)
             self.pushButton_add_invoice_for_curr_job.setEnabled(False)
+            self.pushButton_pay_safety_deposit.setEnabled(False)
+            self.pushButton_remove_safety_deposit.setEnabled(False)
+            self.pushButton_add_job_addition.setEnabled(False)
+            self.pushButton_remove_job_addition.setEnabled(False)
 
     def reset_job_info(self):
         self.set_job_data()
@@ -686,9 +777,6 @@ class MainWindow(QtWidgets.QMainWindow):
         trade_cost_group = trade.cost_group.id if trade else "-"
         self.label_job_cost_group_2.setText(str(trade_cost_group))
 
-        """ appendums """
-        # TODO: Auftrag -> Nachtrag, so wie paid_safety_deposits
-
         """ safety deposits """
         self.label_job_safety_deposits_sum.setText(amount_str(safety_deposits_sum))
         # verified_sum_w_VAT since the safety deposit is also taken from the amount with VAT
@@ -706,6 +794,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_job_verified_sum.setText(amount_str(verified_sum))
         self.label_job_verified_sum_w_VAT.setText(amount_str(verified_sum_w_VAT))
         self.label_job_verified_sum_VAT_amount.setText(amount_str(verified_sum_VAT_amount))
+
+    def set_paid_safety_deposits_of_job(self, paid_safety_deposits):
+        self.treeWidget_paid_safety_desposits.clear()
+        for psd in paid_safety_deposits:
+            helper.add_item_to_tree(content_item=psd,
+                                    parent=self.treeWidget_paid_safety_desposits,
+                                    cols=[str(psd["date"]), amount_w_currency_str(psd["amount"], self.currency), psd["comment"]])
+
+    def set_job_additions_of_job(self, job_additions):
+        self.treeWidget_job_additions.clear()
+        for job_addition in job_additions:
+            helper.add_item_to_tree(content_item=job_addition,
+                                    parent=self.treeWidget_job_additions,
+                                    cols=[str(job_addition["date"]), amount_w_currency_str(job_addition["amount"], self.currency), job_addition["comment"]])
 
     #   Fill the listwidget with the invoices
     def set_invoices_of_job(self, invoices_of_job):
@@ -970,8 +1072,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.change_tab("tab_jobs_table")
 
     def change_tab(self, tab_name):
-        tab = self.tabWidget.findChild(QtWidgets.QWidget, tab_name)
-        self.tabWidget.setCurrentWidget(tab)
+        tab = self.tabWidget_content.findChild(QtWidgets.QWidget, tab_name)
+        self.tabWidget_content.setCurrentWidget(tab)
 
     """
     #

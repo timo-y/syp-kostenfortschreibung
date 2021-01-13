@@ -166,6 +166,7 @@ class PersonEncoder(JSONEncoder):
                 "fax": o.fax,
                 "mobile": o.mobile,
                 "email": o.email,
+                "company_uid": o.company.uid_to_json() if o.company else None,
             }
             return encoded_person
         return JSONEncoder.default(self, o)
@@ -221,7 +222,8 @@ class ArchJobEncoder(JobEncoder):
                 "company_uid": o.company.uid_to_json() if o.company else None,
                 "job_sum": o.job_sum,
                 "trade_uid": o.trade.uid_to_json() if o.trade else None,
-                "paid_safety_deposits": [{"date": psd["date"].isoformat(), "amount": psd["amount"]} for psd in o.paid_safety_deposits],
+                "job_additions": [{"date": job_addition["date"].isoformat(), "amount": job_addition["amount"], "comment": job_addition["comment"]} for job_addition in o.job_additions],
+                "paid_safety_deposits": [{"date": psd["date"].isoformat(), "amount": psd["amount"], "comment": psd["comment"]} for psd in o.paid_safety_deposits],
             }
             return encoded_job
         return JobEncoder.default(self, o)

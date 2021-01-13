@@ -97,39 +97,32 @@
         <item row="0" column="1">
          <widget class="QLabel" name="label_client_last_name">
           <property name="text">
-           <string>Nachname</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_client_first_name">
           <property name="text">
-           <string>Vorname</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_client_street_a_number">
           <property name="text">
-           <string>Straße, Nr.</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
          <widget class="QLabel" name="label_client_zip_a_state">
           <property name="text">
-           <string>PLZ, Ort</string>
+           <string>-</string>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QPushButton" name="pushButton_add_client">
-          <property name="text">
-           <string>Auswählen</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
          <widget class="QPushButton" name="pushButton_add_new_client">
           <property name="text">
            <string>Neu hinzufügen</string>
@@ -758,8 +751,6 @@
   <tabstop>checkBox_execution_period</tabstop>
   <tabstop>dateEdit_execution_period_date_1</tabstop>
   <tabstop>dateEdit_execution_period_date_2</tabstop>
-  <tabstop>pushButton_add_new_client</tabstop>
-  <tabstop>pushButton_add_client</tabstop>
   <tabstop>checkBox_commissioned</tabstop>
   <tabstop>dateEdit_commissioned_date</tabstop>
   <tabstop>pushButton_commissioned_date_set_today</tabstop>

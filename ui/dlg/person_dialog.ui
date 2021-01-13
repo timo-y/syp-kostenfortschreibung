@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>501</width>
-    <height>340</height>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,6 +105,90 @@
      <property name="title">
       <string>Adressse</string>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_street">
+          <property name="text">
+           <string>&amp;Straße</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_street</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEdit_street"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_house_number">
+          <property name="text">
+           <string>&amp;Hausnummer</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_house_number</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEdit_house_number"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_city">
+          <property name="text">
+           <string>&amp;Stadt</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_city</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="lineEdit_city"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_state">
+          <property name="text">
+           <string>&amp;Bundesland</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_state</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="lineEdit_state"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_zipcode">
+          <property name="text">
+           <string>&amp;Postleitzahl</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_zipcode</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineEdit_zipcode"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_country">
+          <property name="text">
+           <string>&amp;Land</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEdit_country</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="lineEdit_country"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -144,9 +228,18 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>lineEdit_first_name</tabstop>
+  <tabstop>lineEdit_last_name</tabstop>
   <tabstop>lineEdit_telephone</tabstop>
+  <tabstop>lineEdit_mobile</tabstop>
   <tabstop>lineEdit_fax</tabstop>
   <tabstop>lineEdit_email</tabstop>
+  <tabstop>lineEdit_street</tabstop>
+  <tabstop>lineEdit_house_number</tabstop>
+  <tabstop>lineEdit_city</tabstop>
+  <tabstop>lineEdit_state</tabstop>
+  <tabstop>lineEdit_zipcode</tabstop>
+  <tabstop>lineEdit_country</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -62,6 +62,10 @@ class AppData:
         self.project.companies = self.get_init_companies()
         self.project.cost_groups = self.get_init_cost_groups()
         self.project.trades = self.get_init_trades()
+
+        if self.project.client:
+            self.project.add_person(self.project.client)
+
         return new_project
 
     """
@@ -290,7 +294,23 @@ class AppData:
     @debug.log
     def open_invoice_check_dir(self):
         path = self.get_invoice_check_dir()
+        if os.path.exists(path):
+            webbrowser.open(os.path.realpath(path))
+        else:
+            webbrowser.open(self.get_dir())
+
+    @debug.log
+    def open_syp_dir(self):
+        path = self.get_syp_dir()
         webbrowser.open(os.path.realpath(path))
+
+    @debug.log
+    def open_project_dir(self):
+        path = self.get_project_dir()
+        if os.path.exists(path):
+            webbrowser.open(os.path.realpath(path))
+        else:
+            webbrowser.open(os.path.join(self.config["SYP_dir"], "02 Projekte"))
 
     # GET
     @debug.log
@@ -301,6 +321,12 @@ class AppData:
     @debug.log
     def get_syp_dir(self):
         return self.config["SYP_dir"]
+
+    @debug.log
+    def get_project_dir(self):
+        if self.project:
+            path = os.path.join(self.config["SYP_dir"], "02 Projekte", self.project.identifier)
+            return path
 
     @debug.log
     def get_autosave_dir(self):

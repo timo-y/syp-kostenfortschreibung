@@ -66,6 +66,7 @@ class CompanyDialog(QtWidgets.QDialog):
         pass
 
     def update_ui(self):
+        self.activate_edit_person_button()
         sel_c_p_first_name = self.sel_contact_person.first_name if self.sel_contact_person else "-"
         sel_c_p_last_name = self.sel_contact_person.last_name if self.sel_contact_person else "-"
         args = self.get_input()
@@ -74,6 +75,11 @@ class CompanyDialog(QtWidgets.QDialog):
                         contact_person_first_name=sel_c_p_first_name,
                         contact_person_last_name=sel_c_p_last_name)
 
+    def activate_edit_person_button(self):
+        if self.sel_contact_person:
+            self.pushButton_edit_contact_person.setEnabled(True)
+        else:
+            self.pushButton_edit_contact_person.setEnabled(False)
     """
     #
     #   SIGNALS, ACTIONS & BUTTONS
@@ -104,12 +110,12 @@ class CompanyDialog(QtWidgets.QDialog):
     def add_new_contact_person(self):
         contact_person = helper.input_person(self.app_data)
         if contact_person:
-            self.sel_contact_person
+            self.sel_contact_person = contact_person
             self.update_ui()
 
     def edit_contact_person(self):
         if self.sel_contact_person:
-            helper.edit_peron(self.app_data, self.sel_contact_person)
+            helper.edit_person(self.app_data, self.sel_contact_person)
             self.update_ui()
         else:
             raise Exception("No contact person defined!")

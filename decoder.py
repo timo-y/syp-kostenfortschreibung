@@ -190,6 +190,7 @@ class PersonDecoder(JSONDecoder):
                 "fax": dct["fax"],
                 "mobile": dct["mobile"],
                 "email": dct["email"],
+                "company_uid": UIDDecoder().object_hook(dct["company_uid"]) if dct["company_uid"] else None,
             }
             return corp.Person(**args)
         return dct
@@ -245,7 +246,16 @@ class ArchJobDecoder(JSONDecoder):
                 "company_uid": UIDDecoder().object_hook(dct["company_uid"]) if dct["company_uid"] else None,
                 "job_sum": dct["job_sum"],
                 "trade_uid": UIDDecoder().object_hook(dct["trade_uid"]) if dct["trade_uid"] else None,
-                "paid_safety_deposits": [{"date": datetime.fromisoformat(psd["date"]), "amount": psd["amount"]} for psd in dct["paid_safety_deposits"]]
+                "job_additions": [{
+                    "date": datetime.fromisoformat(job_addition["date"]),
+                    "amount": job_addition["amount"],
+                    "comment": job_addition["comment"]
+                    } for job_addition in dct["job_additions"]],
+                "paid_safety_deposits": [{
+                    "date": datetime.fromisoformat(psd["date"]),
+                    "amount": psd["amount"],
+                    "comment": psd["comment"]
+                    } for psd in dct["paid_safety_deposits"]]
             }
             return arch.ArchJob(**args)
         return dct

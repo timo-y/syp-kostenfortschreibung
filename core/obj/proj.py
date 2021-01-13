@@ -223,7 +223,7 @@ class Project(IdObject):
     """
     @property
     def people(self):
-        return self._people
+        return [person for person in self._people if person.is_not_deleted()]
     @people.setter
     def people(self, people):
         if not(self._people):

@@ -92,6 +92,15 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "description", "width": 180},
             {"title": "budget", "width": 120},
         ]
+        self.person_cols = [
+            {"title": "first_name", "width": 80},
+            {"title": "last_name", "width": 150},
+            {"title": "address", "width": 180},
+            {"title": "telephone", "width": 80},
+            {"title": "fax", "width": 80},
+            {"title": "mobile", "width": 80},
+            {"title": "email", "width": 100},
+        ]
 
         self.initialize_ui()
         self.center_window()
@@ -122,7 +131,6 @@ class MainWindow(QtWidgets.QMainWindow):
         job_tree_view_cols = ["date", "id"] # maybe put on top of file
         self.treeWidget_invoices_of_curr_job.setHeaderLabels([self.app_data.titles[col] for col in job_tree_view_cols])
 
-
     def initialize_tabwidget(self):
         self.tabWidget.clear()
         self.tabWidget.setTabBar(customqt.TabBar(self))
@@ -136,6 +144,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget.addTab(self.tab_cost_groups_table, "Kostengruppen")
         self.tabWidget.addTab(self.tab_people, "Beteiligten")
         self.tabWidget.addTab(self.tab_invoice_check, "???")
+
+    def init_column_width(self):
+        self.render_cost_stand(set_width=True)
+        self.render_invoice_view(set_width=True)
+        self.render_job_view(set_width=True)
+        self.render_company_view(set_width=True)
+        self.render_trades(set_width=True)
+        self.render_cost_groups(set_width=True)
+        self.render_people(set_width=True)
 
     def enable_ui(self):
         self.groupBox_content.setEnabled(True)
@@ -165,6 +182,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.render_company_view()
             self.render_trades()
             self.render_cost_groups()
+            self.render_people()
 
     def update_labels(self):
         self.label_cur_proj.setText(self.app_data.project.identifier)
@@ -180,6 +198,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #   Maximize/minimize areas...
     #
     """
+
+    # this function is probably not needed
     def minimize_invoice_info(self):
         print("this should minimize the invoice info widget")
         #self.horizontalLayout_invoice_info_top.setVisible(False)
@@ -206,7 +226,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_edit_invoice.clicked.connect(self.button_edit_invoice)
         self.pushButton_invoice_check.clicked.connect(self.button_invoice_check)
         self.pushButton_go_to_job.clicked.connect(self.set_job_view_sel_invoice)
-        self.pushButton_minimize_invoice.clicked.connect(self.minimize_invoice_info)
 
         """ job buttons """
         self.pushButton_new_job.clicked.connect(lambda:self.input_job_to_project())
@@ -240,6 +259,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """ cost_group signals """
         self.tableWidget_cost_groups.itemDoubleClicked.connect(self.double_click_cost_group)
         self.tableWidget_cost_groups.itemClicked.connect(self.click_cost_group)
+        """ people signals """
+        self.tableWidget_people.itemDoubleClicked.connect(self.double_click_person)
+        self.tableWidget_people.itemClicked.connect(self.click_person)
+
 
     def load_action_signals(self):
         self.actionNewProject.triggered.connect(lambda:self.input_new_project())
@@ -373,6 +396,24 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             raise Exception("No cost_group selected!")
 
+    """ signal
+    #
+    #  PERSON
+    #
+    """
+    def double_click_person(self, item):
+        self.edit_person(item.data(1))
+
+    def click_person(self, item):
+        person = item.data(1)
+        self.render_person_info(person)
+
+    def button_edit_person(self):
+        if self.tableWidget_people.currentItem():
+            self.edit_person(self.tableWidget_people.currentItem().data(1))
+        else:
+            raise Exception("No person selected!")
+
     """
     #
     #   RENDER VIEWS
@@ -384,7 +425,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COST STAND-TAB
     #
     """
-    def render_cost_stand(self):
+    def render_cost_stand(self, set_width=False):
         TITLE_DE = {
             "cost_group": "KG",
             "project_budget": "Projektbudget netto",
@@ -403,9 +444,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # set columns of table to the list self.invoice_cols
         self.tableWidget_cost_stand.setColumnCount(len(self.cost_stand_cols))
-
-        for i in range(len(self.cost_stand_cols)):
-            self.tableWidget_cost_stand.setColumnWidth(i, self.cost_stand_cols[i]["width"])
+        if set_width:
+            for i in range(len(self.cost_stand_cols)):
+                self.tableWidget_cost_stand.setColumnWidth(i, self.cost_stand_cols[i]["width"])
 
         # set column titles
         self.tableWidget_cost_stand.setHorizontalHeaderLabels([self.app_data.titles[col["title"]] for col in self.cost_stand_cols])
@@ -450,14 +491,15 @@ class MainWindow(QtWidgets.QMainWindow):
     #   INVOICES-TAB
     #
     """
-    def render_invoice_view(self):
+    def render_invoice_view(self, set_width=False):
         self.activate_invoice_buttons()
         date_cols = ["invoice_date", "inbox_date", "checked_date"]
         helper.render_to_table(content=self.app_data.project.invoices,
                                 table=self.tableWidget_invoices,
                                 cols=self.invoice_cols,
                                 titles=self.app_data.titles,
-                                date_cols=date_cols)
+                                date_cols=date_cols,
+                                set_width=set_width)
         item = self.tableWidget_invoices.currentItem()
         if item:
             curr_invoice = item.data(1)
@@ -568,7 +610,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   JOBS-TAB
     #
     """
-    def render_job_view(self):
+    def render_job_view(self, set_width=False):
         self.activate_job_buttons()
         amount_cols = ["job_sum"]
         helper.render_to_table(content=self.app_data.project.jobs,
@@ -576,7 +618,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                 cols=self.job_cols,
                                 titles=self.app_data.titles,
                                 amount_cols=amount_cols,
-                                currency=self.currency)
+                                currency=self.currency,
+                                set_width=set_width)
         item = self.tableWidget_jobs.currentItem()
         if item:
             curr_job = item.data(1)
@@ -678,7 +721,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COMPANIES-TAB
     #
     """
-    def render_company_view(self):
+    def render_company_view(self, set_width=False):
         self.activate_company_buttons()
         amount_cols = ["budget"]
         helper.render_to_table(content=self.app_data.project.companies,
@@ -686,7 +729,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                 cols=self.company_cols,
                                 titles=self.app_data.titles,
                                 amount_cols=amount_cols,
-                                currency=self.currency)
+                                currency=self.currency,
+                                set_width=set_width)
         item = self.tableWidget_companies.currentItem()
         if item:
             curr_company = item.data(1)
@@ -757,7 +801,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   TRADES-TAB
     #
     """
-    def render_trades(self):
+    def render_trades(self, set_width=False):
         self.activate_trade_buttons()
         amount_cols = ["budget"]
         helper.render_to_table(content=self.app_data.project.trades,
@@ -765,7 +809,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                 cols=self.trade_cols,
                                 titles=self.app_data.titles,
                                 amount_cols=amount_cols,
-                                currency=self.currency)
+                                currency=self.currency,
+                                set_width=set_width)
         item = self.tableWidget_trades.currentItem()
         if item:
             curr_trade = item.data(1)
@@ -811,7 +856,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COST GROUPS-TAB
     #
     """
-    def render_cost_groups(self):
+    def render_cost_groups(self, set_width=False):
         self.activate_cost_group_buttons()
         amount_cols = ["budget"]
         helper.render_to_table(content=self.app_data.project.cost_groups,
@@ -819,7 +864,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                 cols=self.cost_group_cols,
                                 titles=self.app_data.titles,
                                 amount_cols=amount_cols,
-                                currency=self.currency)
+                                currency=self.currency,
+                                set_width=set_width)
         item = self.tableWidget_cost_groups.currentItem()
         if item:
             curr_cost_group = item.data(1)
@@ -857,6 +903,56 @@ class MainWindow(QtWidgets.QMainWindow):
         budget_w_VAT = budget + budget_VAT_amount
         self.label_cost_group_budget_w_VAT.setText(amount_str(budget_w_VAT))
         self.label_cost_group_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
+
+    """ render
+    #
+    #   PEOPLE-TAB
+    #
+    """
+    def render_people(self, set_width=False):
+        self.activate_person_buttons()
+        amount_cols = ["budget"]
+        helper.render_to_table(content=self.app_data.project.people,
+                                table=self.tableWidget_people,
+                                cols=self.person_cols,
+                                titles=self.app_data.titles,
+                                amount_cols=amount_cols,
+                                currency=self.currency,
+                                set_width=set_width)
+        item = self.tableWidget_people.currentItem()
+        if item:
+            curr_person = item.data(1)
+            self.render_person_info(curr_person)
+
+    def render_person_info(self, person):
+        if person.is_not_deleted():
+            args = vars(person).copy()
+            self.set_person_data(**args)
+            self.activate_person_buttons()
+        else:
+            self.reset_person_info()
+
+    def activate_person_buttons(self):
+        if self.tableWidget_people.currentItem():
+            self.pushButton_edit_person.setEnabled(True)
+            self.pushButton_delete_person.setEnabled(True)
+        else:
+            self.pushButton_edit_person.setEnabled(False)
+            self.pushButton_delete_person.setEnabled(False)
+
+    def reset_person_info(self):
+        self.set_person_data()
+        self.activate_person_buttons()
+
+    def set_person_data(self, *, _uid=None, first_name="", last_name="", telephone="", mobile="", fax="", email="", **kwargs):
+        """ meta data """
+        self.label_person_uid.setText(_uid.labelize() if _uid else "-")
+
+        self.label_person_name_2.setText(f"{first_name} {last_name}")
+        self.label_person_telephone_2.setText(telephone)
+        self.label_person_mobile_2.setText(mobile)
+        self.label_person_fax_2.setText(fax)
+        self.label_person_email_2.setText(email)
 
     """
     #
@@ -897,7 +993,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 helper.input_new_project(self.app_data)
         else:
             helper.input_new_project(self.app_data)
-        self.update_ui()
+        if self.app_data.project_loaded():
+            self.update_ui()
+            self.init_column_width()
 
     def edit_project(self):
         helper.edit_project(self.app_data)
@@ -912,6 +1010,7 @@ class MainWindow(QtWidgets.QMainWindow):
             helper.load_project(self, self.app_data)
         if self.app_data.project_loaded():
             self.update_ui()
+            self.init_column_width()
 
     def save_project(self):
         helper.save_project(self, self.app_data)
@@ -1057,6 +1156,23 @@ class MainWindow(QtWidgets.QMainWindow):
         cost_group = helper.edit_cost_group(self.app_data, cost_group)
         if cost_group:
             self.render_cost_group_info(cost_group)
+            self.update_ui()
+
+    """ func
+    #
+    #   Person
+    #
+    """
+    @debug.log
+    def input_person_to_project(self):
+        person = helper.input_person(self.app_data)
+        self.update_ui()
+
+    @debug.log
+    def edit_person(self, person):
+        person = helper.edit_person(self.app_data, person)
+        if person:
+            self.render_person_info(person)
             self.update_ui()
 
     """ func

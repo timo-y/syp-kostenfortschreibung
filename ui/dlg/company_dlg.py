@@ -102,20 +102,15 @@ class CompanyDialog(QtWidgets.QDialog):
     #
     """
     def add_new_contact_person(self):
-        input_person_args = dlg.open_person_dialog()
-        if input_person_args:
-            input_contact_person = self.app_data.project.input_new_person(input_person_args)
-            self.sel_contact_person = input_contact_person
+        contact_person = helper.input_person(self.app_data)
+        if contact_person:
+            self.sel_contact_person
             self.update_ui()
-            print(f"New person added: {input_contact_person.first_name}, {input_contact_person.last_name}")
 
     def edit_contact_person(self):
         if self.sel_contact_person:
-            sel_contact_person_args = dlg.open_person_dialog(loaded_person=self.sel_contact_person)
-            if sel_contact_person_args:
-                self.sel_contact_person.update(**sel_contact_person_args)
-                self.update_ui()
-                print(f"Existing person edited: {self.sel_contact_person.first_name}, {self.sel_contact_person.last_name}")
+            helper.edit_peron(self.app_data, self.sel_contact_person)
+            self.update_ui()
         else:
             raise Exception("No contact person defined!")
 

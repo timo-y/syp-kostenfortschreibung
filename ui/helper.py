@@ -152,22 +152,22 @@ def input_address(app_data):
 #
 """
 def input_person(app_data):
-    input_person_args = dlg.open_person_dialog(app_data=app_data)
+    input_person_args = dlg.open_person_dialog()
     if input_person_args:
         person = app_data.project.input_new_person(input_person_args)
         """ logging """
         debug.log(f"New person added: {person.first_name}, {person.last_name}")
         return person
 
-def edit_person(app_data):
-    person_args = dlg.open_person_dialog(app_data=app_data, loaded_person=person)
+def edit_person(app_data, person):
+    person_args = dlg.open_person_dialog(loaded_person=person)
     if person_args:
         if person_args == "delete":
             app_data.project.delete_person(person)
             """ logging """
             debug.log(f"Person deleted: {person.first_name}, {person.last_name}")
         else:
-            person.update(person_args)
+            person.update(**person_args)
             """ logging """
             debug.log(f"Existing person edited: {person.first_name}, {person.last_name}")
         return person
@@ -366,7 +366,7 @@ def edit_proj_config(app_data):
 #
 #
 """
-def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], currency="€"):
+def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], currency="€", set_width=False):
     sel_item = table.currentItem().data(1) if table.currentItem() else None # to restore the selection
     table.clear()
 
@@ -379,9 +379,9 @@ def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], 
     table.setHorizontalHeaderLabels(header_labels)
     # hide the UID column
     table.setColumnHidden(0, True)
-
-    for i in range(len(cols)):
-        table.setColumnWidth(i+1, cols[i]["width"])
+    if set_width:
+        for i in range(len(cols)):
+            table.setColumnWidth(i+1, cols[i]["width"])
 
     row = 0
     for content_item in content:

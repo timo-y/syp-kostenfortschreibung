@@ -68,7 +68,7 @@ class Application(QtWidgets.QApplication):
     """
     @debug.log
     def initialize_autosaver(self):
-        self.autosave_timer=QTimer()
+        self.autosave_timer = QTimer()
         self.autosave_timer.timeout.connect(self.autosave_project)
 
     @debug.log

@@ -12,10 +12,6 @@ from core.obj import corp
 class ArchJob(corp.Job):
     """docstring for ArchJob"""
 
-    TITLE_DE = corp.Job.TITLE_DE.copy()
-    TITLE_DE.update({"trade": "Gewerk",
-                    "paid_safety_deposits": "gezahlte Sicherheitseinbehalte"})
-
     def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None, company_uid=None, trade=None, trade_uid=None, job_additions=None, paid_safety_deposits=None):
         super(ArchJob, self).__init__(id, uid=uid, deleted=deleted, company=company, job_sum=job_sum, company_uid=company_uid)
         self.trade = trade
@@ -116,13 +112,6 @@ class ArchJob(corp.Job):
 class Trade(IdObject):
     """docstring for Trade"""
 
-    TITLE_DE = {
-        "name": "Name",
-        "cost_group": "Kostengruppe",
-        "budget": "Budget",
-        "comment": "Kommentar"
-    }
-
     def __init__(self, *, name, budget, comment, uid=None, deleted=False,  cost_group=None, cost_group_ref=None):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
@@ -133,6 +122,12 @@ class Trade(IdObject):
         """ for restoration only """
         self._cost_group_ref = cost_group_ref
 
+    """
+    #
+    #   MANIPULATE
+    #   Fuctions manipulating the trade
+    #
+    """
     @debug.log
     def update(self, name, cost_group, budget, comment):
         self.name = name
@@ -162,7 +157,7 @@ class Trade(IdObject):
             self.cost_group = [cost_group for cost_group in cost_groups if cost_group.uid == self._cost_group_ref["uid"]][0]
             self._cost_group_ref = None
         elif self._cost_group_ref and self.cost_group:
-            raise Exception(f"Cannot restore cost_group: cost_group_uid ({self.cost_group_ref['uid']}) stored and the cost_group (uid: {self.cost_group.uid}) was already set.")
+            raise Exception(f"Cannot restore cost_group: cost_group_uid ({self._cost_group_ref['uid']}) stored and the cost_group (uid: {self.cost_group.uid}) was already set.")
 
     @debug.log
     def restore_cost_group_by_id(self, cost_groups):
@@ -186,28 +181,79 @@ class Trade(IdObject):
 class CostGroup(IdObject):
     """docstring for CostGroup"""
 
-    TITLE_DE = {
-        "id": "Kostengruppe (ID)",
-        "name": "Kostengruppe",
-        "description": "Beschreibung",
-        "budget": "Budget",
-    }
-
-    def __init__(self, id, name="", description="", *, uid=None, deleted=False, budget=0):
+    def __init__(self, id, name="", description="", *, uid=None, deleted=False, budget=0, parent=None, parent_ref=None):
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
         self.name = name
         self.description = description
         self.budget = budget
+        self.parent = parent
 
+        """ for restoration only """
+        self._parent_ref = parent_ref
+
+    """
+    #
+    #   PROPERTIES
+    #
+    #
+    """
+    def is_main_group(self):
+        if self.parent is None:
+            return True
+        else:
+            return False
+
+    def is_sub_group(self):
+        return not(self.is_main_group())
+
+    """
+    #
+    #   MANIPULATE
+    #   Fuctions manipulating the cost_group
+    #
+    """
     @debug.log
-    def update(self, id, name, description, budget):
+    def update(self, id, name, description, budget, parent):
         self.id = id
         self.name = name
         self.description = description
         self.budget = budget
+        self.parent = parent
         """ set edited date """
         self.edited()
+
+    """
+    #
+    #   RESTORE
+    #
+    #
+    """
+    @debug.log
+    def restore(self, project):
+        self.restore_parent(project.cost_groups)
+
+    @debug.log
+    def restore_after_import(self, project):
+        self.restore_parent_by_id(project.cost_groups)
+
+    @debug.log
+    def restore_parent(self, cost_groups):
+        if self._parent_ref["uid"] and not(self.parent):
+            self.parent = [cost_group for cost_group in cost_groups if cost_group.uid == self._parent_ref["uid"]][0]
+            self._parent_ref = None
+        elif self._parent_ref and self.parent:
+            raise Exception(f"Cannot restore parent: parent_uid ({self._parent_ref['uid']}) stored and the parent (uid: {self.parent.uid}) was already set.")
+
+    @debug.log
+    def restore_parent_by_id(self, cost_groups):
+        if self._parent_ref["id"] and not(self.parent):
+            temp_list = [cost_group for cost_group in cost_groups if cost_group.id == self._parent_ref["id"]]
+            if len(temp_list)>0:
+                self.parent = temp_list[0]
+                self._parent_uid = None
+            else:
+                debug.log_warning(f"Can't restore parent by id, since there was no cost_group with the given id")
 
     """
     #

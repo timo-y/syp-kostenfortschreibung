@@ -77,8 +77,10 @@ class CompanyDialog(QtWidgets.QDialog):
 
     def activate_edit_person_button(self):
         if self.sel_contact_person:
+            self.pushButton_add_contact_person.setEnabled(False)
             self.pushButton_edit_contact_person.setEnabled(True)
         else:
+            self.pushButton_add_contact_person.setEnabled(True)
             self.pushButton_edit_contact_person.setEnabled(False)
     """
     #

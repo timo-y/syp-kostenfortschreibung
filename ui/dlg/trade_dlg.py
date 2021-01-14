@@ -59,7 +59,8 @@ class TradeDialog(QtWidgets.QDialog):
         self.comboBox_cost_group.clear()
         self.comboBox_cost_group.addItem("Kostengruppe auswählen...", None)
         for cost_group in self.cost_groups:
-            self.comboBox_cost_group.addItem(str(cost_group.id), cost_group)
+            if cost_group.is_main_group():
+                self.comboBox_cost_group.addItem(str(cost_group.id), cost_group)
 
     def set_default_labels(self):
         pass

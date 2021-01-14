@@ -147,7 +147,7 @@ class TradeDecoder(JSONDecoder):
                 "cost_group_ref":
                 {
                     "uid": UIDDecoder().object_hook(dct["cost_group_ref"]["uid"]) if dct["cost_group_ref"]["uid"] else None,
-                    "id": dct["cost_group_ref"]["id"]
+                    "id": dct["cost_group_ref"]["id"] if dct["cost_group_ref"]["id"] else None
                 },
                 "budget": dct["budget"],
                 "comment": dct["comment"]
@@ -168,7 +168,12 @@ class CostGroupDecoder(JSONDecoder):
                 "id": dct["id"],
                 "name": dct["name"],
                 "description": dct["description"],
-                "budget": dct["budget"]
+                "budget": dct["budget"],
+                "parent_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["parent_ref"]["uid"]) if dct["parent_ref"]["uid"] else None,
+                    "id": dct["parent_ref"]["id"] if dct["parent_ref"]["id"] else None
+                },
             }
             return arch.CostGroup(**args)
         return dct

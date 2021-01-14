@@ -1077,53 +1077,7 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="3" column="1">
-       <widget class="QLabel" name="label_reduction_percent">
-        <property name="text">
-         <string>Satz</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="label_reduction_insurance_costs">
-        <property name="text">
-         <string>&amp;Versicherungskosten</string>
-        </property>
-        <property name="buddy">
-         <cstring>doubleSpinBox_reduction_insurance_costs</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_reduction_insurance_costs">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="suffix">
-         <string>%</string>
-        </property>
-        <property name="decimals">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <double>100.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_rebate">
-        <property name="text">
-         <string>&amp;Nachlass</string>
-        </property>
-        <property name="buddy">
-         <cstring>doubleSpinBox_rebate</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="5">
+      <item row="8" column="5">
        <widget class="QLabel" name="label_currency_7">
         <property name="enabled">
          <bool>false</bool>
@@ -1139,91 +1093,44 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="label_reduction_usage_costs">
-        <property name="text">
-         <string>&amp;Verbrauchskosten</string>
-        </property>
-        <property name="buddy">
-         <cstring>doubleSpinBox_reduction_usage_costs</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButton_prev_invoices">
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_prev_invoices_count">
         <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="text">
-         <string>Rechnungen anzeigen</string>
+         <string>0</string>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
-       <widget class="QLabel" name="label_currency_15">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>€</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_rebate">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="suffix">
-         <string>%</string>
-        </property>
-        <property name="decimals">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <double>100.000000000000000</double>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_prev_invoices">
         <property name="text">
-         <string>gezahlte Rechnungen</string>
+         <string>vorherige Rechnungen</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="5">
-       <widget class="QLabel" name="label_currency_14">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_reduction_percent">
         <property name="text">
-         <string>€</string>
+         <string>Satz</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="1">
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_rebate">
+        <property name="text">
+         <string>&amp;Nachlass</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_rebate</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_reduction_usage_costs">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -1242,20 +1149,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_prev_invoices_count">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_reduction_insurance_costs">
         <property name="text">
-         <string>0</string>
+         <string>&amp;Versicherungskosten</string>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="buddy">
+         <cstring>doubleSpinBox_reduction_insurance_costs</cstring>
         </property>
        </widget>
       </item>
-      <item row="6" column="5">
+      <item row="7" column="5">
        <widget class="QLabel" name="label_currency_6">
         <property name="enabled">
          <bool>false</bool>
@@ -1271,63 +1175,26 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="5">
-       <widget class="QCheckBox" name="checkBox_reduce_prev_invoices">
-        <property name="text">
-         <string>vorherige Rechnungen abziehen</string>
+      <item row="8" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_reduction_insurance_costs">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="checked">
-         <bool>true</bool>
+        <property name="suffix">
+         <string>%</string>
         </property>
-       </widget>
-      </item>
-      <item row="6" column="2" colspan="3">
-       <widget class="QLabel" name="label_rebate_amount">
-        <property name="enabled">
-         <bool>false</bool>
+        <property name="decimals">
+         <number>1</number>
         </property>
-        <property name="sizeIncrement">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <italic>false</italic>
-          <underline>false</underline>
-         </font>
-        </property>
-        <property name="text">
-         <string>0,0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="maximum">
+         <double>100.000000000000000</double>
         </property>
        </widget>
       </item>
-      <item row="7" column="2" colspan="3">
-       <widget class="QLabel" name="label_reduction_insurance_costs_amount">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <italic>false</italic>
-          <underline>false</underline>
-         </font>
-        </property>
-        <property name="text">
-         <string>0,0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" colspan="3">
+      <item row="1" column="4">
        <widget class="QLabel" name="label_prev_invoices_amount">
         <property name="enabled">
          <bool>false</bool>
@@ -1353,7 +1220,59 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="5">
+       <widget class="QLabel" name="label_currency_15">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>€</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="5">
+       <widget class="QLabel" name="label_currency_14">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>€</string>
+        </property>
+       </widget>
+      </item>
       <item row="8" column="2" colspan="3">
+       <widget class="QLabel" name="label_reduction_insurance_costs_amount">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <italic>false</italic>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>0,0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2" colspan="3">
        <widget class="QLabel" name="label_reduction_usage_costs_amount">
         <property name="enabled">
          <bool>false</bool>
@@ -1373,10 +1292,85 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="2" colspan="4">
+      <item row="7" column="2" colspan="3">
+       <widget class="QLabel" name="label_rebate_amount">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <italic>false</italic>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>0,0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_rebate">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="suffix">
+         <string>%</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_reduction_usage_costs">
+        <property name="text">
+         <string>&amp;Verbrauchskosten</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_reduction_usage_costs</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_prev_invoices_2">
+        <property name="text">
+         <string>kumulierte s.r.u.r.g. R.s.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="5">
+       <widget class="QCheckBox" name="checkBox_reduce_prev_invoices">
+        <property name="text">
+         <string>vorherige Rechnungen abziehen</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" colspan="3">
        <widget class="QLabel" name="label_reduction_amount">
         <property name="text">
          <string>Betrag</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>

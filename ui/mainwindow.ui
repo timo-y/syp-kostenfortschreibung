@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1767</width>
+    <width>1498</width>
     <height>1008</height>
    </rect>
   </property>
@@ -218,59 +218,73 @@
             <property name="title">
              <string>Schnellzugriff</string>
             </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="QPushButton" name="pushButton_quick_new_invoice">
-               <property name="autoFillBackground">
-                <bool>false</bool>
+              <widget class="QGroupBox" name="groupBox_12">
+               <property name="title">
+                <string>Neu</string>
                </property>
-               <property name="text">
-                <string>Rechnung hinzufügen (Strg + R)</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
-               </property>
-               <property name="autoExclusive">
-                <bool>true</bool>
-               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_23">
+                <item>
+                 <widget class="QPushButton" name="pushButton_quick_new_invoice">
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>Neue Rechnung (Strg + R)</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                  <property name="autoExclusive">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_quick_new_job">
+                  <property name="text">
+                   <string>Neuer Auftrag (Strg + T)</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_quick_new_job">
-               <property name="text">
-                <string>Auftrag hinzufügen (Strg + T)</string>
+              <widget class="QGroupBox" name="groupBox_14">
+               <property name="title">
+                <string>Verzeichnisse</string>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_quick_invoice_check_dir">
-               <property name="text">
-                <string>Rechnungsprüfungsverzeichnis</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_quick_syp_dir">
-               <property name="text">
-                <string>SYP-Verzeichnis</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_quick_proj_dir">
-               <property name="text">
-                <string>Projektverzeichnis</string>
-               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_24">
+                <item>
+                 <widget class="QPushButton" name="pushButton_quick_invoice_check_dir">
+                  <property name="text">
+                   <string>Rechnungsprüfungsverzeichnis</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_quick_proj_dir">
+                  <property name="text">
+                   <string>Projektverzeichnis</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_quick_syp_dir">
+                  <property name="text">
+                   <string>SYP-Verzeichnis</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
@@ -308,7 +322,7 @@
          <enum>QTabWidget::South</enum>
         </property>
         <property name="currentIndex">
-         <number>7</number>
+         <number>6</number>
         </property>
         <widget class="QWidget" name="tab_overview">
          <attribute name="title">
@@ -1319,13 +1333,6 @@
                           </property>
                          </widget>
                         </item>
-                        <item row="2" column="2" colspan="2">
-                         <widget class="QLabel" name="label_reduction_amount">
-                          <property name="text">
-                           <string>Betrag</string>
-                          </property>
-                         </widget>
-                        </item>
                         <item row="10" column="3">
                          <widget class="QLabel" name="label_reduction_usage_costs_amount">
                           <property name="enabled">
@@ -1433,6 +1440,16 @@
                           </property>
                           <property name="text">
                            <string>0</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="2" colspan="3">
+                         <widget class="QLabel" name="label_reduction_amount">
+                          <property name="text">
+                           <string>Betrag</string>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1706,7 +1723,7 @@
                        <item>
                         <widget class="QPushButton" name="pushButton_edit_invoice">
                          <property name="text">
-                          <string>Rechnung bearbeiten</string>
+                          <string>bearbeiten</string>
                          </property>
                         </widget>
                        </item>
@@ -1752,7 +1769,7 @@
               <item>
                <widget class="QPushButton" name="pushButton_new_invoice">
                 <property name="text">
-                 <string>Rechnung hinzufügen</string>
+                 <string>Neue Rechnung</string>
                 </property>
                </widget>
               </item>
@@ -1807,50 +1824,6 @@
               </item>
               <item>
                <layout class="QGridLayout" name="gridLayout_job_details">
-                <item row="3" column="0">
-                 <widget class="QGroupBox" name="groupBox_2">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="title">
-                   <string>Rechnungen</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_11">
-                   <item>
-                    <widget class="QTreeWidget" name="treeWidget_invoices_of_curr_job">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="sortingEnabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="columnCount">
-                      <number>0</number>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item row="5" column="0">
-                 <spacer name="verticalSpacer_3">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
                 <item row="0" column="0">
                  <layout class="QHBoxLayout" name="horizontalLayout_content">
                   <property name="spacing">
@@ -1956,7 +1929,7 @@
                           <widget class="QLabel" name="label_trade">
                            <property name="font">
                             <font>
-                             <pointsize>10</pointsize>
+                             <pointsize>8</pointsize>
                              <italic>false</italic>
                             </font>
                            </property>
@@ -1989,7 +1962,7 @@
                            </property>
                            <property name="font">
                             <font>
-                             <pointsize>10</pointsize>
+                             <pointsize>8</pointsize>
                              <italic>true</italic>
                             </font>
                            </property>
@@ -2165,6 +2138,163 @@
                             </item>
                             <item row="1" column="1" colspan="2">
                              <widget class="QLabel" name="label_job_job_sum">
+                              <property name="font">
+                               <font>
+                                <pointsize>14</pointsize>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>-</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QGroupBox" name="groupBox_job_sum_6">
+                           <property name="minimumSize">
+                            <size>
+                             <width>200</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="title">
+                            <string>Auftragssumme mit Nachträgen</string>
+                           </property>
+                           <layout class="QGridLayout" name="gridLayout_19">
+                            <item row="1" column="3">
+                             <widget class="QLabel" name="label_currency_36">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="text">
+                               <string>€</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="2" column="3">
+                             <widget class="QLabel" name="label_currency_37">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="text">
+                               <string>€</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="1" column="0">
+                             <widget class="QLabel" name="label_net_10">
+                              <property name="text">
+                               <string>netto</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="3" column="1" colspan="2">
+                             <widget class="QLabel" name="label_job_sum_w_job_additions_VAT_amount">
+                              <property name="enabled">
+                               <bool>false</bool>
+                              </property>
+                              <property name="font">
+                               <font>
+                                <pointsize>6</pointsize>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>-</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="3" column="3">
+                             <widget class="QLabel" name="label_currency_38">
+                              <property name="enabled">
+                               <bool>false</bool>
+                              </property>
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="font">
+                               <font>
+                                <pointsize>6</pointsize>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>€</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="2" column="0">
+                             <widget class="QLabel" name="label_w_tax_10">
+                              <property name="text">
+                               <string>brutto</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="2" column="1" colspan="2">
+                             <widget class="QLabel" name="label_job_sum_w_job_additions_w_VAT">
+                              <property name="font">
+                               <font>
+                                <pointsize>10</pointsize>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>-</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="3" column="0">
+                             <widget class="QLabel" name="label_VAT_10">
+                              <property name="enabled">
+                               <bool>false</bool>
+                              </property>
+                              <property name="font">
+                               <font>
+                                <pointsize>6</pointsize>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>MwSt.:</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="1" column="1" colspan="2">
+                             <widget class="QLabel" name="label_job_job_sum_w_job_additions">
                               <property name="font">
                                <font>
                                 <pointsize>14</pointsize>
@@ -2360,7 +2490,7 @@
                        <property name="currentIndex">
                         <number>0</number>
                        </property>
-                       <widget class="QWidget" name="tabWidget_2Page1" native="true">
+                       <widget class="QWidget" name="tabWidget_2Page1">
                         <attribute name="title">
                          <string>Sicherheitseinbehalte</string>
                         </attribute>
@@ -2435,7 +2565,7 @@
                            </property>
                            <property name="font">
                             <font>
-                             <pointsize>10</pointsize>
+                             <pointsize>8</pointsize>
                             </font>
                            </property>
                            <property name="title">
@@ -2615,7 +2745,7 @@
                          </item>
                         </layout>
                        </widget>
-                       <widget class="QWidget" name="tabWidget_2Page2" native="true">
+                       <widget class="QWidget" name="tabWidget_2Page2">
                         <attribute name="title">
                          <string>Nachträge</string>
                         </attribute>
@@ -2653,6 +2783,36 @@
                          </item>
                         </layout>
                        </widget>
+                       <widget class="QWidget" name="tab">
+                        <attribute name="title">
+                         <string>Rechnungen</string>
+                        </attribute>
+                        <layout class="QVBoxLayout" name="verticalLayout_25">
+                         <item>
+                          <widget class="QTreeWidget" name="treeWidget_invoices_of_curr_job">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="sortingEnabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="columnCount">
+                            <number>0</number>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="pushButton_add_invoice_for_curr_job">
+                           <property name="text">
+                            <string>Rechnung für Auftrag hinzufügen</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
                       </widget>
                      </item>
                      <item>
@@ -2678,7 +2838,7 @@
                        <item>
                         <widget class="QPushButton" name="pushButton_edit_job">
                          <property name="text">
-                          <string>Auftrag bearbeiten</string>
+                          <string>bearbeiten</string>
                          </property>
                         </widget>
                        </item>
@@ -2690,11 +2850,17 @@
                  </layout>
                 </item>
                 <item row="4" column="0">
-                 <widget class="QPushButton" name="pushButton_add_invoice_for_curr_job">
-                  <property name="text">
-                   <string>Rechnung für Auftrag hinzufügen</string>
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
                   </property>
-                 </widget>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </item>
@@ -2718,7 +2884,7 @@
               <item>
                <widget class="QPushButton" name="pushButton_new_job">
                 <property name="text">
-                 <string>Auftrag hinzufügen</string>
+                 <string>Neuer Auftrag</string>
                 </property>
                </widget>
               </item>
@@ -2797,6 +2963,11 @@
                  </property>
                  <item>
                   <widget class="QLabel" name="label_company_name">
+                   <property name="font">
+                    <font>
+                     <pointsize>14</pointsize>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>-</string>
                    </property>
@@ -2811,6 +2982,11 @@
                  </item>
                  <item>
                   <widget class="QLabel" name="label_company_service">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>-</string>
                    </property>
@@ -2825,6 +3001,11 @@
                  </item>
                  <item>
                   <widget class="QLabel" name="label_company_service_type">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>-</string>
                    </property>
@@ -2863,6 +3044,11 @@
                     </item>
                     <item row="2" column="1" colspan="3">
                      <widget class="QLabel" name="label_company_budget_w_VAT">
+                      <property name="font">
+                       <font>
+                        <pointsize>10</pointsize>
+                       </font>
+                      </property>
                       <property name="text">
                        <string>-</string>
                       </property>
@@ -2969,6 +3155,11 @@
                     </item>
                     <item row="1" column="1" colspan="3">
                      <widget class="QLabel" name="label_company_budget">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
                       <property name="text">
                        <string>-</string>
                       </property>
@@ -3002,6 +3193,11 @@
                           <verstretch>0</verstretch>
                          </sizepolicy>
                         </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>-</string>
                         </property>
@@ -3009,6 +3205,11 @@
                       </item>
                       <item>
                        <widget class="QLabel" name="label_company_contact_person_last_name">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
                         <property name="text">
                          <string>-</string>
                         </property>
@@ -3054,7 +3255,7 @@
                       </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>Firma bearbeiten</string>
+                      <string>bearbeiten</string>
                      </property>
                     </widget>
                    </item>
@@ -3128,7 +3329,7 @@
               <item>
                <widget class="QPushButton" name="pushButton_new_company">
                 <property name="text">
-                 <string>Firma hinzufügen</string>
+                 <string>Neue Firma</string>
                 </property>
                </widget>
               </item>
@@ -3203,7 +3404,7 @@
                   <widget class="QLabel" name="label_trade_name">
                    <property name="font">
                     <font>
-                     <pointsize>10</pointsize>
+                     <pointsize>14</pointsize>
                      <weight>75</weight>
                      <bold>true</bold>
                     </font>
@@ -3222,6 +3423,11 @@
                  </item>
                  <item>
                   <widget class="QLabel" name="label_trade_cost_group">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>-</string>
                    </property>
@@ -3329,6 +3535,11 @@
                     </item>
                     <item row="2" column="1" colspan="3">
                      <widget class="QLabel" name="label_trade_budget_w_VAT">
+                      <property name="font">
+                       <font>
+                        <pointsize>10</pointsize>
+                       </font>
+                      </property>
                       <property name="text">
                        <string>-</string>
                       </property>
@@ -3373,6 +3584,11 @@
                     </item>
                     <item row="1" column="1" colspan="3">
                      <widget class="QLabel" name="label_trade_budget">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
                       <property name="text">
                        <string>-</string>
                       </property>
@@ -3413,7 +3629,7 @@
                    <item>
                     <widget class="QPushButton" name="pushButton_edit_trade">
                      <property name="text">
-                      <string>Gewerk bearbeiten</string>
+                      <string>bearbeiten</string>
                      </property>
                     </widget>
                    </item>
@@ -3459,7 +3675,7 @@
               <item>
                <widget class="QPushButton" name="pushButton_new_trade">
                 <property name="text">
-                 <string>Gewerk hinzufügen</string>
+                 <string>Neues Gewerk</string>
                 </property>
                </widget>
               </item>
@@ -3531,18 +3747,46 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_21">
                  <item>
-                  <widget class="QLabel" name="label_cost_group_id">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>-</string>
-                   </property>
-                  </widget>
+                  <layout class="QGridLayout" name="gridLayout_20">
+                   <item row="0" column="1">
+                    <widget class="QLabel" name="label_cost_group_parent">
+                     <property name="font">
+                      <font>
+                       <pointsize>8</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>übergeordnete Kostengruppe:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_cost_group_id">
+                     <property name="font">
+                      <font>
+                       <pointsize>14</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="QLabel" name="label_cost_group_parent_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item>
                   <widget class="QLabel" name="label_cost_group_name_2">
@@ -3553,6 +3797,11 @@
                  </item>
                  <item>
                   <widget class="QLabel" name="label_cost_group_name">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>-</string>
                    </property>
@@ -3589,6 +3838,11 @@
                     </item>
                     <item row="2" column="1" colspan="3">
                      <widget class="QLabel" name="label_cost_group_budget_w_VAT">
+                      <property name="font">
+                       <font>
+                        <pointsize>10</pointsize>
+                       </font>
+                      </property>
                       <property name="text">
                        <string>-</string>
                       </property>
@@ -3704,6 +3958,11 @@
                     </item>
                     <item row="1" column="1" colspan="3">
                      <widget class="QLabel" name="label_cost_group_budget">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
                       <property name="text">
                        <string>-</string>
                       </property>
@@ -3744,7 +4003,7 @@
                    <item>
                     <widget class="QPushButton" name="pushButton_edit_cost_group">
                      <property name="text">
-                      <string>Kostengruppe bearbeiten</string>
+                      <string> bearbeiten</string>
                      </property>
                     </widget>
                    </item>
@@ -3790,7 +4049,7 @@
               <item>
                <widget class="QPushButton" name="pushButton_new_cost_group">
                 <property name="text">
-                 <string>Kostengruppe hinzufügen</string>
+                 <string>Neue Kostengruppe</string>
                 </property>
                </widget>
               </item>
@@ -3861,87 +4120,153 @@
                  <string>Person</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_18">
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_person_company">
-                   <property name="text">
-                    <string>Firma</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QLabel" name="label_person_company_2">
-                   <property name="text">
-                    <string>-</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="0" colspan="2">
                   <layout class="QGridLayout" name="gridLayout_13">
-                   <item row="2" column="1">
-                    <widget class="QLabel" name="label_person_telephone_2">
-                     <property name="text">
-                      <string>-</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_person_name">
-                     <property name="text">
-                      <string>Name</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_person_telephone">
-                     <property name="text">
-                      <string>Telefon</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QLabel" name="label_person_fax_2">
-                     <property name="text">
-                      <string>-</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
+                   <item row="5" column="0">
                     <widget class="QLabel" name="label_person_fax">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
                       <string>Fax</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="6" column="1">
-                    <widget class="QLabel" name="label_person_email_2">
+                   <item row="5" column="1">
+                    <widget class="QLabel" name="label_person_fax_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="6" column="0">
+                   <item row="3" column="1">
+                    <widget class="QLabel" name="label_person_telephone_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="1">
+                    <widget class="QLabel" name="label_person_email_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_person_telephone">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Telefon</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="0">
                     <widget class="QLabel" name="label_person_email">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
                       <string>E-Mail</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0">
+                   <item row="4" column="0">
                     <widget class="QLabel" name="label_person_mobile">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="text">
                       <string>Mobil</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="1">
-                    <widget class="QLabel" name="label_person_mobile_2">
+                   <item row="1" column="1">
+                    <widget class="QLabel" name="label_person_name_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>14</pointsize>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
                     </widget>
                    </item>
+                   <item row="4" column="1">
+                    <widget class="QLabel" name="label_person_mobile_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>-</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_person_name">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_person_company">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Firma</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="0" column="1">
-                    <widget class="QLabel" name="label_person_name_2">
+                    <widget class="QLabel" name="label_person_company_2">
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -3949,30 +4274,7 @@
                    </item>
                   </layout>
                  </item>
-                 <item row="1" column="0" colspan="2">
-                  <widget class="QGroupBox" name="groupBox_12">
-                   <property name="title">
-                    <string>Adressse</string>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_15">
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="label_4">
-                      <property name="text">
-                       <string>Straße</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QLabel" name="label_6">
-                      <property name="text">
-                       <string>Straße</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item row="3" column="0" colspan="2">
+                 <item row="2" column="0" colspan="2">
                   <layout class="QHBoxLayout" name="horizontalLayout_22">
                    <item>
                     <widget class="QLabel" name="label_person_uid">
@@ -3999,20 +4301,140 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_delete_person">
-                     <property name="text">
-                      <string>Person löschen</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
                     <widget class="QPushButton" name="pushButton_edit_person">
                      <property name="text">
-                      <string>Person bearbeiten</string>
+                      <string>bearbeiten</string>
                      </property>
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                 <item row="1" column="0" colspan="2">
+                  <widget class="QGroupBox" name="groupBox_10">
+                   <property name="title">
+                    <string>Adressse</string>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_23">
+                    <item>
+                     <layout class="QFormLayout" name="formLayout_5">
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_person_street">
+                        <property name="text">
+                         <string>Straße</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_person_house_number">
+                        <property name="text">
+                         <string>Hausnummer</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_person_city">
+                        <property name="text">
+                         <string>Stadt</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0">
+                       <widget class="QLabel" name="label_person_state">
+                        <property name="text">
+                         <string>Bundesland</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="0">
+                       <widget class="QLabel" name="label_person_zipcode">
+                        <property name="text">
+                         <string>Postleitzahl</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="0">
+                       <widget class="QLabel" name="label_person_country">
+                        <property name="text">
+                         <string>Land</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QLabel" name="label_person_street_2">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QLabel" name="label_person_house_number_2">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QLabel" name="label_person_city_2">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1">
+                       <widget class="QLabel" name="label_person_state_2">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="1">
+                       <widget class="QLabel" name="label_person_zipcode_2">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="1">
+                       <widget class="QLabel" name="label_person_country_2">
+                        <property name="font">
+                         <font>
+                          <pointsize>12</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -4050,16 +4472,6 @@
                  </size>
                 </property>
                </spacer>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton_new_person">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Person hinzufügen</string>
-                </property>
-               </widget>
               </item>
              </layout>
             </item>
@@ -4100,7 +4512,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1767</width>
+     <width>1498</width>
      <height>21</height>
     </rect>
    </property>
@@ -4117,6 +4529,7 @@
      </property>
      <addaction name="actionExportAllCompanies"/>
      <addaction name="actionExportAllTrades"/>
+     <addaction name="actionExportAllCostGroups"/>
     </widget>
     <widget class="QMenu" name="menuImport">
      <property name="enabled">
@@ -4127,6 +4540,7 @@
      </property>
      <addaction name="actionImportCompanies"/>
      <addaction name="actionImportTrades"/>
+     <addaction name="actionImportCostGroups"/>
     </widget>
     <addaction name="actionNewProject"/>
     <addaction name="actionOpenProject"/>
@@ -4144,13 +4558,15 @@
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="title">
      <string>Info</string>
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionDocumentation"/>
+    <addaction name="separator"/>
+    <addaction name="actionSYP_Kostenfortschreibung"/>
    </widget>
    <widget class="QMenu" name="menuProjekt">
     <property name="enabled">
@@ -4160,7 +4576,10 @@
      <string>Projekt</string>
     </property>
     <addaction name="actionNewInvoice"/>
+    <addaction name="actionNewJob"/>
     <addaction name="separator"/>
+    <addaction name="actionOpenSYPDir"/>
+    <addaction name="actionOpenProjectDir"/>
     <addaction name="actionOpenInvoiceCheckDir"/>
     <addaction name="separator"/>
     <addaction name="actionEditProj"/>
@@ -4350,7 +4769,7 @@
   </action>
   <action name="actionNewInvoice">
    <property name="text">
-    <string>Rechnung hinzufügen</string>
+    <string>Neue Rechnung</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -4371,13 +4790,44 @@
     <string>Rechnungsprüfungsverzeichniss</string>
    </property>
   </action>
+  <action name="actionNewJob">
+   <property name="text">
+    <string>Neuer Auftrag</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionOpenSYPDir">
+   <property name="text">
+    <string>SYP-Verzeichnis</string>
+   </property>
+  </action>
+  <action name="actionOpenProjectDir">
+   <property name="text">
+    <string>Projektverzeichnis</string>
+   </property>
+  </action>
+  <action name="actionSYP_Kostenfortschreibung">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>SYP-Kostenfortschreibung</string>
+   </property>
+  </action>
+  <action name="actionExportAllCostGroups">
+   <property name="text">
+    <string>Kostengruppen</string>
+   </property>
+  </action>
+  <action name="actionImportCostGroups">
+   <property name="text">
+    <string>Kostengruppen</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
-  <tabstop>pushButton_quick_new_invoice</tabstop>
-  <tabstop>pushButton_quick_new_job</tabstop>
-  <tabstop>pushButton_quick_invoice_check_dir</tabstop>
-  <tabstop>pushButton_quick_syp_dir</tabstop>
-  <tabstop>pushButton_quick_proj_dir</tabstop>
   <tabstop>tableWidget_invoices</tabstop>
   <tabstop>pushButton_new_invoice</tabstop>
   <tabstop>pushButton_new_job</tabstop>

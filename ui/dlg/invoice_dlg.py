@@ -178,7 +178,6 @@ class InvoiceDialog(QtWidgets.QDialog):
         self.checkBox_checked.toggled.connect(self.dateEdit_checked_date.setEnabled)
         self.checkBox_checked.toggled.connect(self.pushButton_checked_date_set_today.setEnabled)
         self.checkBox_w_VAT.toggled.connect(self.doubleSpinBox_VAT.setEnabled)
-        self.checkBox_reduce_prev_invoices.toggled.connect(self.pushButton_prev_invoices.setEnabled)
         self.checkBox_sd_absolute.toggled.connect(self.doubleSpinBox_safety_deposit_absolute.setEnabled)
         self.checkBox_sd_absolute.toggled.connect(self.doubleSpinBox_safety_deposit.setDisabled)
         self.checkBox_discount.toggled.connect(self.dateEdit_due_date_discount.setEnabled)

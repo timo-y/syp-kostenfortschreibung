@@ -15,6 +15,7 @@ class CostGroupDialog(QtWidgets.QDialog):
         super().__init__()
         """ create local variables """
         self.app_data = app_data
+        self.cost_groups = app_data.project.cost_groups
         self.default_vat = app_data.project.config["default_vat"]
         self.currency = app_data.project.config["currency"]
         self.loaded_cost_group = loaded_cost_group
@@ -29,6 +30,7 @@ class CostGroupDialog(QtWidgets.QDialog):
         self.set_button_actions()
         self.set_event_handler()
         self.set_validators()
+        self.setup_combo_boxes()
         self.set_default_labels()
 
         if self.loaded_cost_group:
@@ -37,6 +39,8 @@ class CostGroupDialog(QtWidgets.QDialog):
             """ load trade data to input """
             loaded_args = self.loaded_cost_group.__dict__.copy()
             self.set_input(**loaded_args)
+            if loaded_cost_group.parent:
+                self.set_parent_to(loaded_cost_group.parent)
 
         self.update_ui()
 
@@ -48,6 +52,15 @@ class CostGroupDialog(QtWidgets.QDialog):
     """
     def initialize_ui(self):
         uic.loadUi('ui/dlg/cost_group_dialog.ui', self) # Load the .ui file
+
+    def setup_combo_boxes(self):
+        self.setup_combo_box_parent()
+
+    def setup_combo_box_parent(self):
+        self.comboBox_parent.clear()
+        self.comboBox_parent.addItem("Keine", None)
+        for cost_group in self.cost_groups:
+            self.comboBox_parent.addItem(str(cost_group.id), cost_group)
 
     def set_default_labels(self):
         pass
@@ -72,6 +85,10 @@ class CostGroupDialog(QtWidgets.QDialog):
     #   catch the signals from the mainwindow and set functions to them
     #
     """
+    def set_parent_to(self, cost_group):
+        index = self.comboBox_parent.findData(cost_group)
+        self.comboBox_parent.setCurrentIndex(index)
+
     def set_button_actions(self):
         """ delete button """
         self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_cost_group))
@@ -111,7 +128,8 @@ class CostGroupDialog(QtWidgets.QDialog):
                 "id": self.lineEdit_id.text(),
                 "name": self.lineEdit_name.text(),
                 "description": self.textEdit_description.toPlainText(),
-                "budget": two_inputs_to_float(self.lineEdit_budget_1, self.lineEdit_budget_2)
+                "budget": two_inputs_to_float(self.lineEdit_budget_1, self.lineEdit_budget_2),
+                "parent": self.comboBox_parent.currentData(),
             }
         return args
 

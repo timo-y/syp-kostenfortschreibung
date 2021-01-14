@@ -13,23 +13,6 @@ from core.obj import corp, arch, proj
 
 class Project(IdObject):
 
-    TITLE_DE = {
-        "identifier": "Kennung",
-        "construction_scheme": "Bauvorhaben",
-        "address": "Adresse",
-        "client": "Auftraggeber*in",
-        "project_data": "Projektdaten",
-        "companies": "Firmen",
-        "trades": "Gewerke",
-        "invoices": "Rechnungen",
-        "jobs": "Aufträge",
-        "people": "Beteiligten",
-        "commissioned_date": "Beauftragt",
-        "planning_finished_date": "Planung abgeschlossen",
-        "billed_date": "Abgerechnet",
-        "planning_status": "Planungsstand"
-    }
-
     def __init__(self, identifier, *, config=None, uid=None, deleted=False,  construction_scheme="", address=None, client=None, project_data=None,
                         companies=None, trades=None, cost_groups=None, invoices=None, jobs=None, people=None, commissioned_date=None,
                         planning_finished_date = None, billed_date=None, planning_status=None, address_uid=None, client_uid=None
@@ -52,18 +35,25 @@ class Project(IdObject):
         #   Object containing more detailed project data like usable floor space.
         #   For more informations look at obj.proj.ProjectData.
         self._project_data = project_data
+        """
+        #   COMPANIES, TRADES and COST_GROUPS
+        #   These lists are initialized with the default lists and can be
+        #   extended in a project.
+        """
         self._companies = companies if companies is not None else list()
         self._trades = trades if trades is not None else list()
         self._cost_groups = cost_groups if cost_groups is not None else list()
+        """
+        #   INVOICES, JOBS and PEOPLE
+        #   Initialized empty and accumulated during the project.
+        """
         self._invoices = invoices if invoices is not None else list()
-
         #   self.sort_invoices():
         #   Invoices must always be sorted by date (oldest first)
         #   because the way the previous invoices are calculated.
         #   In most cases of appending invoices, the sorting is automatically
         #   taken care of via the "setter" self.add_invoice(...).
         self.sort_invoices()
-
         self._jobs = jobs if jobs is not None else list()
         self._people = people if people is not None else list()
 
@@ -167,6 +157,10 @@ class Project(IdObject):
             raise Exception("Existing list of cost_groups is non-empty.")
     def get_deleted_cost_groups(self):
         return [cost_group for cost_group in self._cost_groups if cost_group.is_deleted()]
+
+    @property
+    def main_cost_groups(self):
+        return [cost_group for cost_group in self._cost_groups if cost_group.is_main_group() and cost_group.is_not_deleted()]
 
     """ properties
     #
@@ -530,6 +524,7 @@ class Project(IdObject):
         self.restore_jobs()
         self.restore_invoices()
         self.restore_trades()
+        self.restore_cost_groups()
 
     @debug.log
     def restore_client(self):
@@ -564,6 +559,10 @@ class Project(IdObject):
         for trade in self.trades:
             trade.restore(self)
 
+    @debug.log
+    def restore_cost_groups(self):
+        for cost_group in self.cost_groups:
+            cost_group.restore(self)
     """
     #
     #   UTILITY
@@ -582,18 +581,6 @@ class Project(IdObject):
 class ProjectData(IdObject):
     """ docstring for ProjectData """
 
-    TITLE_DE = {
-        "commissioned_services": "Beauftragte Leistungen",
-        "property_size": "Grundstückgröße",
-        "usable_floor_space_nuf": "Nutzfläche (NUF)",
-        "usable_floor_space_bgf": "Nutzfläche (BGF)",
-        "building_class": "Gebäudeklasse",
-        "construction_costs_kg300_400": "Baukosten KG300&KG400",
-        "production_costs": "Produktionskosten",
-        "contract_fee": "Honorar",
-        "execution_period": "Ausführungszeitraum"
-    }
-
     def __init__(self, *, uid=None, deleted=False,  commissioned_services=None, property_size=None, usable_floor_space_nuf=None,
         usable_floor_space_bgf=None, building_class=None, construction_costs_kg300_400=None,
         production_costs=None, contract_fee=None, execution_period=None):
@@ -608,3 +595,9 @@ class ProjectData(IdObject):
         self.contract_fee = contract_fee
         self.execution_period = execution_period
 
+class ProjectCostCalculation(IdObject):
+    """docstring for CostCalculation"""
+    def __init__(self, uid=None, deleted=False, calculation_date=None, inventory=None):
+        super().__init__(self, uid=uid, deleted=deleted)
+        self.calculation_date = calculation_date
+        self.inventory = inventory

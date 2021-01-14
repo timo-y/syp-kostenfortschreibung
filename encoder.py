@@ -145,6 +145,11 @@ class CostGroupEncoder(JSONEncoder):
                 "name": o.name,
                 "description": o.description,
                 "budget": o.budget,
+                "parent_ref":
+                {
+                    "uid": o.parent.uid_to_json() if o.parent else None,
+                    "id": o.parent.id if o.parent else None
+                }
             }
             return encoded_cost_group
         return JSONEncoder.default(self, o)

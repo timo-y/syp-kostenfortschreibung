@@ -109,29 +109,51 @@ def export_trades(mainwindow, app_data):
             """ logging """
             debug.log(f"Trades exported to {save_path}")
 
+def export_cost_groups(mainwindow, app_data):
+    if app_data.project:
+        filename = "cost_groups.json"
+        save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+        f_dialog = QtWidgets.QFileDialog()
+        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Kostengruppen exportieren...", save_dir_path, "Kostengruppen-JSON (*.json)")
+        if save_path:
+            app_data.export_cost_groups(save_path)
+            """ logging """
+            debug.log(f"CostGroups exported to {save_path}")
+
 """ i,a&e
 #
 #   IMPORT
 #
 """
 def import_companies(mainwindow, app_data):
-    save_dir_path = app_data.get_save_dir()
-    f_dialog = QtWidgets.QFileDialog(directory=save_dir_path)
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Firmenverzeichniss importieren...",  "", "Company-JSONs (*.json);;All Files (*)")
+    filename = "companies.json"
+    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    f_dialog = QtWidgets.QFileDialog()
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Firmenverzeichniss importieren...",  save_dir_path, "Company-JSONs (*.json);;All Files (*)")
     if file_path:
         app_data.import_companies(file_path)
         """ logging """
         debug.log(f"Companies successfully imported")
 
-
 def import_trades(mainwindow, app_data):
-    save_dir_path = app_data.get_save_dir()
-    f_dialog = QtWidgets.QFileDialog(directory=save_dir_path)
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Gewerkeverzeichniss importieren...",  "", "Trade-JSONs (*.json);;All Files (*)")
+    filename = "trades.json"
+    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    f_dialog = QtWidgets.QFileDialog()
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Gewerkeverzeichniss importieren...",  save_dir_path, "Trade-JSONs (*.json);;All Files (*)")
     if file_path:
         app_data.import_trades(file_path)
         """ logging """
         debug.log(f"Trades successfully imported")
+
+def import_cost_groups(mainwindow, app_data):
+    filename = "cost_groups.json"
+    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    f_dialog = QtWidgets.QFileDialog()
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Kostengruppen importieren...",  save_dir_path, "Kostengruppen-JSONs (*.json);;All Files (*)")
+    if file_path:
+        app_data.import_cost_groups(file_path)
+        """ logging """
+        debug.log(f"CostGroups successfully imported")
 
 """ i,a&e
 #

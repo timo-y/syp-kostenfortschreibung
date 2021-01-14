@@ -156,7 +156,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """ TODO: figure out where to put this """
         company_tree_view_cols = ["job", "invoice", "verified_amount"] # maybe put on top of file
         self.treeWidget_company_invoices_by_job.setHeaderLabels([self.app_data.titles[col] for col in company_tree_view_cols])
-        job_tree_view_cols = ["date", "id"] # maybe put on top of file
+        job_tree_view_cols = ["date", "id", "safety_deposit_amount", "verified_amount"] # maybe put on top of file
         self.treeWidget_invoices_of_curr_job.setHeaderLabels([self.app_data.titles[col] for col in job_tree_view_cols])
         paid_safety_deposits_cols = ["date", "amount", "comment"]
         self.treeWidget_paid_safety_desposits.setHeaderLabels([self.app_data.titles[col] for col in paid_safety_deposits_cols])
@@ -227,7 +227,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_quick_invoice_check_dir.clicked.connect(lambda:self.app_data.open_invoice_check_dir())
         self.pushButton_quick_syp_dir.clicked.connect(lambda:self.app_data.open_syp_dir())
         self.pushButton_quick_proj_dir.clicked.connect(lambda:self.app_data.open_project_dir())
-        #self.pushButton_6.clicked.connect()
 
         """ invoice buttons """
         self.pushButton_new_invoice.clicked.connect(self.input_invoice_to_project)
@@ -252,6 +251,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """ cost_group buttons """
         self.pushButton_new_cost_group.clicked.connect(lambda:self.input_cost_group_to_project())
         self.pushButton_edit_cost_group.clicked.connect(self.button_edit_cost_group)
+        """ person buttons """
+        self.pushButton_edit_person.clicked.connect(self.button_edit_person)
 
     def load_widget_signals(self):
         """ invoice signals """
@@ -281,6 +282,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def load_action_signals(self):
         self.actionNewProject.triggered.connect(lambda:self.input_new_project())
         self.actionNewInvoice.triggered.connect(lambda:self.input_invoice_to_project())
+        self.actionNewJob.triggered.connect(lambda:self.input_job_to_project())
         self.actionOpenProject.triggered.connect(lambda:self.load_project())
         self.actionSave.triggered.connect(lambda:self.save_project())
         self.actionSaveAs.triggered.connect(lambda:self.save_project_as())
@@ -288,12 +290,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionEditProj.triggered.connect(lambda:self.edit_project())
         self.actionEditProjConfig.triggered.connect(lambda:self.edit_proj_config())
         self.actionOpenInvoiceCheckDir.triggered.connect(lambda:self.app_data.open_invoice_check_dir())
+        self.actionOpenSYPDir.triggered.connect(lambda:self.app_data.open_syp_dir())
+        self.actionOpenProjectDir.triggered.connect(lambda:self.app_data.open_project_dir())
         """ EXPORT """
         self.actionExportAllCompanies.triggered.connect(self.export_companies)
         self.actionExportAllTrades.triggered.connect(self.export_trades)
+        self.actionExportAllCostGroups.triggered.connect(self.export_cost_groups)
         """ IMPORT """
         self.actionImportCompanies.triggered.connect(self.import_companies)
         self.actionImportTrades.triggered.connect(self.import_trades)
+        self.actionImportCostGroups.triggered.connect(self.import_cost_groups)
 
     """
     #
@@ -496,48 +502,75 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def render_cost_stand(self, set_width=False):
-        TITLE_DE = {
-            "cost_group": "KG",
-            "project_budget": "Projektbudget netto",
-            "project_budget_w_VAT": "Projektbudget brutto",
-            "trade_budget": "Fortschreibung Gewerkebudgets netto",
-            "trade_budget_w_VAT": "Fortschreibung Gewerkebudgets brutto",
-            "difference_proj_to_trades_budget": "Differenz Projektbudget zu Fortschreibung der Gewerkebudgets netto",
-            "job_sums": "Auftragssummen netto",
-            "job_sums_w_VAT": "Auftragssummen brutto",
-            "approved_invoices_w_VAT": "Freigegebene Rechnungen brutto",
-            "approved_invoices_w_VAT_by_tradebudgets": "Freigegebene Rechnungen / Gewerkebudgets"
-        }
-
-        self.tableWidget_cost_stand.setSortingEnabled(False) # disable sorting when filling the table (to avoid bugs with data field)
-        self.tableWidget_cost_stand.setRowCount(len(self.app_data.project.cost_groups))
-
-        # set columns of table to the list self.invoice_cols
+        # disable sorting when filling the table (to avoid bugs with data field)
+        self.tableWidget_cost_stand.setSortingEnabled(False)
+        """
+        #   Number of rows is number of cost_groups plus one summary row
+        """
+        self.tableWidget_cost_stand.setRowCount(len(self.app_data.project.cost_groups)+1)
+        """
+        #   Set columns of table to the list self.invoice_cols
+        """
         self.tableWidget_cost_stand.setColumnCount(len(self.cost_stand_cols))
         if set_width:
             for i in range(len(self.cost_stand_cols)):
                 self.tableWidget_cost_stand.setColumnWidth(i, self.cost_stand_cols[i]["width"])
-
-        # set column titles
+        """
+        #   Set column titles
+        """
         self.tableWidget_cost_stand.setHorizontalHeaderLabels([self.app_data.titles[col["title"]] for col in self.cost_stand_cols])
-        # set title height
+        """
+        #   Set title height
+        """
         self.tableWidget_cost_stand.horizontalHeader().setFixedHeight(100)
-
+        """
+        #   Render cost_group to the table
+        """
         row = 0
-        for cost_group in self.app_data.project.cost_groups:
+        for cost_group in self.app_data.project.main_cost_groups:
             self.add_cost_group_to_table(cost_group, row)
             row += 1
+        """
+        #   Write summary line
+        """
+        vat = self.app_data.project.get_vat()
+        cost_group_budget_total = sum(cost_group.budget for cost_group in self.app_data.project.main_cost_groups)
+        trade_budget_total = sum(trade.budget for trade in self.app_data.project.trades)
+        job_sums_total = sum(job.job_sum for job in self.app_data.project.jobs)
+        approved_invoices_w_VAT_total = sum(invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices)
+        cost_group_total = {
+            "cost_group": self.app_data.titles["total"],
+            "project_budget": amount_w_currency_str(cost_group_budget_total, self.currency),
+            "project_budget_w_VAT":  amount_w_currency_str(cost_group_budget_total * (1+vat), self.currency),
+            "trade_budget": amount_w_currency_str(trade_budget_total, self.currency),
+            "trade_budget_w_VAT": amount_w_currency_str(trade_budget_total * (1+vat), self.currency),
+            "difference_proj_to_trades_budget": amount_w_currency_str(cost_group_budget_total - trade_budget_total, self.currency),
+            "job_sums": amount_w_currency_str(job_sums_total, self.currency),
+            "job_sums_w_VAT": amount_w_currency_str(job_sums_total * (1+vat), self.currency),
+            "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT_total, self.currency),
+            "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT_total / (trade_budget_total * (1+vat))) if trade_budget_total else "-"
+        }
+        col = 0
+        font = QtGui.QFont()
+        font.setBold(True)
+        for attr in self.cost_stand_cols:
+            table_item = QtWidgets.QTableWidgetItem(str(cost_group_total[attr["title"]]))
+            table_item.setTextAlignment(QtCore.Qt.AlignCenter)
+            table_item.setFont(font)
+            table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
+            self.tableWidget_cost_stand.setItem(row, col, table_item)
+            col += 1
 
         self.tableWidget_cost_stand.setSortingEnabled(True) # enable sorting once the table is filled
 
 
     def add_cost_group_to_table(self, cost_group, row):
-        """ calculate values """
-        vat = self.app_data.project.config["default_vat"]
+        """ Calculate values """
+        vat = self.app_data.project.get_vat()
         trade_budget = sum([trade.budget for trade in self.app_data.project.trades if trade.cost_group is cost_group])
         job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and job.trade.cost_group is cost_group])
         approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job and  invoice.job.trade and invoice.job.trade.cost_group and invoice.job.trade.cost_group is cost_group])
-        """ make output dictionary """
+        """ Create output dictionary """
         cost_group_attr = {
             "cost_group":  cost_group.id,
             "project_budget": amount_w_currency_str(cost_group.budget, self.currency),
@@ -549,7 +582,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "job_sums_w_VAT": amount_w_currency_str(job_sums * (1+vat), self.currency),
             "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT, self.currency),
             "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT / (trade_budget * (1+vat))) if trade_budget else "-"
-            }
+        }
 
         col = 0
         for attr in self.cost_stand_cols:
@@ -563,6 +596,10 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     #   INVOICES-TAB
     #
+    """
+    """
+    #   render_invoice_view
+    #   This functions renders the table of the invoice tab
     """
     def render_invoice_view(self, set_width=False):
         self.activate_invoice_buttons()
@@ -578,6 +615,10 @@ class MainWindow(QtWidgets.QMainWindow):
             curr_invoice = item.data(1)
             self.render_invoice_info(curr_invoice)
 
+    """
+    #   render_invoice_info
+    #   This functions renders the right info panel of the selected invoice
+    """
     def render_invoice_info(self, invoice):
         if invoice.is_not_deleted():
             args = vars(invoice).copy()
@@ -602,6 +643,11 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.reset_invoice_info()
 
+    """
+    #   activate_invoice_buttons
+    #   This functions checks, if an invoice is selected or not
+    #   and activates or deactivates the buttons of the right info panel
+    """
     def activate_invoice_buttons(self):
         if self.tableWidget_invoices.currentItem() and self.tableWidget_invoices.currentItem().data(1).is_not_deleted():
             self.pushButton_go_to_job.setEnabled(True)
@@ -716,6 +762,7 @@ class MainWindow(QtWidgets.QMainWindow):
             paid_safety_deposits_sum = job.paid_safety_deposits_sum
 
             self.set_job_data(**args,
+                                job_sum_w_additions=job.job_sum_w_additions,
                                 verified_sum_w_VAT=verified_sum_w_VAT,
                                 safety_deposits_sum=safety_deposits_sum,
                                 paid_safety_deposits_sum=paid_safety_deposits_sum)
@@ -757,7 +804,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.treeWidget_invoices_of_curr_job.clear()
         self.activate_job_buttons()
 
-    def set_job_data(self, *, _uid=None, company=None, id="-", trade=None, job_sum=0,
+    def set_job_data(self, *, _uid=None, company=None, id="-", trade=None, job_sum=0, job_sum_w_additions=0,
                         verified_sum_w_VAT=0, safety_deposits_sum=0, paid_safety_deposits_sum=0,
                         **kwargs):
         company_name = company.name if company else "-"
@@ -767,12 +814,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_job_id.setText(str(id))
         """ data """
         self.label_job_uid.setText(_uid.labelize() if _uid else "-")
-        """ amounts """
+        """ job_sum initial """
         job_sum_VAT_amount = job_sum * self.app_data.project.get_vat()
         job_sum_w_VAT = job_sum + job_sum_VAT_amount
         self.label_job_job_sum.setText(amount_str(job_sum))
         self.label_job_sum_w_VAT.setText(amount_str(job_sum_w_VAT))
         self.label_job_sum_VAT_amount.setText(amount_str(job_sum_VAT_amount))
+        """ job_sum w job_additions """
+        job_sum_w_additions_VAT_amount = job_sum_w_additions * self.app_data.project.get_vat()
+        job_sum_w_additions_w_VAT = job_sum_w_additions + job_sum_w_additions_VAT_amount
+        self.label_job_job_sum_w_job_additions.setText(amount_str(job_sum_w_additions))
+        self.label_job_sum_w_job_additions_w_VAT.setText(amount_str(job_sum_w_additions_w_VAT))
+        self.label_job_sum_w_job_additions_VAT_amount.setText(amount_str(job_sum_w_additions_VAT_amount))
         """ KG """
         trade_cost_group = trade.cost_group.id if trade else "-"
         self.label_job_cost_group_2.setText(str(trade_cost_group))
@@ -815,7 +868,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for invoice in invoices_of_job:
             helper.add_item_to_tree(content_item=invoice,
                                     parent=self.treeWidget_invoices_of_curr_job,
-                                    cols=[str(invoice.invoice_date.toPyDate()), str(invoice.id)],
+                                    cols=[str(invoice.invoice_date.toPyDate()), str(invoice.id), amount_w_currency_str(invoice.safety_deposit_amount, self.currency), amount_w_currency_str(invoice.verified_amount, self.currency)],
                                     tooltip=f"sachlich richtig und rechnerisch geprüfte Rechnungssumme (netto) {amount_w_currency_str(invoice.verified_amount, self.app_data.project.get_currency())}")
 
     """ render
@@ -991,12 +1044,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_cost_group_data()
         self.activate_cost_group_buttons()
 
-    def set_cost_group_data(self, *, _uid=None, id="", name="", description="", budget=0, **kwargs):
+    def set_cost_group_data(self, *, _uid=None, id="", name="", description="", budget=0, parent=None, **kwargs):
         """ meta data """
         self.label_cost_group_uid.setText(_uid.labelize() if _uid else "-")
 
         self.label_cost_group_id.setText(str(id))
         self.label_cost_group_name.setText(str(name))
+        self.label_cost_group_parent_2.setText(str(parent) if parent else "-")
         self.textEdit_cost_group_description.setText(str(description))
 
         """ budget """
@@ -1005,6 +1059,7 @@ class MainWindow(QtWidgets.QMainWindow):
         budget_w_VAT = budget + budget_VAT_amount
         self.label_cost_group_budget_w_VAT.setText(amount_str(budget_w_VAT))
         self.label_cost_group_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
+
 
     """ render
     #
@@ -1037,24 +1092,39 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_person_buttons(self):
         if self.tableWidget_people.currentItem():
             self.pushButton_edit_person.setEnabled(True)
-            self.pushButton_delete_person.setEnabled(True)
         else:
             self.pushButton_edit_person.setEnabled(False)
-            self.pushButton_delete_person.setEnabled(False)
 
     def reset_person_info(self):
         self.set_person_data()
         self.activate_person_buttons()
 
-    def set_person_data(self, *, _uid=None, first_name="", last_name="", telephone="", mobile="", fax="", email="", **kwargs):
+    def set_person_data(self, *, _uid=None, first_name="", last_name="", telephone="", mobile="", fax="", email="", address=None, company=None, **kwargs):
         """ meta data """
         self.label_person_uid.setText(_uid.labelize() if _uid else "-")
 
+        self.label_person_company_2.setText(str(company) if company else "-")
         self.label_person_name_2.setText(f"{first_name} {last_name}")
         self.label_person_telephone_2.setText(telephone)
         self.label_person_mobile_2.setText(mobile)
         self.label_person_fax_2.setText(fax)
         self.label_person_email_2.setText(email)
+        """ address """
+        if address:
+            self.label_person_street_2.setText(address.street)
+            self.label_person_house_number_2.setText(address.house_number)
+            self.label_person_city_2.setText(address.city)
+            self.label_person_state_2.setText(address.state)
+            self.label_person_zipcode_2.setText(address.zipcode)
+            self.label_person_country_2.setText(address.country)
+        else:
+            self.label_person_street_2.setText("-")
+            self.label_person_house_number_2.setText("-")
+            self.label_person_city_2.setText("-")
+            self.label_person_state_2.setText("-")
+            self.label_person_zipcode_2.setText("-")
+            self.label_person_country_2.setText("-")
+
 
     """
     #
@@ -1132,6 +1202,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def export_trades(self):
         helper.export_trades(self, self.app_data)
 
+    def export_cost_groups(self):
+        helper.export_cost_groups(self, self.app_data)
+
     """ func
     #
     #   IMPORT
@@ -1145,17 +1218,9 @@ class MainWindow(QtWidgets.QMainWindow):
         helper.import_trades(self, self.app_data)
         self.update_ui()
 
-    """ func
-    #
-    #   ADDRESS
-    #
-    """
-    def input_project_address(self):
-        address = helper.input_address(self.app_data)
-        if address:
-            self.app_data.project.address = address
-            """ logging """
-            debug.log(f"Projectaddress set: {address}")
+    def import_cost_groups(self):
+        helper.import_cost_groups(self, self.app_data)
+        self.update_ui()
 
     """ func
     #
@@ -1167,7 +1232,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if person:
             self.app_data.project.client = person
             """ logging """
-            debug.log(f"New client added: {person.first_name}, {person.last_name}")
+            debug.log(f"Client set to: {person.first_name}, {person.last_name}")
 
     """ func
     #
@@ -1185,6 +1250,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if invoice:
             self.render_invoice_info(invoice)
             self.update_ui()
+            self.activate_invoice_buttons()
 
     @debug.log
     def invoice_check(self, invoice, save_path=None):
@@ -1209,6 +1275,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if job:
             self.render_job_info(job)
             self.update_ui()
+            self.activate_job_buttons()
 
     """ func
     #
@@ -1226,6 +1293,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if company:
             self.render_company_info(company)
             self.update_ui()
+            self.activate_company_buttons()
 
     """ func
     #
@@ -1243,6 +1311,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if trade:
             self.render_trade_info(trade)
             self.update_ui()
+            self.activate_trade_buttons()
 
     """ func
     #
@@ -1260,6 +1329,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if cost_group:
             self.render_cost_group_info(cost_group)
             self.update_ui()
+            self.activate_cost_group_buttons()
 
     """ func
     #
@@ -1277,6 +1347,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if person:
             self.render_person_info(person)
             self.update_ui()
+            self.activate_person_buttons()
 
     """ func
     #

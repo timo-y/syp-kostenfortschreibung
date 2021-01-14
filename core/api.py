@@ -146,6 +146,10 @@ class AppData:
     def export_trades(self, save_path):
         self.to_json_file(data=self.project.trades, save_path=save_path, encoder=encoder.TradeEncoder)
 
+    @debug.log
+    def export_cost_groups(self, save_path):
+        self.to_json_file(data=self.project.cost_groups, save_path=save_path, encoder=encoder.CostGroupEncoder)
+
     """
     #   IMPORT
     """
@@ -170,6 +174,21 @@ class AppData:
                 self.project.add_trade(import_trade)
             else:
                 debug.log_warning(f"Skipping the import of trade {import_trade.name} because there already exists a trade with the same name!")
+
+    @debug.log
+    def import_cost_groups(self, file_path):
+        imported_cost_groups = self.from_json_file(file_path=file_path, decoder=decoder.CostGroupDecoder)
+        for import_cost_group in imported_cost_groups:
+            if import_cost_group.id not in [cost_group.id for cost_group in self.project.cost_groups]:
+                import_cost_group.uid.reset_uid()
+                self.project.add_cost_group(import_trade)
+            else:
+                debug.log_warning(f"Skipping the import of cost_group {import_cost_group.id} because there already exists a trade with the same id!")
+        #   Restore the link within cost_groups (parent).
+        #   Since they are connected within, this can only happen
+        #   once the import is complete
+        for cost_group in self.project.cost_groups:
+            cost_group.restore_after_import(self.project)
 
     """
     #

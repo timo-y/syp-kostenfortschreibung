@@ -114,13 +114,11 @@ class JobDialog(QtWidgets.QDialog):
     def activate_psd_buttons(self):
         args = self.get_input()
         if args["company"]:
-            self.pushButton_add_paid_safety_deposit.setEnabled(True)
             if self.treeWidget_paid_safety_deposits.currentItem():
                 self.pushButton_remove_paid_safety_deposit.setEnabled(True)
             else:
                 self.pushButton_remove_paid_safety_deposit.setEnabled(False)
         else:
-            self.pushButton_add_paid_safety_deposit.setEnabled(False)
             self.pushButton_remove_paid_safety_deposit.setEnabled(False)
 
     def activate_ok_button(self):

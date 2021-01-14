@@ -12,14 +12,6 @@ DEFAULT_VAT = 0.16
 class Company(IdObject):
     """docstring for Company"""
 
-    TITLE_DE = {
-        "name": "Firma",
-        "service": "Leistung",
-        "service_type": "Typ",
-        "contact_person": "Ansprechpartner",
-        "budget": "Budget"
-    }
-
     def __init__(self, name, service, service_type, *, uid=None, deleted=False, budget=0, contact_person=None, contact_person_ref=None):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
@@ -100,17 +92,6 @@ class Company(IdObject):
 class Person(IdObject):
     """docstring for Person"""
 
-    TITLE_DE = {
-        "first_name": "Vorname",
-        "last_name": "Nachname",
-        "address": "Adresse",
-        "telephone": "Telefon",
-        "fax": "Fax",
-        "mobile": "Mobiltelefon",
-        "email": "E-Mail",
-        "company": "Firma"
-    }
-
     def __init__(self,*, first_name="", last_name="", uid=None, deleted=False,  address=None,
                 telephone=None, fax=None, mobile=None, email=None, company=None, company_uid=None
                 ):
@@ -189,15 +170,6 @@ class Person(IdObject):
 class Address(IdObject):
     """docstring for Address"""
 
-    TITLE_DE = {
-        "street": "Straße",
-        "house_number": "Hausnummer",
-        "city": "Stadt",
-        "state": "Bundesland",
-        "zipcode": "Postleitzahl",
-        "country": "Land"
-    }
-
     def __init__(self, street, house_number, city, state, zipcode, country, *, uid=None, deleted=False):
         super().__init__(self, uid=uid, deleted=deleted)
         self.street = street
@@ -230,12 +202,6 @@ class Address(IdObject):
 
 class Job(IdObject):
     """docstring for Job"""
-
-    TITLE_DE = {
-        "id": "Nummer",
-        "company": "Firma",
-        "job_sum": "Auftragssumme"
-    }
 
     def __init__(self, id, *, uid=None, deleted=False,  company=None, job_sum=None, company_uid=None):
         super().__init__(self, uid=uid, deleted=deleted)
@@ -289,26 +255,6 @@ class Job(IdObject):
 
 class Invoice(IdObject):
     """docstring for Invoice"""
-    TITLE_DE = {
-        "id": "Nummer",
-        "company": "Firma",
-        "trade": "Gewerk",
-        "cost_group": "Kostengruppe",
-        "job": "Auftrag",
-        "cumulative": "kumulativ",
-        "invoice_date": "Rechnungsdatum",
-        "inbox_date": "Eingangsdatum",
-        "checked_date": "Prüfungsdatum",
-        "amount": "Rechnungssumme",
-        "verified_amount": "sachlich richtig und rechnerisch geprüfte Summe",
-        "rebate": "Nachlass",
-        "reduction_insurance_costs": "Abzug Versicherungskosten",
-        "reduction_usage_costs": "Abzug Verbrauchskosten",
-        "prev_invoices": "gezahlte Rechnungen",
-        "VAT": "MwSt.",
-        "safety_deposit": "Sicherheitseinbehalt",
-        "discount": "Skonto"
-    }
 
     def __init__(self, *, id=None, uid=None, deleted=False,  company=None, job=None, cumulative=True,
                     invoice_date=None, inbox_date=None, checked_date=None,

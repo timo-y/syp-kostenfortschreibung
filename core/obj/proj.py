@@ -324,6 +324,7 @@ class Project(IdObject):
             self._jobs.append(job)
         else:
             raise TypeError("job is not an corp.Job type.")
+
     @debug.log
     def delete_job(self, job):
         job.delete()

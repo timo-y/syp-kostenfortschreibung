@@ -48,15 +48,13 @@ class Template():
 
 class InvoiceCheckExcelTemplate(Template):
     """docstring for InvoiceCheckExcelTemplate"""
-    def __init__(self, project_identifier, app_data_config, invoice, save_path=None):
+    def __init__(self, project_identifier, app_data_config, invoice, save_dir=None, filename=None):
         self.template_dir = app_data_config["template_subdir"]
         self.template_filename = "invoice_check.xlsx"
 
-        # if dialog tells us where to save, use that path otherwise use default path
-        self.default_filename = f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}-{project_identifier}-{invoice.id}"
-        default_save_dir = os.path.join(os.getcwd(), app_data_config["save_dir"], project_identifier, app_data_config["invoice_check_subdir"])
-        save_path = os.path.join(default_save_dir, f"{self.default_filename}.xlsx")
-        self.save_path = save_path if save_path is not None else save_path
+        self.filename = filename if filename else "invoice_check"
+        default_save_dir = save_dir if save_dir else os.path.join(os.getcwd(), app_data_config["save_dir"], project_identifier, app_data_config["invoice_check_subdir"])
+        self.save_path = os.path.join(default_save_dir, f"{self.filename}.xlsx")
 
         super(InvoiceCheckExcelTemplate, self).__init__(template_dir=self.template_dir,
                                                         template_filename=self.template_filename,

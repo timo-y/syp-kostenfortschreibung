@@ -7,6 +7,7 @@
 
 from PyQt5 import QtWidgets, uic
 
+from ui import helper
 from core.obj import (proj, corp)
 
 class PersonDialog(QtWidgets.QDialog):
@@ -23,8 +24,11 @@ class PersonDialog(QtWidgets.QDialog):
         self.setWindowTitle(dialog_title)
         """ fixed window size """
         self.setFixedSize(self.size())
-
+        """ activate UI """
+        self.set_button_actions()
         if self.loaded_person:
+            """ activate delete button """
+            self.pushButton_delete.setEnabled(True)
             """ load person data to input """
             loaded_args = self.loaded_person.__dict__.copy()
             self.set_input(**loaded_args)
@@ -37,6 +41,16 @@ class PersonDialog(QtWidgets.QDialog):
     """
     def initialize_ui(self):
         uic.loadUi('ui/dlg/person_dialog.ui', self)
+
+    """
+    #
+    #   SIGNALS, ACTIONS & BUTTONS
+    #   catch the signals from the mainwindow and set functions to them
+    #
+    """
+    def set_button_actions(self):
+        """ delete button """
+        self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_person))
 
     """
     #

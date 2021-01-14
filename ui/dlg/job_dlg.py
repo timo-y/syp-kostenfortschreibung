@@ -51,6 +51,8 @@ class JobDialog(QtWidgets.QDialog):
             self.deactivate_input()
             """ activate delete button """
             self.pushButton_delete.setEnabled(True)
+            """ activate safety deposits of invoices of job """
+            self.groupBox_safety_deposits_of_jobs.setEnabled(True)
             """ load job data to input """
             loaded_args = vars(self.loaded_job).copy()
             self.set_input(**loaded_args)

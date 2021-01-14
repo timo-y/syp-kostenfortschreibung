@@ -78,7 +78,7 @@ class Application(QtWidgets.QApplication):
 
     @debug.log
     def autosave_project(self):
-        if self.app_data.project:
+        if self.app_data.project and self.app_data.project.has_been_saved():
             self.app_data.autosave_project()
             self.app_data.delete_old_autosaves()
 

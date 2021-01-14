@@ -90,7 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
         self.cost_group_cols = [
             {"title": "id", "width": 80},
-            {"title": "name", "width": 150},
+            {"title": "name", "width": 180},
             {"title": "description", "width": 180},
             {"title": "budget", "width": 120},
         ]
@@ -1190,6 +1190,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def invoice_check(self, invoice, save_path=None):
         self.app_data.output_check_invoice(invoice)
         self.app_data.open_invoice_check_dir()
+        self.app_data.open_client_correspondence_dir()
         debug.log(f"Invoice check file written for the invoice {invoice}")
 
     """ func

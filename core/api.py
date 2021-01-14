@@ -181,24 +181,49 @@ class AppData:
     #   INVOICE CHECK
     """
     @debug.log
-    def output_check_invoice(self, invoice, save_path=None):
-        xlsx_template = templatr.InvoiceCheckExcelTemplate(project_identifier=self.project.identifier, app_data_config=self.config, invoice=invoice, save_path=save_path)
+    def output_check_invoice(self, invoice):
+        folder_name = self.get_invoice_check_folder_name(invoice)
+        """
+        #
+        #   First in the invoice check path
+        #
+        """
+        inv_check_path = os.path.join(self.get_invoice_check_dir(), folder_name)
+        xlsx_template = templatr.InvoiceCheckExcelTemplate(project_identifier=self.project.identifier,
+                                                            app_data_config=self.config,
+                                                            invoice=invoice,
+                                                            save_dir=inv_check_path)
         xlsx_template.make_file()
         # Export PDF
         dir_path = os.path.dirname(os.path.realpath(xlsx_template.save_path))
-        pdf_save_path = os.path.join(dir_path, f"{xlsx_template.default_filename}.pdf")
+        pdf_save_path = os.path.join(dir_path, f"{xlsx_template.filename}.pdf")
+        pdfexportr.PDFExportr().create_pdf(xlsx_template.save_path, pdf_save_path)
+        """
+        #
+        #   Second in the correspondence path
+        #
+        """
+        correspondence_path = os.path.join(self.get_client_correspondence_dir(), folder_name)
+        xlsx_template = templatr.InvoiceCheckExcelTemplate(project_identifier=self.project.identifier,
+                                                            app_data_config=self.config,
+                                                            invoice=invoice,
+                                                            save_dir=correspondence_path)
+        xlsx_template.make_file()
+        # Export PDF
+        dir_path = os.path.dirname(os.path.realpath(xlsx_template.save_path))
+        pdf_save_path = os.path.join(dir_path, f"{xlsx_template.filename}.pdf")
         pdfexportr.PDFExportr().create_pdf(xlsx_template.save_path, pdf_save_path)
 
     """
     #   OVERVIEWs
     """
-    #TODO
+    # TODO
     def output_ov_by_trades(self):
         pass
-    #TODO
+    # TODO
     def output_ov_by_job(self):
         pass
-    #TODO
+    # TODO
     def output_ov_by_company(self):
         pass
 
@@ -275,6 +300,13 @@ class AppData:
     """ util>config
     #   PATHS & DIRECTORIES
     """
+    # CREATE
+    @debug.log
+    def create_dir(self, dir_path):
+        # create directory if non-existing
+        if not os.path.exists(os.path.dirname(dir_path)):
+            os.makedirs(os.path.dirname(dir_path))
+
     # OPEN
     @debug.log
     def open_dir(self):
@@ -294,6 +326,14 @@ class AppData:
     @debug.log
     def open_invoice_check_dir(self):
         path = self.get_invoice_check_dir()
+        if os.path.exists(path):
+            webbrowser.open(os.path.realpath(path))
+        else:
+            webbrowser.open(self.get_dir())
+
+    @debug.log
+    def open_client_correspondence_dir(self):
+        path = self.get_client_correspondence_dir()
         if os.path.exists(path):
             webbrowser.open(os.path.realpath(path))
         else:
@@ -345,8 +385,17 @@ class AppData:
 
     @debug.log
     def get_invoice_check_dir(self):
-        invoice_check_dir_path = os.path.join(os.getcwd(), self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
+        #  TODO: maybe outsource this into the config
+        invoice_check_dir = "03 Kosten/01 Rechnungsprüfung/"
+        invoice_check_dir_path = os.path.join(self.get_project_dir(), invoice_check_dir)
         return invoice_check_dir_path
+
+    @debug.log
+    def get_client_correspondence_dir(self):
+        #  TODO: maybe outsource this into the config
+        correspondence_dir = "02 Schriftverkehr/Bauherr/Ausgang"
+        correspondence_dir_path = os.path.join(self.get_project_dir(), correspondence_dir)
+        return correspondence_dir_path
 
     @debug.log
     def get_autosave_filename_suffix(self):
@@ -359,6 +408,12 @@ class AppData:
         autosave_filename = f"{autosave_datetime}-{self.get_autosave_filename_suffix()}"
         autosave_path = os.path.join(self.get_autosave_dir(), autosave_filename)
         return autosave_path, autosave_datetime
+
+    @debug.log
+    def get_invoice_check_folder_name(self, invoice):
+        if self.project_loaded():
+            dir_name = f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}-{self.project.identifier}-{invoice.id}"
+            return dir_name
 
     @debug.log
     def set_usersave_path(self, save_path, datetime_str=datetime.now().strftime('%Y-%m-%d_%H%M%S')):

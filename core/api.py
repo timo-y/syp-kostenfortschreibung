@@ -181,7 +181,7 @@ class AppData:
         for import_cost_group in imported_cost_groups:
             if import_cost_group.id not in [cost_group.id for cost_group in self.project.cost_groups]:
                 import_cost_group.uid.reset_uid()
-                self.project.add_cost_group(import_trade)
+                self.project.add_cost_group(import_cost_group)
             else:
                 debug.log_warning(f"Skipping the import of cost_group {import_cost_group.id} because there already exists a trade with the same id!")
         #   Restore the link within cost_groups (parent).

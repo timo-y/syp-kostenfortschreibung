@@ -122,9 +122,9 @@ class TradeEncoder(JSONEncoder):
                 "name": o.name,
                 "cost_group_ref":
                 {
-                    "uid": o.cost_group.uid_to_json() if o.cost_group else None,
-                    "id": o.cost_group.id if o.cost_group else None
-                },
+                    "uid": o.cost_group.uid_to_json(),
+                    "id": o.cost_group.id
+                } if o.cost_group else None,
                 "budget": o.budget,
                 "comment": o.comment
             }
@@ -147,9 +147,9 @@ class CostGroupEncoder(JSONEncoder):
                 "budget": o.budget,
                 "parent_ref":
                 {
-                    "uid": o.parent.uid_to_json() if o.parent else None,
-                    "id": o.parent.id if o.parent else None
-                }
+                    "uid": o.parent.uid_to_json(),
+                    "id": o.parent.id
+                } if o.parent else None,
             }
             return encoded_cost_group
         return JSONEncoder.default(self, o)

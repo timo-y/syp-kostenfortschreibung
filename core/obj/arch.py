@@ -153,7 +153,7 @@ class Trade(IdObject):
 
     @debug.log
     def restore_cost_group(self, cost_groups):
-        if self._cost_group_ref["uid"] and not(self.cost_group):
+        if self._cost_group_ref and not(self.cost_group):
             self.cost_group = [cost_group for cost_group in cost_groups if cost_group.uid == self._cost_group_ref["uid"]][0]
             self._cost_group_ref = None
         elif self._cost_group_ref and self.cost_group:
@@ -161,11 +161,11 @@ class Trade(IdObject):
 
     @debug.log
     def restore_cost_group_by_id(self, cost_groups):
-        if self._cost_group_ref["id"] and not(self.cost_group):
+        if self._cost_group_ref and not(self.cost_group):
             temp_list = [cost_group for cost_group in cost_groups if cost_group.id == self._cost_group_ref["id"]]
             if len(temp_list)>0:
                 self.cost_group = temp_list[0]
-                self._cost_group_uid = None
+                self._cost_group_ref = None
             else:
                 debug.log_warning(f"Can't restore cost_group by id, since there was no cost_group with the given id")
 
@@ -239,15 +239,16 @@ class CostGroup(IdObject):
 
     @debug.log
     def restore_parent(self, cost_groups):
-        if self._parent_ref["uid"] and not(self.parent):
+        if self._parent_ref and not(self.parent):
             self.parent = [cost_group for cost_group in cost_groups if cost_group.uid == self._parent_ref["uid"]][0]
             self._parent_ref = None
+
         elif self._parent_ref and self.parent:
             raise Exception(f"Cannot restore parent: parent_uid ({self._parent_ref['uid']}) stored and the parent (uid: {self.parent.uid}) was already set.")
 
     @debug.log
     def restore_parent_by_id(self, cost_groups):
-        if self._parent_ref["id"] and not(self.parent):
+        if self._parent_ref and not(self.parent):
             temp_list = [cost_group for cost_group in cost_groups if cost_group.id == self._parent_ref["id"]]
             if len(temp_list)>0:
                 self.parent = temp_list[0]

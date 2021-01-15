@@ -25,7 +25,7 @@ class CostGroupDialog(QtWidgets.QDialog):
         dialog_title = f"Kostengruppe ({loaded_cost_group.id}) bearbeiten..." if loaded_cost_group else "Neue Kostengruppe"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.set_button_actions()
         self.set_event_handler()

@@ -19,7 +19,7 @@ class Project(IdObject):
                         ):
         super().__init__(self, uid=uid, deleted=deleted)
 
-        #   CONFIG (dict)
+        #   Config (dict)
         #   Is passed at initialization from the API (api.py) and contains the following information:
         #       currency, default_vat, save_dir, autosave_subdir, template_subdir, user_save_datetime,
         #       user_save (dict: dateime, path), last_autosave (dict: datetime, path),
@@ -31,36 +31,36 @@ class Project(IdObject):
         self._address = address
         self._client = client
 
-        #   PROJECT DATA (obj.proj.ProjectData)
-        #   Object containing more detailed project data like usable floor space.
-        #   For more informations look at obj.proj.ProjectData.
+        #   ProjectData (obj.proj.ProjectData)
+        #       Object containing more detailed project data like usable floor space.
+        #       For more informations look at obj.proj.ProjectData.
         self._project_data = project_data
         """
-        #   COMPANIES, TRADES and COST_GROUPS
-        #   These lists are initialized with the default lists and can be
-        #   extended in a project.
+        #   Companies, Trades and COST_GROUPS
+        #       These lists are initialized with the default lists and can be
+        #       extended in a project.
         """
         self._companies = companies if companies is not None else list()
         self._trades = trades if trades is not None else list()
         self._cost_groups = cost_groups if cost_groups is not None else list()
         """
-        #   INVOICES, JOBS and PEOPLE
-        #   Initialized empty and accumulated during the project.
+        #   Invoices, JOBS and PEOPLE
+        #       Initialized empty and accumulated during the project.
         """
         self._invoices = invoices if invoices is not None else list()
         #   self.sort_invoices():
-        #   Invoices must always be sorted by date (oldest first)
-        #   because the way the previous invoices are calculated.
-        #   In most cases of appending invoices, the sorting is automatically
-        #   taken care of via the "setter" self.add_invoice(...).
+        #       Invoices must always be sorted by date (oldest first)
+        #       because the way the previous invoices are calculated.
+        #       In most cases of appending invoices, the sorting is automatically
+        #       taken care of via the "setter" self.add_invoice(...).
         self.sort_invoices()
         self._jobs = jobs if jobs is not None else list()
         self._people = people if people is not None else list()
 
 
-        #   CLIENT
-        #   At initialization, the client is created before the project in the dialog and needs to be
-        #   added to the list of people of the project.
+        #   Client
+        #       At initialization, the client is created before the project in the dialog and needs to be
+        #       added to the list of people of the project.
         if client:
             self._people.append(client)
 
@@ -75,8 +75,8 @@ class Project(IdObject):
 
     """
     #
-    #   PROPERTIES
-    #   GETTER, SETTER and also GETTER of sub-properties
+    #   Properties
+    #       GETTER, SETTER and also GETTER of sub-properties
     #
     """
     @property
@@ -111,7 +111,7 @@ class Project(IdObject):
 
     """ properties
     #
-    #   COMPANIES
+    #   Companies
     #
     """
     @property
@@ -131,7 +131,7 @@ class Project(IdObject):
 
     """ properties
     #
-    #   TRADES
+    #   Trades
     #
     """
     @property
@@ -164,7 +164,7 @@ class Project(IdObject):
 
     """ properties
     #
-    #   INVOICES
+    #   Invoices
     #
     """
     @property
@@ -189,7 +189,7 @@ class Project(IdObject):
 
     """ properties
     #
-    #   JOBS
+    #   Jobs
     #
     """
     @property
@@ -212,7 +212,7 @@ class Project(IdObject):
 
     """ properties
     #
-    #   PEOPLE
+    #   People
     #
     """
     @property
@@ -229,7 +229,7 @@ class Project(IdObject):
 
     """ properties
     #
-    #   ADDRESSES
+    #   Addresses
     #
     """
     @property
@@ -244,11 +244,11 @@ class Project(IdObject):
 
     """ properties
     #
-    #    CONFIG
+    #    Config
     #
     """
     """
-    #   CURRENCY
+    #   Currency
     """
     @debug.log
     def get_currency(self):
@@ -260,7 +260,7 @@ class Project(IdObject):
     def get_vat(self):
         return self.config["default_vat"]
     """
-    #   SAVE PATH / TIME
+    #   Save Path / Time
     """
     @debug.log
     def get_usersave_path(self):
@@ -271,14 +271,14 @@ class Project(IdObject):
         return self.config["user_save"]["datetime"]
 
     #   Set the save path in the project config.
-    #   This gets called from the api upon saving.
+    #       This gets called from the api upon saving.
     @debug.log
     def set_save_path(self, save_path, datetime=datetime.now()):
         self.config["user_save"]["datetime"] = datetime
         self.config["user_save"]["path"] = save_path
 
     """
-    #   AUTOSAVE PATH / TIME
+    #   Autosave Path / Time
     """
     @debug.log
     def get_autosave_path(self):
@@ -289,7 +289,7 @@ class Project(IdObject):
         return self.config["last_auto_save"]["datetime"]
 
     #   Set the autosave path in the project config.
-    #   This gets called from the api upon autosaving.
+    #       This gets called from the api upon autosaving.
     @debug.log
     def set_autosave_path(self, save_path, datetime=datetime.now()):
         self.config["last_auto_save"]["datetime"] = datetime
@@ -297,13 +297,14 @@ class Project(IdObject):
 
     """
     #
-    #   FUNCTIONALITY
-    #   Functions helping with handling the project
+    #   Functionality
+    #       Functions helping with handling the project like
+    #       adding or removing an invoice or person.
     #
     """
     """ func
     #
-    #   JOBS
+    #   Jobs
     #
     """
     @debug.log
@@ -327,7 +328,7 @@ class Project(IdObject):
 
     """ func
     #
-    #   INVOICES
+    #   Invoices
     #
     """
     @debug.log
@@ -386,7 +387,7 @@ class Project(IdObject):
 
     """ func
     #
-    #   COMPANIES
+    #   Companies
     #
     """
     @debug.log
@@ -412,7 +413,7 @@ class Project(IdObject):
         return company
     """ func
     #
-    #   TRADES
+    #   Trades
     #
     """
     @debug.log
@@ -436,7 +437,7 @@ class Project(IdObject):
 
     """ func
     #
-    #   COST GROUPS
+    #   CostGroups
     #
     """
     @debug.log
@@ -460,7 +461,7 @@ class Project(IdObject):
 
     """ func
     #
-    #   PEOPLE
+    #   People
     #
     """
     @debug.log
@@ -485,7 +486,7 @@ class Project(IdObject):
 
     """
     #
-    #   UPDATE
+    #   Update
     #   Fuctions updating a project
     #
     """
@@ -512,8 +513,8 @@ class Project(IdObject):
 
     """
     #
-    #   RESTORE
-    #   Functions that help to reconstruct the data-structure after loading
+    #   Restore
+    #       Functions that help to reconstruct the data-structure after loading
     #
     """
     @debug.log
@@ -565,7 +566,7 @@ class Project(IdObject):
             cost_group.restore(self)
     """
     #
-    #   UTILITY
+    #   Utility
     #
     #
     """
@@ -578,6 +579,13 @@ class Project(IdObject):
             return True
         return False
 
+"""
+#
+#   ProjectData
+#       This Object contains all hardfacts of a project, i.e. its
+#       property size or the building class.
+#
+"""
 class ProjectData(IdObject):
     """ docstring for ProjectData """
 
@@ -595,9 +603,51 @@ class ProjectData(IdObject):
         self.contract_fee = contract_fee
         self.execution_period = execution_period
 
+"""
+#
+#   ProjectCostCalculation
+#       A project costcalculation is mainly a list of objects (dicts), which represent
+#       some item or service and they belong to a CostGroup and/or Trade, with cost per unit and units.
+#       Then we can make a pre-calculation of the project costs.
+#       During a project, these calculation can be updated and the Trade/CostGroup budgets updated w.r.t. this.
+#
+"""
 class ProjectCostCalculation(IdObject):
     """docstring for CostCalculation"""
     def __init__(self, uid=None, deleted=False, calculation_date=None, inventory=None):
         super().__init__(self, uid=uid, deleted=deleted)
-        self.calculation_date = calculation_date
-        self.inventory = inventory
+        self.calculation_date = calculation_date if calculation_date else datetime.now()
+        self._inventory = inventory if inventory else list()
+
+    def add_inventory_item(self, name, decription, price_per_unit, units, unit_type, is_active, cost_group, trade):
+        args = {
+                "name": name,
+                "decription": decription,
+                "price_per_unit": price_per_unit,
+                "units": units,
+                "unit_type": unit_type,
+                "cost_group": cost_group,
+                "trade": trade,
+                "is_active":is_active
+                }
+        self._inventory.append(InventoryItem(**args))
+
+class InventoryItem(IdObject):
+    """docstring for InventoryItem"""
+    def __init__(self, name, *, uid=None, deleted=False,
+                        decription, price_per_unit, units, unit_type,
+                        is_active=True, cost_group=None,
+                        cost_group_uid=None, trade=None, trade_uid=None,):
+        super().__init__(self, uid=uid, deleted=deleted)
+        self.name = name
+        self.description = description
+        self.price_per_unit = price_per_unit
+        self.units = units
+        self.unit_type = unit_type
+        self.is_active = is_active
+        self.cost_group = cost_group
+        self.trade = trade
+
+        """ for restoration only """
+        self.cost_group_uid = cost_group_uid
+        self.trade_uid = self.trade_uid

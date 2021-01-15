@@ -26,7 +26,7 @@ class TradeDialog(QtWidgets.QDialog):
         dialog_title = f"Gewerk ({loaded_trade.name}) bearbeiten..." if loaded_trade else "Neues Gewerk"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.setup_combo_boxes()
         self.set_button_actions()

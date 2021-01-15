@@ -18,7 +18,7 @@ class AddressDialog(QtWidgets.QDialog):
         dialog_title = f"Adresse ({loaded_address.street}, {loaded_address.house_number}) bearbeiten..." if loaded_address else "Neue Adresse"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
 
         if loaded_address:
             loaded_address_args = vars(loaded_address).copy()

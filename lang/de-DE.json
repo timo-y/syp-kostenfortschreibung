@@ -2,6 +2,7 @@
     "VAT": "MwSt.",
     "address": "Adresse",
     "amount": "Betrag",
+    "amount_a_reductions_amount": "Rechnungssumme n. Abz\u00fcgen u. Nachlass netto",
     "approved_invoices_w_VAT": "Freigegebene Rechnungen\nbrutto",
     "approved_invoices_w_VAT_by_tradebudgets": "Freigegebene Rechnungen/\nGewerkebudgets",
     "billed_date": "Abgerechnet",

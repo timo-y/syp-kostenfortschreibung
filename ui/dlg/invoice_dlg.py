@@ -29,7 +29,7 @@ class InvoiceDialog(QtWidgets.QDialog):
         dialog_title = f"Rechnung ({loaded_invoice.id}) bearbeiten..." if loaded_invoice else "Neue Rechnung"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.setup_combo_boxes()
         self.set_button_actions()

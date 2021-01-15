@@ -156,11 +156,11 @@ class MainWindow(QtWidgets.QMainWindow):
         """ TODO: figure out where to put this """
         company_tree_view_cols = ["job", "invoice", "verified_amount"] # maybe put on top of file
         self.treeWidget_company_invoices_by_job.setHeaderLabels([self.app_data.titles[col] for col in company_tree_view_cols])
-        job_tree_view_cols = ["date", "id", "safety_deposit_amount", "verified_amount"] # maybe put on top of file
+        job_tree_view_cols = ["date", "id", "safety_deposit_amount", "amount_a_reductions_amount"] # maybe put on top of file
         self.treeWidget_invoices_of_curr_job.setHeaderLabels([self.app_data.titles[col] for col in job_tree_view_cols])
         paid_safety_deposits_cols = ["date", "amount", "comment"]
         self.treeWidget_paid_safety_desposits.setHeaderLabels([self.app_data.titles[col] for col in paid_safety_deposits_cols])
-        job_additions_cols = ["date", "amount", "comment"]
+        job_additions_cols = ["date", "name", "amount", "comment"]
         self.treeWidget_job_additions.setHeaderLabels([self.app_data.titles[col] for col in job_additions_cols])
 
 
@@ -199,6 +199,27 @@ class MainWindow(QtWidgets.QMainWindow):
         currency_labels = [label for label in self.findChildren(QtWidgets.QLabel) if "label_currency_" in label.objectName()]
         for label in currency_labels:
             label.setText(self.currency)
+
+    """
+    #
+    #   EVENT LISTENERS
+    #
+    #
+    """
+    def closeEvent(self, event):
+        if self.app_data.project_loaded():
+            reply = QtWidgets.QMessageBox.question(self, 'Sichern vor dem Schließen?', 'Möchten Sie das geöffnete Projekt vor dem Beenden speichern?',
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Cancel)
+
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.save_project()
+                event.accept()
+            elif reply == QtWidgets.QMessageBox.No:
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.accept()
 
     """
     #
@@ -754,19 +775,19 @@ class MainWindow(QtWidgets.QMainWindow):
             #   summing up again and not using a common vat factor.
             #
             """
-            verified_sum = sum([invoice.verified_amount for invoice in invoices_of_job])
-            verified_sum_w_VAT = sum([invoice.verified_amount_w_VAT for invoice in invoices_of_job])
-            verified_sum_VAT_amount = sum([invoice.verified_amount_VAT_amount for invoice in invoices_of_job])
+            inv_sum = sum([invoice.amount_a_reductions_amount for invoice in invoices_of_job])
+            inv_sum_w_VAT = sum([invoice.amount_a_reductions_amount_w_VAT for invoice in invoices_of_job])
+            inv_sum_VAT_amount = sum([invoice.amount_a_reductions_amount_VAT_amount for invoice in invoices_of_job])
 
             safety_deposits_sum = sum([invoice.safety_deposit_amount for invoice in invoices_of_job])
             paid_safety_deposits_sum = job.paid_safety_deposits_sum
 
             self.set_job_data(**args,
                                 job_sum_w_additions=job.job_sum_w_additions,
-                                verified_sum_w_VAT=verified_sum_w_VAT,
+                                inv_sum_w_VAT=inv_sum_w_VAT,
                                 safety_deposits_sum=safety_deposits_sum,
                                 paid_safety_deposits_sum=paid_safety_deposits_sum)
-            self.set_verified_sum_info(verified_sum, verified_sum_w_VAT, verified_sum_VAT_amount)
+            self.set_invoice_sum_info(inv_sum, inv_sum_w_VAT, inv_sum_VAT_amount)
             self.set_paid_safety_deposits_of_job(paid_safety_deposits=job.paid_safety_deposits)
             self.set_job_additions_of_job(job_additions=job.job_additions)
             self.set_invoices_of_job(invoices_of_job=invoices_of_job)
@@ -805,7 +826,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.activate_job_buttons()
 
     def set_job_data(self, *, _uid=None, company=None, id="-", trade=None, job_sum=0, job_sum_w_additions=0,
-                        verified_sum_w_VAT=0, safety_deposits_sum=0, paid_safety_deposits_sum=0,
+                        inv_sum_w_VAT=0, safety_deposits_sum=0, paid_safety_deposits_sum=0,
                         **kwargs):
         company_name = company.name if company else "-"
         self.label_job_company.setText(company_name)
@@ -833,7 +854,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """ safety deposits """
         self.label_job_safety_deposits_sum.setText(amount_str(safety_deposits_sum))
         # verified_sum_w_VAT since the safety deposit is also taken from the amount with VAT
-        safety_deposits_percent = safety_deposits_sum/verified_sum_w_VAT*100 if verified_sum_w_VAT != 0 else 0
+        safety_deposits_percent = safety_deposits_sum/inv_sum_w_VAT*100 if inv_sum_w_VAT != 0 else 0
         self.label_job_safety_deposits_percent.setText(percent_str(safety_deposits_percent))
         self.label_job_paid_safety_deposits_sum.setText(amount_str(paid_safety_deposits_sum))
         paid_safety_deposits_percent = paid_safety_deposits_sum/safety_deposits_sum*100 if safety_deposits_sum !=0 else 0
@@ -842,11 +863,11 @@ class MainWindow(QtWidgets.QMainWindow):
         remaining_sd_percent = 100-paid_safety_deposits_percent
         self.label_job_remaining_sd_percent.setText(percent_str(remaining_sd_percent))
 
-    def set_verified_sum_info(self, verified_sum=0, verified_sum_w_VAT=0, verified_sum_VAT_amount=0):
+    def set_invoice_sum_info(self, inv_sum=0, inv_sum_w_VAT=0, inv_sum_VAT_amount=0):
         """ amounts """
-        self.label_job_verified_sum.setText(amount_str(verified_sum))
-        self.label_job_verified_sum_w_VAT.setText(amount_str(verified_sum_w_VAT))
-        self.label_job_verified_sum_VAT_amount.setText(amount_str(verified_sum_VAT_amount))
+        self.label_job_invoice_sum.setText(amount_str(inv_sum))
+        self.label_job_invoice_sum_w_VAT.setText(amount_str(inv_sum_w_VAT))
+        self.label_job_invoice_sum_VAT_amount.setText(amount_str(inv_sum_VAT_amount))
 
     def set_paid_safety_deposits_of_job(self, paid_safety_deposits):
         self.treeWidget_paid_safety_desposits.clear()
@@ -860,7 +881,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for job_addition in job_additions:
             helper.add_item_to_tree(content_item=job_addition,
                                     parent=self.treeWidget_job_additions,
-                                    cols=[str(job_addition["date"]), amount_w_currency_str(job_addition["amount"], self.currency), job_addition["comment"]])
+                                    cols=[str(job_addition["date"]), job_addition["name"], amount_w_currency_str(job_addition["amount"], self.currency), job_addition["comment"]])
 
     #   Fill the listwidget with the invoices
     def set_invoices_of_job(self, invoices_of_job):
@@ -868,8 +889,8 @@ class MainWindow(QtWidgets.QMainWindow):
         for invoice in invoices_of_job:
             helper.add_item_to_tree(content_item=invoice,
                                     parent=self.treeWidget_invoices_of_curr_job,
-                                    cols=[str(invoice.invoice_date.toPyDate()), str(invoice.id), amount_w_currency_str(invoice.safety_deposit_amount, self.currency), amount_w_currency_str(invoice.verified_amount, self.currency)],
-                                    tooltip=f"sachlich richtig und rechnerisch geprüfte Rechnungssumme (netto) {amount_w_currency_str(invoice.verified_amount, self.app_data.project.get_currency())}")
+                                    cols=[str(invoice.invoice_date.toPyDate()), str(invoice.id), amount_w_currency_str(invoice.safety_deposit_amount, self.currency), amount_w_currency_str(invoice.amount_a_reductions_amount, self.currency)],
+                                    )
 
     """ render
     #

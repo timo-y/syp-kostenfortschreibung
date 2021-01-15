@@ -322,7 +322,7 @@
          <enum>QTabWidget::South</enum>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_overview">
          <attribute name="title">
@@ -2320,7 +2320,7 @@
                             </size>
                            </property>
                            <property name="title">
-                            <string>sachl. richtige u.rechn. gepr. Rechnungssummen</string>
+                            <string>s.r.u.r.gepr. Rechnungssummen n. Abz. u. Nachl.</string>
                            </property>
                            <layout class="QGridLayout" name="gridLayout_10">
                             <item row="1" column="3">
@@ -2369,7 +2369,7 @@
                              </widget>
                             </item>
                             <item row="3" column="1" colspan="2">
-                             <widget class="QLabel" name="label_job_verified_sum_VAT_amount">
+                             <widget class="QLabel" name="label_job_invoice_sum_VAT_amount">
                               <property name="enabled">
                                <bool>false</bool>
                               </property>
@@ -2421,7 +2421,7 @@
                              </widget>
                             </item>
                             <item row="2" column="1" colspan="2">
-                             <widget class="QLabel" name="label_job_verified_sum_w_VAT">
+                             <widget class="QLabel" name="label_job_invoice_sum_w_VAT">
                               <property name="font">
                                <font>
                                 <pointsize>10</pointsize>
@@ -2451,7 +2451,7 @@
                              </widget>
                             </item>
                             <item row="1" column="1" colspan="2">
-                             <widget class="QLabel" name="label_job_verified_sum">
+                             <widget class="QLabel" name="label_job_invoice_sum">
                               <property name="font">
                                <font>
                                 <pointsize>14</pointsize>
@@ -2638,7 +2638,7 @@
                                </font>
                               </property>
                               <property name="text">
-                               <string>der  s.r.u.r.g.Rechnungssummen (brutto)</string>
+                               <string>der  s.r.u.r.g.Rechnungssummen n Abz. u. Nachl (brutto)</string>
                               </property>
                               <property name="alignment">
                                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

@@ -23,7 +23,7 @@ class PersonDialog(QtWidgets.QDialog):
         dialog_title = f"Person ({loaded_person.first_name}, {loaded_person.last_name}) bearbeiten..." if loaded_person else "Neuer Person"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.set_button_actions()
         if self.loaded_person:

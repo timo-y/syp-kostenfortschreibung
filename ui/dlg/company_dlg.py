@@ -28,7 +28,7 @@ class CompanyDialog(QtWidgets.QDialog):
         dialog_title = f"Firma ({loaded_company.name}) bearbeiten..." if loaded_company else "Neue Firma"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.setup_combo_boxes()
         self.set_button_actions()

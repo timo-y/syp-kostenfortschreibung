@@ -16,7 +16,7 @@ class PaySafetyDepositDialog(QtWidgets.QDialog):
         dialog_title = "Sicherheitseinbehalt zurückzahlen..."
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         # TODO: set suffix of input to €
         self.set_date_today()

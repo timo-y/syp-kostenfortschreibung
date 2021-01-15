@@ -35,7 +35,7 @@ class JobDialog(QtWidgets.QDialog):
             dialog_title = f"Auftrag ({loaded_job_company_name}, {loaded_job.id}) bearbeiten..."
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.setup_combo_boxes()
         self.set_widget_actions()

@@ -16,7 +16,7 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.initialize_ui()
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.set_button_actions()
         self.set_update_trigger()

@@ -20,6 +20,7 @@ DEFAULT_LOG_FILENAME = 'info.log'
 import os
 import webbrowser
 import json
+import shutil
 from datetime import datetime
 
 import zipr, templatr, pdfexportr, encoder, decoder
@@ -202,36 +203,35 @@ class AppData:
     @debug.log
     def output_check_invoice(self, invoice):
         folder_name = self.get_invoice_check_folder_name(invoice)
+        create_at_path = os.path.join(self.get_app_invoice_check_dir(), folder_name)
+        # Create xlsx-File
+        xlsx_template = templatr.InvoiceCheckExcelTemplate(project_identifier=self.project.identifier,
+                                                            app_data_config=self.config,
+                                                            invoice=invoice,
+                                                            save_dir=create_at_path)
+        xlsx_template.make_file()
+        # Export PDF
+        dir_path = os.path.dirname(os.path.realpath(xlsx_template.save_path))
+        pdf_filename = f"{xlsx_template.filename}.pdf"
+        pdf_save_path = os.path.join(dir_path, pdf_filename)
+        pdfexportr.PDFExportr().create_pdf(xlsx_template.save_path, pdf_save_path)
         """
-        #
-        #   First in the invoice check path
-        #
+        #   First copy and move to the invoice check path
         """
         inv_check_path = os.path.join(self.get_invoice_check_dir(), folder_name)
-        xlsx_template = templatr.InvoiceCheckExcelTemplate(project_identifier=self.project.identifier,
-                                                            app_data_config=self.config,
-                                                            invoice=invoice,
-                                                            save_dir=inv_check_path)
-        xlsx_template.make_file()
-        # Export PDF
-        dir_path = os.path.dirname(os.path.realpath(xlsx_template.save_path))
-        pdf_save_path = os.path.join(dir_path, f"{xlsx_template.filename}.pdf")
-        pdfexportr.PDFExportr().create_pdf(xlsx_template.save_path, pdf_save_path)
+        # create directory if non-existing
+        if not os.path.exists(inv_check_path):
+            os.makedirs(inv_check_path)
+        shutil.copy(pdf_save_path, os.path.join(inv_check_path, pdf_filename))
         """
-        #
-        #   Second in the correspondence path
-        #
+        #   Second to the correspondence path
         """
         correspondence_path = os.path.join(self.get_client_correspondence_dir(), folder_name)
-        xlsx_template = templatr.InvoiceCheckExcelTemplate(project_identifier=self.project.identifier,
-                                                            app_data_config=self.config,
-                                                            invoice=invoice,
-                                                            save_dir=correspondence_path)
-        xlsx_template.make_file()
-        # Export PDF
-        dir_path = os.path.dirname(os.path.realpath(xlsx_template.save_path))
-        pdf_save_path = os.path.join(dir_path, f"{xlsx_template.filename}.pdf")
-        pdfexportr.PDFExportr().create_pdf(xlsx_template.save_path, pdf_save_path)
+        # create directory if non-existing
+        if not os.path.exists(correspondence_path):
+            os.makedirs(correspondence_path)
+
+        shutil.copy(pdf_save_path, os.path.join(correspondence_path, pdf_filename))
 
     """
     #   OVERVIEWs
@@ -388,8 +388,14 @@ class AppData:
             return path
 
     @debug.log
+    def get_app_invoice_check_dir(self):
+        if self.project:
+            path = os.path.join(os.getcwd(), self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
+            return path
+
+    @debug.log
     def get_autosave_dir(self):
-        autosave_dir_path = os.path.join(os.getcwd(), self.config["save_dir"], self.project.identifier, self.config["autosave_subdir"])
+        autosave_dir_path = os.path.join(os.getcwd(), self.config["save_dir"], self.config["autosave_subdir"])
         return autosave_dir_path
 
     @debug.log

@@ -24,7 +24,7 @@ class ProjectDialog(QtWidgets.QDialog):
         dialog_title = f"Projekt ({loaded_project.identifier}) bearbeiten..." if loaded_project else "Neue Projekt"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
-        self.setFixedSize(self.size())
+        # self.setFixedSize(self.size())
         """ activate UI """
         self.setup_combo_boxes()
         self.set_button_actions()

@@ -12,7 +12,9 @@ from core.obj import corp
 class ArchJob(corp.Job):
     """docstring for ArchJob"""
 
-    def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None, company_uid=None, trade=None, trade_uid=None, job_additions=None, paid_safety_deposits=None):
+    def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None,
+                    company_uid=None, trade=None, trade_uid=None, job_additions=None,
+                    paid_safety_deposits=None):
         super(ArchJob, self).__init__(id, uid=uid, deleted=deleted, company=company, job_sum=job_sum, company_uid=company_uid)
         self.trade = trade
         """
@@ -53,8 +55,8 @@ class ArchJob(corp.Job):
     def job_sum_w_additions(self):
         return self.job_sum+sum([job_addition["amount"] for job_addition in self._job_additions])
 
-    def add_job_addition(self, date, amount, comment=""):
-        self._job_additions.append({"date": date, "amount": amount, "comment": comment})
+    def add_job_addition(self, date, name, amount, comment=""):
+        self._job_additions.append({"date": date, "name": name, "amount": amount, "comment": comment})
 
     def remove_job_addition(self, job_addition):
         self._job_additions.remove(job_addition)

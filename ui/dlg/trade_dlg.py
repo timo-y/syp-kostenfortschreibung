@@ -6,12 +6,13 @@
 """
 
 from PyQt5 import QtWidgets, QtGui, uic
+from PyQt5.QtWidgets import QDialogButtonBox
 
 from ui import dlg, helper
 from ui.helper import str_to_float, two_inputs_to_float, amount_str, rnd
 
 class TradeDialog(QtWidgets.QDialog):
-    def __init__(self, *, app_data, loaded_trade=None):
+    def __init__(self, *, app_data, loaded_trade=None, sel_cost_group=None):
         super().__init__()
         """ create local variables """
         self.app_data = app_data
@@ -30,6 +31,7 @@ class TradeDialog(QtWidgets.QDialog):
         """ activate UI """
         self.setup_combo_boxes()
         self.set_button_actions()
+        self.set_combo_box_actions()
         self.set_event_handler()
         self.set_validators()
         self.set_default_labels()
@@ -40,6 +42,8 @@ class TradeDialog(QtWidgets.QDialog):
             """ load trade data to input """
             loaded_args = self.loaded_trade.__dict__.copy()
             self.set_input(**loaded_args)
+        elif sel_cost_group:
+            self.set_cost_group_to(sel_cost_group)
 
         self.update_ui()
 
@@ -59,8 +63,7 @@ class TradeDialog(QtWidgets.QDialog):
         self.comboBox_cost_group.clear()
         self.comboBox_cost_group.addItem("Kostengruppe auswählen...", None)
         for cost_group in self.cost_groups:
-            if cost_group.is_main_group():
-                self.comboBox_cost_group.addItem(str(cost_group.id), cost_group)
+            self.comboBox_cost_group.addItem(str(cost_group.id), cost_group)
 
     def set_default_labels(self):
         pass
@@ -71,6 +74,13 @@ class TradeDialog(QtWidgets.QDialog):
         self.lineEdit_budget_1.setValidator(onlyInt)
         self.lineEdit_budget_2.setValidator(onlyInt)
 
+    def activate_ok_button(self):
+        args = self.get_input()
+        if len(args["name"])>0 and args["cost_group"]:
+            self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
+        else:
+            self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
+
     def update_ui(self):
         #""" update the values of the labels """#
         args = self.get_input()
@@ -78,6 +88,7 @@ class TradeDialog(QtWidgets.QDialog):
         budget_w_VAT = args["budget"] + budget_VAT_amount
         self.set_labels(budget_w_VAT=budget_w_VAT,
             budget_VAT_amount=budget_VAT_amount)
+        self.activate_ok_button()
 
     """
     #
@@ -88,6 +99,9 @@ class TradeDialog(QtWidgets.QDialog):
     def set_button_actions(self):
         """ delete button """
         self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_trade))
+
+    def set_combo_box_actions(self):
+        self.comboBox_cost_group.currentIndexChanged.connect(self.activate_ok_button)
 
     def set_event_handler(self):
         self.keyReleaseEvent = self.eventHandler

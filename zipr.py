@@ -65,6 +65,11 @@ def save_project(path, app_data):
             data = app_data.project
             json.dump(data, file, cls=encoder.ProjectEncoder, indent=4)
 
+        # project cost calculations
+        with z.open("project_cost_calculations.json", "w") as file:
+            data = app_data.project.project_cost_calculations
+            json.dump(data, file, cls=encoder.ProjectCostCalculationEncoder, indent=4)
+
         # companies
         with z.open("companies.json", "w") as file:
             data = app_data.project.companies
@@ -95,6 +100,7 @@ def save_project(path, app_data):
             data = app_data.project.cost_groups
             json.dump(data, file, cls=encoder.CostGroupEncoder, indent=4)
 
+
 @debug.log
 def open_project(path):
     loaded_args = dict()
@@ -109,6 +115,10 @@ def open_project(path):
         # project
         with z.open(root+"/project.json", "r") as file:
             loaded_args["project"] = json.load(file, object_hook=decoder.ProjectDecoder().object_hook)
+
+        # cost groups
+        with z.open(root+"/project_cost_calculations.json", "r") as file:
+            loaded_args["project_cost_calculations"] = json.load(file, object_hook=decoder.ProjectCostCalculationDecoder().object_hook)
 
         # companies
         with z.open(root+"/companies.json", "r") as file:

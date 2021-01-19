@@ -15,6 +15,8 @@ from ui import customqt
 
 from PyQt5 import QtWidgets, QtCore
 
+from core.obj import proj
+
 """
 #
 #   INPUT, ADD and EDIT
@@ -157,16 +159,53 @@ def import_cost_groups(mainwindow, app_data):
 
 """ i,a&e
 #
-#   ADDRESS
+#   PROJECT COST CALCULATION
 #
 """
-def input_address(app_data):
-    input_address_args = dlg.open_address_dialog()
-    if input_address_args:
-        address = corp.Address(**input_address_args)
+def input_pcc(app_data):
+    input_pcc_args = dlg.open_project_cost_calculation_dialog(app_data=app_data)
+    if input_pcc_args:
+        pcc = app_data.project.input_new_pcc(input_pcc_args)
         """ logging """
-        debug.log(f"Address added: {address}")
-        return address
+        debug.log(f"ProjectCostCalculation added: {pcc.name}")
+        return pcc
+
+def edit_pcc(app_data, pcc):
+    pcc_args = dlg.open_project_cost_calculation_dialog(app_data=app_data, loaded_pcc=pcc)
+    if pcc_args:
+        if pcc_args == "delete":
+            app_data.project.delete_pcc(pcc)
+            """ logging """
+            debug.log(f"ProjectCostCalculation deleted: {pcc.name}, from the {pcc.date.toPyDate()}")
+        else:
+            pcc.update(**pcc_args)
+            """ logging """
+            debug.log(f"Existing ProjectCostCalculation edited: {pcc.name}, from the {pcc.date.toPyDate()}")
+        return pcc
+
+""" i,a&e
+#
+#   INVENTORY ITEM
+#
+"""
+def input_inventory_item(app_data):
+    input_inventory_item_args = dlg.open_inventory_item_dialog(app_data)
+    if input_inventory_item_args:
+        input_inventory_item = proj.InventoryItem(**input_inventory_item_args)
+        return input_inventory_item
+
+def edit_inventory_item(app_data, inventory_item):
+    inventory_item_args = dlg.open_inventory_item_dialog(app_data=app_data, loaded_inventory_item=inventory_item)
+    if inventory_item_args:
+        if inventory_item_args == "delete":
+            inventory_item.delete()
+            """ logging """
+            debug.log(f"InventoryItem deleted: {inventory_item.name}")
+        else:
+            inventory_item.update(**inventory_item_args)
+            """ logging """
+            debug.log(f"Existing InventoryItem edited: {inventory_item.name}")
+        return inventory_item
 
 """ i,a&e
 #
@@ -191,7 +230,7 @@ def edit_person(app_data, person):
         else:
             person.update(**person_args, company=person.company)
             """ logging """
-            debug.log(f"Existing person edited: {person.first_name}, {person.last_name}")
+            debug.log(f"Existing Person edited: {person.first_name}, {person.last_name}")
         return person
 
 """ i,a&e
@@ -205,7 +244,7 @@ def input_invoice(app_data, sel_job=None):
     if input_invoice_args:
         invoice = app_data.project.input_new_invoice(input_invoice_args)
         """ logging """
-        debug.log(f"New invoice added: {invoice.id}, {invoice.uid}")
+        debug.log(f"New Invoice added: {invoice.id}, {invoice.uid}")
         return invoice
 
 @debug.log
@@ -220,14 +259,14 @@ def edit_invoice(app_data, invoice):
             # need the api function, because we need to update all ivoices afterwards
             app_data.project.update_invoice(invoice, invoice_args)
             """ logging """
-            debug.log(f"Existing invoice edited: {invoice.id}, {invoice.uid}")
+            debug.log(f"Existing Invoice edited: {invoice.id}, {invoice.uid}")
         return invoice
 
 @debug.log
 def invoice_check(app_data, invoice, save_path=None):
     app_data.output_check_invoice(invoice)
     app_data.open_invoice_check_dir()
-    debug.log(f"Invoice check file written for the invoice {invoice}")
+    debug.log(f"Invoice check file written for the Invoice {invoice}")
 
 """ i,a&e
 #
@@ -235,14 +274,14 @@ def invoice_check(app_data, invoice, save_path=None):
 #
 """
 @debug.log
-def input_job(app_data):
+def input_job(app_data, sel_company=None):
     # open dialog and add job to project
-    input_job_args = dlg.open_job_dialog(app_data=app_data)
+    input_job_args = dlg.open_job_dialog(app_data=app_data, sel_company=sel_company)
     if input_job_args:
         job = app_data.project.input_new_job(input_job_args)
         """ logging """
         company_name = job.company.name if job.company else "-"
-        debug.log(f"New job added: {company_name}, {job.id}, {job.uid}")
+        debug.log(f"New Job added: {company_name}, {job.id}, {job.uid}")
         return job
 
 @debug.log
@@ -257,7 +296,7 @@ def edit_job(app_data, job):
         else:
             job.update(**job_args)
             """ logging """
-            debug.log(f"Existing job edited: {company_name}, {job.id}, {job.uid}")
+            debug.log(f"Existing Job edited: {company_name}, {job.id}, {job.uid}")
         return job
 
 @debug.log
@@ -284,7 +323,7 @@ def input_company(app_data):
         company = app_data.project.input_new_company(input_company_args)
         """ logging """
         company_name = company.name if company.name else "-"
-        debug.log(f"New company added: {company_name}")
+        debug.log(f"New Company added: {company_name}")
         return company
 
 @debug.log
@@ -299,7 +338,7 @@ def edit_company(app_data, company):
         else:
             company.update(**company_args)
             """ logging """
-            debug.log(f"Existing company edited: {company_name}")
+            debug.log(f"Existing Company edited: {company_name}")
         return company
 
 """ i,a&e
@@ -308,14 +347,14 @@ def edit_company(app_data, company):
 #
 """
 @debug.log
-def input_trade(app_data):
+def input_trade(app_data, sel_cost_group=None):
     # open dialog and add job to project
-    input_trade_args = dlg.open_trade_dialog(app_data=app_data)
+    input_trade_args = dlg.open_trade_dialog(app_data=app_data, sel_cost_group=sel_cost_group)
     if input_trade_args:
         trade = app_data.project.input_new_trade(input_trade_args)
         """ logging """
         trade_name = trade.name if trade.name else "-"
-        debug.log(f"New trade added: {trade_name}")
+        debug.log(f"New Trade added: {trade_name}")
         return trade
 
 @debug.log
@@ -332,7 +371,7 @@ def edit_trade(app_data, trade):
         else:
             trade.update(**trade_args)
             """ logging """
-            debug.log(f"Existing trade edited: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}")
+            debug.log(f"Existing Trade edited: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}")
         return trade
 
 """ i,a&e
@@ -347,7 +386,7 @@ def input_cost_group(app_data):
     if input_cost_group_args:
         cost_group = app_data.project.input_new_cost_group(input_cost_group_args)
         """ logging """
-        debug.log(f"New cost_group added: {cost_group.id}")
+        debug.log(f"New CostGroup added: {cost_group.id}")
         return cost_group
 
 @debug.log
@@ -358,11 +397,11 @@ def edit_cost_group(app_data, cost_group):
         if cost_group_args == "delete":
             app_data.project.delete_cost_group(cost_group)
             """ logging """
-            debug.log(f"Cost_group deleted: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}")
+            debug.log(f"CostGroup deleted: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}")
         else:
             cost_group.update(**cost_group_args)
             """ logging """
-            debug.log(f"Existing cost_group edited: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}")
+            debug.log(f"Existing CostGroup edited: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}")
         return cost_group
 
 """ i,a&e

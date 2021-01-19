@@ -45,6 +45,13 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "approved_invoices_w_VAT_by_tradebudgets", "width": 150},
             ]
 
+        self.project_cost_calculation_cols = [
+            {"title": "name", "width": 180},
+            {"title": "date", "width": 100},
+            {"title": "total_cost", "width": 150}
+            ]
+
+
         self.invoice_cols = [
             {"title": "id", "width": 150},
             #{"title": "internal_index", "width": 100},
@@ -141,6 +148,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget_content.addTab(self.tab_trades_table, "Gewerke")
         self.tabWidget_content.addTab(self.tab_cost_groups_table, "Kostengruppen")
         self.tabWidget_content.addTab(self.tab_people, "Beteiligten")
+        self.tabWidget_content.addTab(self.tab_project_cost_calculation, "Kostenberechnung")
         #self.tabWidget_content.addTab(self.tab_invoice_check, "???")
 
     def init_column_width(self):
@@ -184,6 +192,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.update_labels()
             #update views
+            self.render_project_cost_calculations()
             self.render_cost_stand()
             self.render_invoice_view()
             self.render_job_view()
@@ -207,6 +216,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def closeEvent(self, event):
+        pass
+        """#
         if self.app_data.project_loaded():
             reply = QtWidgets.QMessageBox.question(self, 'Sichern vor dem Schließen?', 'Möchten Sie das geöffnete Projekt vor dem Beenden speichern?',
                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Cancel)
@@ -220,6 +231,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 event.ignore()
         else:
             event.accept()
+
+        #"""
 
     """
     #
@@ -249,6 +262,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_quick_syp_dir.clicked.connect(lambda:self.app_data.open_syp_dir())
         self.pushButton_quick_proj_dir.clicked.connect(lambda:self.app_data.open_project_dir())
 
+        """ project cost calculation buttons """
+        self.pushButton_add_pcc.clicked.connect(lambda:self.input_pcc_to_project())
+
         """ invoice buttons """
         self.pushButton_new_invoice.clicked.connect(self.input_invoice_to_project)
         self.pushButton_edit_invoice.clicked.connect(self.button_edit_invoice)
@@ -263,19 +279,25 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_remove_safety_deposit.clicked.connect(self.button_remove_psd)
         self.pushButton_add_job_addition.clicked.connect(self.button_add_job_addition)
         self.pushButton_remove_job_addition.clicked.connect(self.button_remove_job_addition)
+
         """ company buttons """
         self.pushButton_new_company.clicked.connect(lambda:self.input_company_to_project())
         self.pushButton_edit_company.clicked.connect(self.button_edit_company)
+
         """ trade buttons """
         self.pushButton_new_trade.clicked.connect(lambda:self.input_trade_to_project())
         self.pushButton_edit_trade.clicked.connect(self.button_edit_trade)
+
         """ cost_group buttons """
         self.pushButton_new_cost_group.clicked.connect(lambda:self.input_cost_group_to_project())
         self.pushButton_edit_cost_group.clicked.connect(self.button_edit_cost_group)
+
         """ person buttons """
         self.pushButton_edit_person.clicked.connect(self.button_edit_person)
 
     def load_widget_signals(self):
+        """ project cost calculation signals """
+        self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.double_click_pcc)
         """ invoice signals """
         self.listWidget_invoices.itemDoubleClicked.connect(self.double_click_invoice)
         self.tableWidget_invoices.itemDoubleClicked.connect(self.double_click_invoice)
@@ -328,6 +350,14 @@ class MainWindow(QtWidgets.QMainWindow):
     #   functions to that get connected to the widget signals (some might also be directly used and not in this section)
     #
     """
+    """ signal
+    #
+    #   PROJECT COST CALCULATION
+    #
+    """
+    def double_click_pcc(self, item):
+        self.edit_pcc(item.data(1))
+
     """ signal
     #
     #   INVOICE
@@ -1081,6 +1111,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_cost_group_budget_w_VAT.setText(amount_str(budget_w_VAT))
         self.label_cost_group_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
 
+    """ render
+    #
+    #   PROJECT-COST-CALCULATION-TAB
+    #
+    """
+    def render_project_cost_calculations(self, set_width=False):
+        self.activate_person_buttons()
+        amount_cols = ["total_cost"]
+        date_cols = ["date"]
+        helper.render_to_table(content=self.app_data.project.project_cost_calculations,
+                                table=self.tableWidget_project_cost_calculations,
+                                cols=self.project_cost_calculation_cols,
+                                titles=self.app_data.titles,
+                                amount_cols=amount_cols,
+                                date_cols=date_cols,
+                                currency=self.currency,
+                                set_width=set_width)
 
     """ render
     #
@@ -1254,6 +1301,22 @@ class MainWindow(QtWidgets.QMainWindow):
             self.app_data.project.client = person
             """ logging """
             debug.log(f"Client set to: {person.first_name}, {person.last_name}")
+
+    """ func
+    #
+    #   PROJECT COST CALCULATION
+    #
+    """
+    @debug.log
+    def input_pcc_to_project(self):
+        pcc = helper.input_pcc(self.app_data)
+        self.update_ui()
+
+    @debug.log
+    def edit_pcc(self, pcc):
+        pcc = helper.edit_pcc(self.app_data, pcc)
+        if pcc:
+            self.update_ui()
 
     """ func
     #

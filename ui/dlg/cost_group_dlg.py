@@ -6,6 +6,7 @@
 """
 
 from PyQt5 import QtWidgets, QtGui, uic
+from PyQt5.QtWidgets import QDialogButtonBox
 
 from ui import dlg, helper
 from ui.helper import str_to_float, two_inputs_to_float, amount_str, rnd
@@ -71,6 +72,13 @@ class CostGroupDialog(QtWidgets.QDialog):
         self.lineEdit_budget_1.setValidator(onlyInt)
         self.lineEdit_budget_2.setValidator(onlyInt)
 
+    def activate_ok_button(self):
+        args = self.get_input()
+        if len(args["name"])>0 and len(str(args["id"]))>0:
+            self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
+        else:
+            self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
+
     def update_ui(self):
         #""" update the values of the labels """#
         args = self.get_input()
@@ -78,6 +86,7 @@ class CostGroupDialog(QtWidgets.QDialog):
         budget_w_VAT = args["budget"] + budget_VAT_amount
         self.set_labels(budget_w_VAT=budget_w_VAT,
             budget_VAT_amount=budget_VAT_amount)
+        self.activate_ok_button()
 
     """
     #
@@ -85,10 +94,6 @@ class CostGroupDialog(QtWidgets.QDialog):
     #   catch the signals from the mainwindow and set functions to them
     #
     """
-    def set_parent_to(self, cost_group):
-        index = self.comboBox_parent.findData(cost_group)
-        self.comboBox_parent.setCurrentIndex(index)
-
     def set_button_actions(self):
         """ delete button """
         self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_cost_group))
@@ -106,6 +111,10 @@ class CostGroupDialog(QtWidgets.QDialog):
     #
     #
     """
+    def set_parent_to(self, cost_group):
+        index = self.comboBox_parent.findData(cost_group)
+        self.comboBox_parent.setCurrentIndex(index)
+
     def set_labels(self, *, budget_w_VAT, budget_VAT_amount):
         """ budget """
         self.label_budget_w_VAT.setText(amount_str(budget_w_VAT))

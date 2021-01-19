@@ -19,9 +19,6 @@ class JobDialog(QtWidgets.QDialog):
         self.app_data = app_data
         self.default_vat = app_data.project.get_vat()
         self.currency = app_data.project.get_currency()
-        self.jobs = app_data.project.jobs
-        self.companies = app_data.project.companies
-        self.trades = app_data.project.trades
         self.sel_company = sel_company
         self.loaded_job = loaded_job
 
@@ -88,12 +85,12 @@ class JobDialog(QtWidgets.QDialog):
 
     def setup_company_combo_box(self):
         self.comboBox_company.addItem("Firma auswählen...", None)
-        for company in self.companies:
+        for company in self.app_data.project.companies:
             self.comboBox_company.addItem(company.name, company)
 
     def setup_trade_combo_box(self):
         self.comboBox_trade.addItem("Gewerk auswählen...", None)
-        for trade in self.trades:
+        for trade in self.app_data.project.trades:
             self.comboBox_trade.addItem(trade.name, trade)
 
     def set_default_labels(self):
@@ -196,8 +193,10 @@ class JobDialog(QtWidgets.QDialog):
     """
     def button_remove_psd(self):
         psd = self.treeWidget_paid_safety_deposits.currentItem().data(1, QtCore.Qt.UserRole)
-        self.paid_safety_deposits.remove(psd)
-        self.update_ui()
+        reply = helper.delete_prompt(self)
+        if reply:
+            self.remove_psd(psd)
+            self.update_ui()
 
     def double_click_invoice_tree(self, item):
         self.edit_invoice(item.data(1, QtCore.Qt.UserRole))
@@ -228,6 +227,10 @@ class JobDialog(QtWidgets.QDialog):
         paid_safety_deposit_args = dlg.open_pay_safety_deposit_dialog()
         if paid_safety_deposit_args:
             self.paid_safety_deposits.append(paid_safety_deposit_args)
+        self.update_ui()
+
+    def remove_psd(self, psd):
+        self.paid_safety_deposits.remove(psd)
         self.update_ui()
 
     def edit_invoice(self, invoice):

@@ -13,9 +13,10 @@ from core.obj import corp, arch, proj
 
 class Project(IdObject):
 
-    def __init__(self, identifier, *, config=None, uid=None, deleted=False,  construction_scheme="", address=None, client=None, project_data=None,
-                        companies=None, trades=None, cost_groups=None, invoices=None, jobs=None, people=None, commissioned_date=None,
-                        planning_finished_date = None, billed_date=None, planning_status=None, address_uid=None, client_uid=None
+    def __init__(self, identifier, *, config=None, uid=None, deleted=False,  construction_scheme="", address=None, client=None,
+                        project_data=None, project_cost_calculations=None, companies=None, trades=None, cost_groups=None,
+                        invoices=None, jobs=None, people=None, commissioned_date=None, planning_finished_date = None,
+                        billed_date=None, planning_status=None, address_uid=None, client_uid=None
                         ):
         super().__init__(self, uid=uid, deleted=deleted)
 
@@ -35,6 +36,10 @@ class Project(IdObject):
         #       Object containing more detailed project data like usable floor space.
         #       For more informations look at obj.proj.ProjectData.
         self._project_data = project_data
+        #   ProjectCostCalculations
+        #       TODO: descr
+        #       TODO: descr
+        self._project_cost_calculations = project_cost_calculations if project_cost_calculations is not None else list()
         """
         #   Companies, Trades and COST_GROUPS
         #       These lists are initialized with the default lists and can be
@@ -111,6 +116,24 @@ class Project(IdObject):
 
     """ properties
     #
+    #   ProjectCostCalculations
+    #
+    """
+    @property
+    def project_cost_calculations(self):
+        return [pcc for pcc in self._project_cost_calculations if pcc.is_not_deleted()]
+    @project_cost_calculations.setter
+    def project_cost_calculations(self, project_cost_calculations):
+        if not(self._project_cost_calculations):
+            self._project_cost_calculations = project_cost_calculations
+        else:
+            raise Exception("Existing list of project_cost_calculations is non-empty.")
+
+    def get_deleted_project_cost_calculations(self):
+        return [pcc for pcc in self._project_cost_calculations if pcc.is_deleted()]
+
+    """ properties
+    #
     #   Companies
     #
     """
@@ -123,6 +146,7 @@ class Project(IdObject):
             self._companies = companies
         else:
             raise Exception("Existing list of companies is non-empty.")
+
     def get_deleted_companies(self):
         return [company for company in self._companies if company.is_deleted()]
 
@@ -143,6 +167,7 @@ class Project(IdObject):
             self._trades = trades
         else:
             raise Exception("Existing list of trades is non-empty.")
+
     def get_deleted_trades(self):
         return [trade for trade in self._trades if trade.is_deleted()]
 
@@ -155,6 +180,7 @@ class Project(IdObject):
             self._cost_groups = cost_groups
         else:
             raise Exception("Existing list of cost_groups is non-empty.")
+
     def get_deleted_cost_groups(self):
         return [cost_group for cost_group in self._cost_groups if cost_group.is_deleted()]
 
@@ -201,6 +227,7 @@ class Project(IdObject):
             self._jobs = jobs
         else:
             raise Exception("Existing jobs of companies is non-empty.")
+
     def get_deleted_jobs(self):
         return [job for job in self._jobs if job.is_deleted()]
 
@@ -224,6 +251,7 @@ class Project(IdObject):
             self._people = people
         else:
             raise Exception("Existing list of people is non-empty.")
+
     def get_deleted_people(self):
         return [person for person in self._people if person.is_deleted()]
 
@@ -304,6 +332,30 @@ class Project(IdObject):
     """
     """ func
     #
+    #   ProjectCostCalculation
+    #
+    """
+    @debug.log
+    def input_new_pcc(self, input_pcc_args):
+        new_pcc = ProjectCostCalculation(**input_pcc_args)
+        self.add_pcc(new_pcc)
+        return new_pcc
+
+    @debug.log
+    def add_pcc(self, pcc):
+        if isinstance(pcc, ProjectCostCalculation):
+            self._project_cost_calculations.append(pcc)
+        else:
+            raise TypeError("pcc is not an ProjectCostCalculation type.")
+
+    @debug.log
+    def delete_pcc(self, pcc):
+        pcc.delete()
+        #TODO: What happens with linked objects?
+        return pcc
+
+    """ func
+    #
     #   Jobs
     #
     """
@@ -325,6 +377,12 @@ class Project(IdObject):
         job.delete()
         #TODO: What happens with linked objects?
         return job
+
+    def job_exists(self, id, company):
+        exists = [job for job in self.jobs if job.id == id and job.company is company]
+        if exists:
+            return True
+        return False
 
     """ func
     #
@@ -459,6 +517,18 @@ class Project(IdObject):
         #TODO: What happens with linked objects?
         return cost_group
 
+    #   Check, if setting the parent to an existing
+    #   cost_group is allowed (i.e. there is no recursion)
+    @debug.log
+    def cost_group_parent_allowed(self, cost_group, parent):
+        if parent.parent:
+            if parent.parent is cost_group:
+                return False
+            else:
+                self.cost_group_parent_allowed(cost_group, parent.parent)
+        else:
+            return True
+
     """ func
     #
     #   People
@@ -521,6 +591,7 @@ class Project(IdObject):
     def restore(self):
         self.restore_client()
         self.restore_people()
+        self.restore_project_cost_calculations()
         self.restore_companies()
         self.restore_jobs()
         self.restore_invoices()
@@ -534,6 +605,11 @@ class Project(IdObject):
             self._client_uid = None
         elif self._client_uid and self.client:
             raise Exception(f"Cannot restore client: client_uid ({self._client_uid}) stored and the client (uid: {self.client.uid}) was already set.")
+
+    @debug.log
+    def restore_project_cost_calculations(self):
+        for pcc in self.project_cost_calculations:
+            pcc.restore(self)
 
     @debug.log
     def restore_people(self):
@@ -573,12 +649,6 @@ class Project(IdObject):
     def has_been_saved(self):
         return True if self.config["user_save"]["path"] else False
 
-    def job_exists(self, id, company):
-        exists = [job for job in self.jobs if job.id == id and job.company is company]
-        if exists:
-            return True
-        return False
-
 """
 #
 #   ProjectData
@@ -589,9 +659,12 @@ class Project(IdObject):
 class ProjectData(IdObject):
     """ docstring for ProjectData """
 
-    def __init__(self, *, uid=None, deleted=False,  commissioned_services=None, property_size=None, usable_floor_space_nuf=None,
-        usable_floor_space_bgf=None, building_class=None, construction_costs_kg300_400=None,
-        production_costs=None, contract_fee=None, execution_period=None):
+    def __init__(self, commissioned_services=None, property_size=None,
+                    usable_floor_space_nuf=None, usable_floor_space_bgf=None,
+                    building_class=None, construction_costs_kg300_400=None,
+                    production_costs=None, contract_fee=None, execution_period=None,
+                    *, uid=None, deleted=False
+                    ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.commissioned_services = commissioned_services
         self.property_size = property_size
@@ -614,40 +687,155 @@ class ProjectData(IdObject):
 """
 class ProjectCostCalculation(IdObject):
     """docstring for CostCalculation"""
-    def __init__(self, uid=None, deleted=False, calculation_date=None, inventory=None):
+    def __init__(self, name, uid=None, deleted=False, date=None, inventory=None):
         super().__init__(self, uid=uid, deleted=deleted)
-        self.calculation_date = calculation_date if calculation_date else datetime.now()
+        self.name = name
+        self.date = date
         self._inventory = inventory if inventory else list()
 
-    def add_inventory_item(self, name, decription, price_per_unit, units, unit_type, is_active, cost_group, trade):
-        args = {
-                "name": name,
-                "decription": decription,
-                "price_per_unit": price_per_unit,
-                "units": units,
-                "unit_type": unit_type,
-                "cost_group": cost_group,
-                "trade": trade,
-                "is_active":is_active
-                }
-        self._inventory.append(InventoryItem(**args))
+    """
+    #
+    #   PROPERTIES
+    #
+    #
+    """
+    @property
+    def inventory(self):
+        return [item for item in self._inventory if item.is_not_deleted()]
+    def add_inventory_item(self, inventory_item):
+        self._inventory.append(inventory_item)
+    def delete_inventory_item(self, inventory_item):
+        inventory_item.delete()
+
+    @property
+    def total_cost(self):
+        return sum(item.total_price for item in self.inventory if item.is_active)
+
+    """
+    #
+    #   Cost Prognosis
+    #       Make a prognosis of the costs of a project via the inventory
+    #
+    """
+    def get_cost_group_prognosis(self, cost_group):
+        cost_group_sum = sum(item.total_price for item in self.inventory if item.is_active and item.cost_group is cost_group)
+        if cost_group.parent is not None:
+            return cost_group_sum+self.get_cost_group_prognosis(cost_group.parent)
+        else:
+            return cost_group_sum
+
+    def get_trade_prognosis(self, trade):
+        trade_sum = sum(item.total_price for item in self.inventory if item.is_active and item.trade is trade)
+        return trade_sum
+
+    """
+    #
+    #   MANIPULATE
+    #   Fuctions manipulating the cost_group
+    #
+    """
+    @debug.log
+    def update(self, name, date, inventory):
+        self.name = name
+        self.date = date
+        self._inventory = inventory
+        """ set edited date """
+        self.edited()
+
+    """
+    #
+    #   RESTORE
+    #   Fuctions to restore pointers
+    #
+    """
+    @debug.log
+    def restore(self, project):
+        self.restore_items(project)
+
+    @debug.log
+    def restore_items(self, project):
+        for item in self._inventory:
+            item.restore(project)
 
 class InventoryItem(IdObject):
     """docstring for InventoryItem"""
-    def __init__(self, name, *, uid=None, deleted=False,
-                        decription, price_per_unit, units, unit_type,
-                        is_active=True, cost_group=None,
-                        cost_group_uid=None, trade=None, trade_uid=None,):
+    def __init__(self, name, *, description="", price_per_unit=0, units=0,
+                        unit_type="", is_active=True,
+                        cost_group=None, cost_group_uid=None,
+                        trade=None, trade_uid=None,
+                         uid=None, deleted=False
+                        ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
         self.description = description
         self.price_per_unit = price_per_unit
         self.units = units
         self.unit_type = unit_type
+        #   is_active
+        #       count the item in the calculation only if True
         self.is_active = is_active
         self.cost_group = cost_group
         self.trade = trade
 
         """ for restoration only """
-        self.cost_group_uid = cost_group_uid
-        self.trade_uid = self.trade_uid
+        self._cost_group_uid = cost_group_uid
+        self._trade_uid = trade_uid
+
+    """
+    #
+    #   PROPERTIES
+    #
+    #
+    """
+    @property
+    def total_price(self):
+        return self.price_per_unit * self.units
+    """
+    #
+    #   MANIPULATE
+    #   Fuctions manipulating the cost_group
+    #
+    """
+    @debug.log
+    def update(self, name, description, price_per_unit, units,
+                    unit_type, is_active, cost_group, trade):
+        self.name = name
+        self.description = description
+        self.price_per_unit = price_per_unit
+        self.units = units
+        self.unit_type = unit_type
+        #   is_active
+        #       count the item in the calculation only if True
+        self.is_active = is_active
+        self.cost_group = cost_group
+        self.trade = trade
+        """ set edited date """
+        self.edited()
+
+
+    """
+    #
+    #   RESTORE
+    #   Fuctions to restore pointers
+    #
+    """
+    @debug.log
+    def restore(self, project):
+        self.restore_cost_group(project.cost_groups)
+        self.restore_trade(project.trades)
+
+    @debug.log
+    def restore_cost_group(self, cost_groups):
+        if self._cost_group_uid and not(self.cost_group):
+            self.cost_group = [cost_group for cost_group in cost_groups if cost_group.uid == self._cost_group_uid][0]
+            self._cost_group_uid = None
+        elif self._cost_group_uid and self.cost_group:
+            raise Exception(f"Cannot restore cost_group: cost_group_uid ({self._cost_group_uid}) stored and the cost_group (uid: {self.cost_group.uid}) was already set.")
+
+    @debug.log
+    def restore_trade(self, trades):
+        if self._trade_uid and not(self.trade):
+            self.trade = [trade for trade in trades if trade.uid == self._trade_uid][0]
+            self._trade_uid = None
+        elif self._trade_uid and self.trade:
+            raise Exception(f"Cannot restore trade: trade_uid ({self._trade_uid}) stored and the trade (uid: {self.trade.uid}) was already set.")

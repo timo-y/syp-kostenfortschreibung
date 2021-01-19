@@ -6,6 +6,7 @@
 """
 
 from PyQt5 import QtWidgets, QtGui, uic
+from PyQt5.QtWidgets import QDialogButtonBox
 
 from ui import dlg, helper
 from ui.helper import two_inputs_to_float, amount_str, rnd
@@ -65,6 +66,21 @@ class CompanyDialog(QtWidgets.QDialog):
     def set_validators(self):
         pass
 
+    def activate_edit_person_button(self):
+        if self.sel_contact_person:
+            self.pushButton_add_contact_person.setEnabled(False)
+            self.pushButton_edit_contact_person.setEnabled(True)
+        else:
+            self.pushButton_add_contact_person.setEnabled(True)
+            self.pushButton_edit_contact_person.setEnabled(False)
+
+    def activate_ok_button(self):
+        args = self.get_input()
+        if len(args["name"])>0:
+            self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
+        else:
+            self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
+
     def update_ui(self):
         self.activate_edit_person_button()
         sel_c_p_first_name = self.sel_contact_person.first_name if self.sel_contact_person else "-"
@@ -74,14 +90,7 @@ class CompanyDialog(QtWidgets.QDialog):
                         budget_VAT_amount=args["budget"]*self.vat,
                         contact_person_first_name=sel_c_p_first_name,
                         contact_person_last_name=sel_c_p_last_name)
-
-    def activate_edit_person_button(self):
-        if self.sel_contact_person:
-            self.pushButton_add_contact_person.setEnabled(False)
-            self.pushButton_edit_contact_person.setEnabled(True)
-        else:
-            self.pushButton_add_contact_person.setEnabled(True)
-            self.pushButton_edit_contact_person.setEnabled(False)
+        self.activate_ok_button()
     """
     #
     #   SIGNALS, ACTIONS & BUTTONS

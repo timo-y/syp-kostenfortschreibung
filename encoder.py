@@ -85,6 +85,45 @@ class ProjectDataEncoder(JSONEncoder):
             return encoded_project_data
         return JSONEncoder.default(self, o)
 
+class ProjectCostCalculationEncoder(JSONEncoder):
+    @debug.log
+    def default(self, o):
+        if isinstance(o, proj.ProjectCostCalculation):
+            encoded_pcc = {
+                # meta data
+                o.__class__.__name__: True,
+                "uid": o.uid_to_json(),
+                "deleted": o.is_deleted(),
+                #  data
+                "name": o.name,
+                "date": o.date.toString(),
+                "inventory": [InventoryItemEncoder().default(item) for item in o.inventory]
+            }
+            return encoded_pcc
+        return JSONEncoder.default(self, o)
+
+class InventoryItemEncoder(JSONEncoder):
+    @debug.log
+    def default(self, o):
+        if isinstance(o, proj.InventoryItem):
+            encoded_inventory_item = {
+                # meta data
+                o.__class__.__name__: True,
+                "uid": o.uid_to_json(),
+                "deleted": o.is_deleted(),
+                #  data
+                "name": o.name,
+                "description": o.description,
+                "price_per_unit": o.price_per_unit,
+                "units": o.units,
+                "unit_type": o.unit_type,
+                "is_active": o.is_active,
+                "cost_group_uid": o.cost_group.uid_to_json(),
+                "trade_uid": o.trade.uid_to_json()
+            }
+            return encoded_inventory_item
+        return JSONEncoder.default(self, o)
+
 class CompanyEncoder(JSONEncoder):
     @debug.log
     def default(self, o):

@@ -256,11 +256,12 @@ class Job(IdObject):
 class Invoice(IdObject):
     """docstring for Invoice"""
 
-    def __init__(self, *, id=None, uid=None, deleted=False,  company=None, job=None, cumulative=True,
-                    invoice_date=None, inbox_date=None, checked_date=None,
-                    amount=0, verified_amount=0, rebate=0, reduction_insurance_costs=0,
-                    reduction_usage_costs=0, reduce_prev_invoices=True, prev_invoices=None, prev_invoices_uids=None,
-                    prev_invoices_amount=None, VAT=DEFAULT_VAT, safety_deposit=0, safety_deposit_amount=None, discount=0,
+    def __init__(self, id="", *, uid=None, deleted=False,  company=None,
+                    job=None, cumulative=True, invoice_date=None, inbox_date=None,
+                    checked_date=None, amount=0, verified_amount=0, rebate=0,
+                    reduction_insurance_costs=0, reduction_usage_costs=0, reduce_prev_invoices=True,
+                    prev_invoices=None, prev_invoices_uids=None, prev_invoices_amount=None,
+                    VAT=DEFAULT_VAT, safety_deposit=0, safety_deposit_amount=None, discount=0,
                     due_date=None, due_date_discount=None, company_uid=None, job_uid=None
                     ):
         super().__init__(self, uid=uid, deleted=deleted)
@@ -277,6 +278,7 @@ class Invoice(IdObject):
         self.reduction_insurance_costs = reduction_insurance_costs
         self.reduction_usage_costs = reduction_usage_costs
         self.reduce_prev_invoices = reduce_prev_invoices
+        # TODO: maybe introduce self.payments if an invoice is payed by parts
         self._prev_invoices = prev_invoices if prev_invoices is not None else list()
         self._prev_invoices_amount =  self.get_prev_invoices_amount() if prev_invoices_amount is None else prev_invoices_amount
         self.VAT = VAT

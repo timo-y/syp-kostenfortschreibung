@@ -14,6 +14,7 @@ from datetime import datetime
 from PyQt5.QtCore import QDate
 
 from core.obj import corp, proj, arch, uid
+
 #maybe stupid
 class AllDecoder(JSONDecoder):
     def __init__(self):
@@ -107,6 +108,45 @@ class ProjectDataDecoder(JSONDecoder):
                 "execution_period" : (QDate.fromString(dct["execution_period"][0]), QDate.fromString(dct["execution_period"][1])) if dct["execution_period"] else None
             }
             return proj.ProjectData(**args)
+        return dct
+
+class ProjectCostCalculationDecoder(JSONDecoder):
+    def __init__(self):
+        JSONDecoder.__init__(self, object_hook=self.dict_to_object)
+
+    @debug.log
+    def dict_to_object(self, dct):
+        if "ProjectCostCalculation" in dct:
+            args = {
+                "uid": UIDDecoder().object_hook(dct["uid"]),
+                "deleted": dct["deleted"],
+                "name": dct["name"],
+                "date": QDate.fromString(dct["date"]),
+                "inventory": [InventoryItemDecoder().object_hook(item) for item in dct["inventory"]]
+            }
+            return proj.ProjectCostCalculation(**args)
+        return dct
+
+class InventoryItemDecoder(JSONDecoder):
+    def __init__(self):
+        JSONDecoder.__init__(self, object_hook=self.dict_to_object)
+
+    @debug.log
+    def dict_to_object(self, dct):
+        if "InventoryItem" in dct:
+            args = {
+                "uid": UIDDecoder().object_hook(dct["uid"]),
+                "deleted": dct["deleted"],
+                "name": dct["name"],
+                "description": dct["description"],
+                "price_per_unit": dct["price_per_unit"],
+                "units": dct["units"],
+                "unit_type": dct["unit_type"],
+                "is_active": dct["is_active"],
+                "cost_group_uid": UIDDecoder().object_hook(dct["cost_group_uid"]),
+                "trade_uid": UIDDecoder().object_hook(dct["trade_uid"]),
+            }
+            return proj.InventoryItem(**args)
         return dct
 
 class CompanyDecoder(JSONDecoder):

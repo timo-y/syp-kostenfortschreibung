@@ -115,9 +115,10 @@ class AppData:
         loaded_args = zipr.open_project(filename)
         self.project = loaded_args["project"]
         self.project.config = loaded_args["project_config"]
+        self.project.project_cost_calculations = loaded_args["project_cost_calculations"]
         self.project.companies = loaded_args["companies"]
         self.project.trades = loaded_args["trades"]
-        self.project._invoices = loaded_args["invoices"]
+        self.project.invoices = loaded_args["invoices"]
         self.project.jobs = loaded_args["jobs"]
         self.project.people = loaded_args["people"]
         self.project.cost_groups = loaded_args["cost_groups"]
@@ -204,17 +205,36 @@ class AppData:
     def output_check_invoice(self, invoice):
         folder_name = self.get_invoice_check_folder_name(invoice)
         create_at_path = os.path.join(self.get_app_invoice_check_dir(), folder_name)
+        """
+        #
+        #   INVOICE CHECK
+        #   First we create the regular invoice check document
+        #
+        """
         # Create xlsx-File
-        xlsx_template = templatr.InvoiceCheckExcelTemplate(project_identifier=self.project.identifier,
-                                                            app_data_config=self.config,
+        invoice_check_xlsx = templatr.InvoiceCheckExcelTemplate(app_data=self,
                                                             invoice=invoice,
                                                             save_dir=create_at_path)
-        xlsx_template.make_file()
+        invoice_check_xlsx.make_file()
         # Export PDF
-        dir_path = os.path.dirname(os.path.realpath(xlsx_template.save_path))
-        pdf_filename = f"{xlsx_template.filename}.pdf"
+        dir_path = os.path.dirname(os.path.realpath(invoice_check_xlsx.save_path))
+        pdf_filename = f"{invoice_check_xlsx.filename}.pdf"
         pdf_save_path = os.path.join(dir_path, pdf_filename)
-        pdfexportr.PDFExportr().create_pdf(xlsx_template.save_path, pdf_save_path)
+        pdfexportr.PDFExportr().create_pdf(invoice_check_xlsx.save_path, pdf_save_path)
+
+        """
+        #
+        #   COMPANY OVERVIEW
+        #   Secondly, we create the overview of the company jobs and invoices
+        #
+        """
+        # Create xlsx-File
+        job_overview_xlsx = templatr.JobOverviewExcelTemplate(app_data=self,
+                                                            company=invoice.company,
+                                                            save_dir=create_at_path)
+        job_overview_xlsx.make_file()
+        # TODO: Export PDF
+
         """
         #   First copy and move to the invoice check path
         """

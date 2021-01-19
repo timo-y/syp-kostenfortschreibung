@@ -14,6 +14,26 @@ def open_project_dialog(app_data, loaded_project=None):
     if input_project_args:
         return input_project_args
 
+def open_project_cost_calculation_dialog(app_data, loaded_pcc=None):
+    pcc_dlg = dlg.ProjectCostCalculationDialog(app_data=app_data, loaded_pcc=loaded_pcc)
+    dialog_output = pcc_dlg.exec_()
+    if dialog_output:
+        exit_state, input_pcc_args = dialog_output
+        if exit_state==1:
+            return input_pcc_args
+        elif exit_state==-1:
+            return "delete"
+
+def open_inventory_item_dialog(app_data, loaded_inventory_item=None):
+    inventory_item_dlg = dlg.InventoryItemDialog(app_data=app_data, loaded_inventory_item=loaded_inventory_item)
+    dialog_output = inventory_item_dlg.exec_()
+    if dialog_output:
+        exit_state, input_inventory_item_args = dialog_output
+        if exit_state==1:
+            return input_inventory_item_args
+        elif exit_state==-1:
+            return "delete"
+
 def open_person_dialog(loaded_person=None):
     person_dlg = dlg.PersonDialog(loaded_person=loaded_person)
     dialog_output = person_dlg.exec_()
@@ -64,8 +84,8 @@ def open_company_dialog(app_data, loaded_company=None):
         elif exit_state==-1:
             return "delete"
 
-def open_trade_dialog(app_data, loaded_trade=None):
-    trade_dlg = dlg.TradeDialog(app_data=app_data, loaded_trade=loaded_trade)
+def open_trade_dialog(app_data, loaded_trade=None, sel_cost_group=None):
+    trade_dlg = dlg.TradeDialog(app_data=app_data, loaded_trade=loaded_trade, sel_cost_group=sel_cost_group)
     dialog_output = trade_dlg.exec_()
     if dialog_output:
         exit_state, input_trade_args = dialog_output

@@ -231,23 +231,19 @@ class InvoiceDialog(QtWidgets.QDialog):
     #
     """
     def add_new_company(self):
-        input_company_args = dlg.open_company_dialog(app_data=self.app_data)
-        if input_company_args:
-            input_company = self.app_data.project.input_new_company(input_company_args)
+        input_company = helper.input_company(app_data=self.app_data)
+        if input_company:
             self.setup_combo_boxes()
             self.set_company_to(input_company)
-            print(f"New company added: {input_company.name}, {input_company.uid}")
 
     def add_new_job(self):
         args = self.get_input()
         sel_company = args["company"]
-        input_job_args = dlg.open_job_dialog(app_data=self.app_data, sel_company=sel_company)
-        if input_job_args:
-            input_job = self.app_data.project.input_new_job(input_job_args)
+        input_job = helper.input_job(app_data=self.app_data, sel_company=sel_company)
+        if input_job:
             self.setup_combo_boxes()
             self.set_company_to(input_job.company)
             self.set_job_to(input_job)
-            print(f"New job added: {input_job.id}, {input_job.uid}")
 
     def update_prev_invoices(self):
         args = self.get_input()

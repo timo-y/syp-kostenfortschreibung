@@ -16,8 +16,6 @@ import logging.handlers
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
-import qdarkstyle
-
 from ui import mainwindow
 from core import api
 
@@ -50,11 +48,6 @@ class Application(QtWidgets.QApplication):
     """
     @debug.log
     def initialize_style(self):
-        # TODO: StyleChanger
-        # QDarkStyleSheet
-        #stylesheet = qdarkstyle.load_stylesheet_pyqt5()
-        #self.setStyleSheet(stylesheet)
-
         stylesheet_path = os.path.join("qss","style.qss")
         with open(stylesheet_path,"r") as file:
             stylesheet = file.read()

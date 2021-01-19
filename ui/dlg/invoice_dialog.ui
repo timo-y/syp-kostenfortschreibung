@@ -1567,6 +1567,9 @@
        <pointsize>8</pointsize>
       </font>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::ClickFocus</enum>
+     </property>
      <property name="text">
       <string>Rechnung löschen</string>
      </property>
@@ -1627,8 +1630,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1055</x>
-     <y>513</y>
+     <x>1234</x>
+     <y>661</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -1643,8 +1646,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1055</x>
-     <y>513</y>
+     <x>1234</x>
+     <y>661</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

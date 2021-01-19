@@ -7,6 +7,7 @@
 import debug
 
 import openpyxl
+from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from openpyxl.styles.borders import Border, Side
 
@@ -30,7 +31,7 @@ class Template():
         self.bold_font_header = Font(color="000000", bold=True, size=18)
         self.bold_font_table_header = Font(color="000000", bold=True, size=12)
 
-        self.border_bottom_thick = Border(bottom=Side(style='medium'))
+        self.border_bottom_medium = Border(bottom=Side(style='medium'))
         self.border_bottom_thin = Border(bottom=Side(style='thin'))
         self.border_top_double = Border(top=Side(style='double'))
 
@@ -136,34 +137,16 @@ class InvoiceCheckExcelTemplate(Template):
         j = 0
         for prev_invoice in invoice.prev_invoices:
             invoice_line = [
-                {"cell": f"D{15+j}", "data": prev_invoice.invoice_date.toPyDate()},
+                {"cell": f"C{15+j}", "border": Border(left=Side(style='thin'))},
+                {"cell": f"D{15+j}", "data": prev_invoice.invoice_date.toPyDate(), "number_format": self.date_format},
                 {"cell": f"F{15+j}", "data": prev_invoice.id},
-                {"cell": f"H{15+j}", "data": prev_invoice.verified_amount}
+                {"cell": f"H{15+j}", "data": prev_invoice.verified_amount, "number_format": self.amount_format, "border": Border(right=Side(style='thin'))}
             ]
             self.excel_data.extend(invoice_line)
             j += 1
 
     @debug.log
-    def reformat_template(self):
-        #   format previous invoices tab
-        for i in range(10):
-            #   date column format
-            self.ws[f"D{15+i}"].number_format = self.date_format
-            #   amount column format
-            self.ws[f"H{15+i}"].number_format = self.amount_format
-        self.add_rows(15, self.new_rows)
-        #   Add borders to the newly added rows
-        for j in range(self.new_rows):
-            self.ws[f"C{15+j}"].border = Border(left=Side(style='thin'))
-            self.ws[f"H{15+j}"].border = Border(right=Side(style='thin'))
-            #   date column format
-            self.ws[f"D{15+j}"].number_format = self.date_format
-            #   amount column format
-            self.ws[f"H{15+j}"].number_format = self.amount_format
-
-    @debug.log
     def make_file(self):
-        self.reformat_template()
         self.make_cell(self.excel_data)
         self.save_file()
 
@@ -179,6 +162,8 @@ class JobOverviewExcelTemplate(Template):
         self.filename = filename if filename else "job_overview"
         self.save_dir = save_dir
         self.save_path = os.path.join(self.save_dir, f"{self.filename}.xlsx")
+
+        self.last_row_index = 9
 
         super(JobOverviewExcelTemplate, self).__init__(template_dir=self.template_dir,
                                                         template_filename=self.template_filename,
@@ -208,11 +193,11 @@ class JobOverviewExcelTemplate(Template):
         jobs_of_company = app_data.project.get_jobs_of_company(company)
         for job in jobs_of_company:
             job_lines = [
-                {"cell": f"A{9+j}", "data": f"Auftrag {job.id}", "border": self.border_bottom_thick, "font": self.bold_font_header, "row_height": header_height},
-                {"cell": f"B{9+j}",                              "border": self.border_bottom_thick},
-                {"cell": f"C{9+j}",                              "border": self.border_bottom_thick},
-                {"cell": f"D{9+j}",                              "border": self.border_bottom_thick},
-                {"cell": f"E{9+j}",                              "border": self.border_bottom_thick},
+                {"cell": f"A{9+j}", "data": f"Auftrag {job.id}", "border": self.border_bottom_medium, "font": self.bold_font_header, "row_height": header_height},
+                {"cell": f"B{9+j}",                              "border": self.border_bottom_medium},
+                {"cell": f"C{9+j}",                              "border": self.border_bottom_medium},
+                {"cell": f"D{9+j}",                              "border": self.border_bottom_medium},
+                {"cell": f"E{9+j}",                              "border": self.border_bottom_medium},
 
                 {"cell": f"B{10+j}", "data": titles["trade"],           "font": self.bold_font_table_header},
                 {"cell": f"C{10+j}", "data": titles["cost_group"],      "font": self.bold_font_table_header},
@@ -226,7 +211,7 @@ class JobOverviewExcelTemplate(Template):
             ]
             self.excel_data.extend(job_lines)
             invoice_header_lines = [
-                {"cell": f"A{12+j}", "data": titles["invoices"], "border": self.border_bottom_thin, "font": self.bold_font_table_header, "row_height": header_height},
+                {"cell": f"A{12+j}", "data": titles["invoices"], "border": self.border_bottom_thin, "font": self.normal_font, "row_height": header_height},
                 {"cell": f"B{12+j}",                             "border": self.border_bottom_thin},
                 {"cell": f"C{12+j}",                             "border": self.border_bottom_thin},
                 {"cell": f"D{12+j}",                             "border": self.border_bottom_thin},
@@ -267,8 +252,10 @@ class JobOverviewExcelTemplate(Template):
             self.excel_data.extend(sum_line)
             # add two lines, one is a spacer to the next job
             j += 2
+        self.last_row_index += j
 
     @debug.log
     def make_file(self):
         self.make_cell(self.excel_data)
+        self.ws.print_area = f"A1:E{self.last_row_index}"
         self.save_file()

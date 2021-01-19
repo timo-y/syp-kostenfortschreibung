@@ -7,6 +7,7 @@
 import debug
 
 from datetime import datetime
+from PyQt5.QtCore import QDate
 
 from core.obj import IdObject
 from core.obj import corp, arch, proj
@@ -188,6 +189,10 @@ class Project(IdObject):
     def main_cost_groups(self):
         return [cost_group for cost_group in self._cost_groups if cost_group.is_main_group() and cost_group.is_not_deleted()]
 
+    def get_children_of_cost_group(self, cost_group):
+        return [child for child in self.cost_groups if child.is_sub_group_of(cost_group)]
+
+
     """ properties
     #
     #   Invoices
@@ -353,6 +358,27 @@ class Project(IdObject):
         pcc.delete()
         #TODO: What happens with linked objects?
         return pcc
+
+    """
+    #   APPLY BUDGETS
+    #   After calculating the costs, apply these as budgets
+    """
+    @debug.log
+    def apply_budgets(self, pcc):
+        self.apply_cost_group_budgets(pcc)
+        self.apply_trade_budgets(pcc)
+
+    @debug.log
+    def apply_cost_group_budgets(self, pcc):
+        for cost_group in self.cost_groups:
+            cost_group_children = self.get_children_of_cost_group(cost_group)
+            cost_group.budget = sum(pcc.get_cost_group_prognosis(child) for child in cost_group_children) + pcc.get_cost_group_prognosis(cost_group)
+
+    @debug.log
+    def apply_trade_budgets(self, pcc):
+        for trade in self.trades:
+            trade.budget = pcc.get_trade_prognosis(trade)
+
 
     """ func
     #
@@ -717,12 +743,16 @@ class ProjectCostCalculation(IdObject):
     #       Make a prognosis of the costs of a project via the inventory
     #
     """
+    def get_main_cost_group_prognosis(self, main_cost_group, cost_groups):
+        if main_cost_group.parent is None:
+            cost_group_sum = sum(self.get_cost_group_prognosis(cost_group) for cost_group in cost_groups if (cost_group is main_cost_group or cost_group.is_sub_group_of(main_cost_group)))
+            return cost_group_sum
+        else:
+            raise Exception("cost_group is not a main cost_group!")
+
     def get_cost_group_prognosis(self, cost_group):
         cost_group_sum = sum(item.total_price for item in self.inventory if item.is_active and item.cost_group is cost_group)
-        if cost_group.parent is not None:
-            return cost_group_sum+self.get_cost_group_prognosis(cost_group.parent)
-        else:
-            return cost_group_sum
+        return cost_group_sum
 
     def get_trade_prognosis(self, trade):
         trade_sum = sum(item.total_price for item in self.inventory if item.is_active and item.trade is trade)
@@ -756,6 +786,24 @@ class ProjectCostCalculation(IdObject):
     def restore_items(self, project):
         for item in self._inventory:
             item.restore(project)
+
+    """
+    #
+    #   __FUNCTIONS__
+    #
+    #
+    """
+    def __copy__(self):
+        new_inventory = list()
+        for item in self.inventory:
+            new_item = InventoryItem(name=item.name, description=item.description, price_per_unit=item.price_per_unit,
+                                    units=item.units, unit_type=item.unit_type, is_active=item.is_active, cost_group=item.cost_group,
+                                    cost_group_uid=item._cost_group_uid, trade=item.trade, trade_uid=item._trade_uid)
+            new_inventory.append(new_item)
+        new_pcc = ProjectCostCalculation(name=f"{self.name} copy", date=QDate.currentDate(), inventory=new_inventory)
+        return new_pcc
+
+
 
 class InventoryItem(IdObject):
     """docstring for InventoryItem"""
@@ -807,11 +855,10 @@ class InventoryItem(IdObject):
         #   is_active
         #       count the item in the calculation only if True
         self.is_active = is_active
-        self.cost_group = cost_group
-        self.trade = trade
+        self._cost_group = cost_group
+        self._trade = trade
         """ set edited date """
         self.edited()
-
 
     """
     #

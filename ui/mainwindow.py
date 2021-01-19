@@ -263,7 +263,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_quick_proj_dir.clicked.connect(lambda:self.app_data.open_project_dir())
 
         """ project cost calculation buttons """
-        self.pushButton_add_pcc.clicked.connect(lambda:self.input_pcc_to_project())
+        self.pushButton_new_pcc.clicked.connect(lambda:self.input_pcc_to_project())
+        self.pushButton_edit_pcc.clicked.connect(self.button_edit_pcc)
+        self.pushButton_copy_pcc.clicked.connect(self.button_copy_pcc)
+        self.pushButton_pcc_apply_budgets.clicked.connect(self.button_apply_pcc_budgets)
 
         """ invoice buttons """
         self.pushButton_new_invoice.clicked.connect(self.input_invoice_to_project)
@@ -358,6 +361,27 @@ class MainWindow(QtWidgets.QMainWindow):
     def double_click_pcc(self, item):
         self.edit_pcc(item.data(1))
 
+    def button_edit_pcc(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        if item:
+            self.edit_pcc(item.data(1))
+        else:
+            debug.log_warning("Couldn't edit project_cost_calculation, no project_cost_calculation selected!")
+
+    def button_copy_pcc(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        if item:
+            self.copy_pcc(item.data(1))
+        else:
+            debug.log_warning("Couldn't copy project_cost_calculation, no project_cost_calculation selected!")
+
+    def button_apply_pcc_budgets(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        if item:
+            self.app_data.project.apply_budgets(item.data(1))
+            self.update_ui()
+        else:
+            debug.log_warning("Couldn't apply budgets, no project_cost_calculation selected!")
     """ signal
     #
     #   INVOICE
@@ -558,7 +582,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         #   Number of rows is number of cost_groups plus one summary row
         """
-        self.tableWidget_cost_stand.setRowCount(len(self.app_data.project.cost_groups)+1)
+        self.tableWidget_cost_stand.setRowCount(len(self.app_data.project.main_cost_groups)+1)
         """
         #   Set columns of table to the list self.invoice_cols
         """
@@ -599,7 +623,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "job_sums": amount_w_currency_str(job_sums_total, self.currency),
             "job_sums_w_VAT": amount_w_currency_str(job_sums_total * (1+vat), self.currency),
             "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT_total, self.currency),
-            "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT_total / (trade_budget_total * (1+vat))) if trade_budget_total else "-"
+            "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT_total*100 / (trade_budget_total * (1+vat))) if trade_budget_total else "-"
         }
         col = 0
         font = QtGui.QFont()
@@ -618,9 +642,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def add_cost_group_to_table(self, cost_group, row):
         """ Calculate values """
         vat = self.app_data.project.get_vat()
-        trade_budget = sum([trade.budget for trade in self.app_data.project.trades if trade.cost_group is cost_group])
-        job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and job.trade.cost_group is cost_group])
-        approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job and  invoice.job.trade and invoice.job.trade.cost_group and invoice.job.trade.cost_group is cost_group])
+        trade_budget = sum([trade.budget for trade in self.app_data.project.trades if (trade.cost_group is cost_group or trade.cost_group.is_sub_group_of(cost_group))])
+        job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and (job.trade.cost_group is cost_group or job.trade.cost_group.is_sub_group_of(cost_group))])
+        approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job and  invoice.job.trade and invoice.job.trade.cost_group and (invoice.job.trade.cost_group is cost_group or invoice.job.trade.cost_group.is_sub_group_of(cost_group))])
         """ Create output dictionary """
         cost_group_attr = {
             "cost_group":  cost_group.id,
@@ -632,7 +656,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "job_sums": amount_w_currency_str(job_sums, self.currency),
             "job_sums_w_VAT": amount_w_currency_str(job_sums * (1+vat), self.currency),
             "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT, self.currency),
-            "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT / (trade_budget * (1+vat))) if trade_budget else "-"
+            "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT*100 / (trade_budget * (1+vat))) if trade_budget else "-"
         }
 
         col = 0
@@ -1318,6 +1342,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if pcc:
             self.update_ui()
 
+    @debug.log
+    def copy_pcc(self, pcc):
+        pcc_copy = pcc.__copy__()
+        self.app_data.project.add_pcc(pcc_copy)
+        self.update_ui()
     """ func
     #
     #   INVOICE

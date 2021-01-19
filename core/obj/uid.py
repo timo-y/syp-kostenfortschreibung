@@ -59,7 +59,7 @@ class UID:
         edited_date = None
         self.uid = uuid.uuid4()
         self.created_date = created_date
-        self.edited_dat30e = edited_date
+        self.edited_date = edited_date
 
     """
     #

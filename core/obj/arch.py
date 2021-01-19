@@ -209,6 +209,15 @@ class CostGroup(IdObject):
     def is_sub_group(self):
         return not(self.is_main_group())
 
+    def is_sub_group_of(self, cost_group):
+        if self.parent is None:
+            return False
+        else:
+            if self.parent is cost_group:
+                return True
+            else:
+                return self.parent.is_sub_group_of(cost_group)
+
     """
     #
     #   MANIPULATE

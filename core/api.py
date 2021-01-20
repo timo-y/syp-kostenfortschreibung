@@ -229,11 +229,15 @@ class AppData:
         #
         """
         # Create xlsx-File
-        job_overview_xlsx = templatr.JobOverviewExcelTemplate(app_data=self,
+        job_overview_xlsx = templatr.CompanyOverviewExcelTemplate(app_data=self,
                                                             company=invoice.company,
                                                             save_dir=create_at_path)
         job_overview_xlsx.make_file()
-        # TODO: Export PDF
+        # Export PDF
+        jo_dir_path = os.path.dirname(os.path.realpath(job_overview_xlsx.save_path))
+        jo_pdf_filename = f"{job_overview_xlsx.filename}.pdf"
+        jo_pdf_save_path = os.path.join(jo_dir_path, jo_pdf_filename)
+        pdfexportr.PDFExportr().create_pdf(job_overview_xlsx.save_path, jo_pdf_save_path)
 
         """
         #   First copy and move to the invoice check path
@@ -243,6 +247,7 @@ class AppData:
         if not os.path.exists(inv_check_path):
             os.makedirs(inv_check_path)
         shutil.copy(pdf_save_path, os.path.join(inv_check_path, pdf_filename))
+        shutil.copy(jo_pdf_save_path, os.path.join(inv_check_path, jo_pdf_filename))
         """
         #   Second to the correspondence path
         """
@@ -250,8 +255,8 @@ class AppData:
         # create directory if non-existing
         if not os.path.exists(correspondence_path):
             os.makedirs(correspondence_path)
-
         shutil.copy(pdf_save_path, os.path.join(correspondence_path, pdf_filename))
+        shutil.copy(jo_pdf_save_path, os.path.join(correspondence_path, jo_pdf_filename))
 
     """
     #   OVERVIEWs

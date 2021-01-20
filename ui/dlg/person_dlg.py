@@ -71,10 +71,10 @@ class PersonDialog(QtWidgets.QDialog):
         """ address """
         if address:
             self.lineEdit_street.setText(address.street)
-            self.lineEdit_house_number.setText(address.house_number)
+            self.lineEdit_house_number.setText(str(address.house_number))
             self.lineEdit_city.setText(address.city)
             self.lineEdit_state.setText(address.state)
-            self.lineEdit_zipcode.setText(address.zipcode)
+            self.lineEdit_zipcode.setText(str(address.zipcode))
             self.lineEdit_country.setText(address.country)
 
     def get_input(self):

@@ -75,10 +75,11 @@ class Template():
 class InvoiceCheckExcelTemplate(Template):
     """docstring for InvoiceCheckExcelTemplate"""
     def __init__(self, app_data, invoice, save_dir, filename=None):
+        date = datetime.today().strftime("%Y-%m-%d")
         self.template_dir = app_data.config["template_subdir"]
         self.template_filename = "invoice_check.xlsx"
 
-        self.filename = filename if filename else "invoice_check"
+        self.filename = filename if filename else f"{date}-invoice_check-{invoice.id.replace(' ', '_')}"
         self.save_dir = save_dir
         self.save_path = os.path.join(self.save_dir, f"{self.filename}.xlsx")
 
@@ -151,21 +152,21 @@ class InvoiceCheckExcelTemplate(Template):
         self.save_file()
 
 
-class JobOverviewExcelTemplate(Template):
+class CompanyOverviewExcelTemplate(Template):
     """docstring for JobOverviewExcelTemplate"""
     def __init__(self, app_data, company, save_dir, filename=None):
-        date = datetime.today()
+        date = datetime.today().strftime("%Y-%m-%d")
         self.app_data = app_data
         self.template_dir = app_data.config["template_subdir"]
-        self.template_filename = "job_overview.xlsx"
+        self.template_filename = "company_overview.xlsx"
 
-        self.filename = filename if filename else "job_overview"
+        self.filename = filename if filename else f"{date}-job_overview-{company.name.replace(' ', '_')}"
         self.save_dir = save_dir
         self.save_path = os.path.join(self.save_dir, f"{self.filename}.xlsx")
 
-        self.last_row_index = 9
+        self.last_row_index = 9 # last row used to define the printed area
 
-        super(JobOverviewExcelTemplate, self).__init__(template_dir=self.template_dir,
+        super(CompanyOverviewExcelTemplate, self).__init__(template_dir=self.template_dir,
                                                         template_filename=self.template_filename,
                                                         save_path=self.save_path)
         """

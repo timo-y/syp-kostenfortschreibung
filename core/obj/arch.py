@@ -220,6 +220,18 @@ class CostGroup(IdObject):
 
     """
     #
+    #   GETTER
+    #
+    #
+    """
+    def get_main_cost_group(self):
+        if self.parent is None:
+            return self
+        else:
+            return self.parent.get_main_cost_group()
+
+    """
+    #
     #   MANIPULATE
     #   Fuctions manipulating the cost_group
     #

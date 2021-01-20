@@ -259,7 +259,7 @@ class JobDialog(QtWidgets.QDialog):
         for psd in paid_safety_deposits:
             helper.add_item_to_tree(content_item=psd,
                                     parent=self.treeWidget_paid_safety_deposits,
-                                    cols=[str(psd["date"]), amount_w_currency_str(psd["amount"], self.currency)])
+                                    cols=[str(psd["date"].toPyDate()), amount_w_currency_str(psd["amount"], self.currency)])
             psd_sum += psd["amount"]
         self.label_paid_safety_deposits_sum.setText(amount_str(psd_sum))
 
@@ -270,12 +270,12 @@ class JobDialog(QtWidgets.QDialog):
     #
     """
     def set_to_max_job_number(self):
-        self.set_job_id_to(self.get_max_job_number())
+        self.set_job_id_to(self.get_max_job_number()+1)
 
     def get_max_job_number(self):
         company = self.comboBox_company.currentData()
-        max_job_nr = max([job.id for job in self.app_data.project.jobs if job.company is company]+[0])
-        return max_job_nr+1
+        max_job_nr = self.app_data.project.get_max_job_number(company)
+        return max_job_nr
 
     def set_job_id_to(self, id):
         self.spinBox_id.setValue(id)

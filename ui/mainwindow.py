@@ -4,6 +4,9 @@
 #
 #
 """
+import string
+import random
+
 import debug
 
 import os
@@ -170,6 +173,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.treeWidget_paid_safety_desposits.setHeaderLabels([self.app_data.titles[col] for col in paid_safety_deposits_cols])
         job_additions_cols = ["date", "name", "amount", "comment"]
         self.treeWidget_job_additions.setHeaderLabels([self.app_data.titles[col] for col in job_additions_cols])
+        cost_groups_costs_cols = ["id", "name", "description", "budget"]
+        self.treeWidget_cost_groups.setHeaderLabels([self.app_data.titles[col] for col in cost_groups_costs_cols])
+        pcc_cost_group_costs_cols = ["cost_group", "inventory_items", "prognosed_costs", "prognosed_costs_main_cost_group"]
+        self.treeWidget_pcc_cost_group_details.setHeaderLabels([self.app_data.titles[col] for col in pcc_cost_group_costs_cols])
+        pcc_trade_costs_cols = ["trade", "inventory_items", "prognosed_costs"]
+        self.treeWidget_pcc_trade_details.setHeaderLabels([self.app_data.titles[col] for col in pcc_trade_costs_cols])
 
 
     def enable_ui(self):
@@ -255,6 +264,9 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def set_button_actions(self):
+        """ DEBUG """
+        self.pushButton_TEST.clicked.connect(self.run_test)
+
         """ quick links """
         self.pushButton_quick_new_invoice.clicked.connect(lambda:self.input_invoice_to_project())
         self.pushButton_quick_new_job.clicked.connect(lambda:self.input_job_to_project())
@@ -301,6 +313,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def load_widget_signals(self):
         """ project cost calculation signals """
         self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.double_click_pcc)
+        self.tableWidget_project_cost_calculations.itemClicked.connect(self.click_pcc)
         """ invoice signals """
         self.listWidget_invoices.itemDoubleClicked.connect(self.double_click_invoice)
         self.tableWidget_invoices.itemDoubleClicked.connect(self.double_click_invoice)
@@ -318,8 +331,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tableWidget_trades.itemDoubleClicked.connect(self.double_click_trade)
         self.tableWidget_trades.itemClicked.connect(self.click_trade)
         """ cost_group signals """
-        self.tableWidget_cost_groups.itemDoubleClicked.connect(self.double_click_cost_group)
-        self.tableWidget_cost_groups.itemClicked.connect(self.click_cost_group)
+        #self.tableWidget_cost_groups.itemDoubleClicked.connect(self.double_click_cost_group)
+        #self.tableWidget_cost_groups.itemClicked.connect(self.click_cost_group)
+        self.treeWidget_cost_groups.itemDoubleClicked.connect(self.double_click_cost_group_tree)
+        self.treeWidget_cost_groups.itemClicked.connect(self.click_cost_group_tree)
         """ people signals """
         self.tableWidget_people.itemDoubleClicked.connect(self.double_click_person)
         self.tableWidget_people.itemClicked.connect(self.click_person)
@@ -359,7 +374,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def double_click_pcc(self, item):
-        self.edit_pcc(item.data(1))
+        pcc = item.data(1)
+        self.edit_pcc(pcc)
+
+    def click_pcc(self, item):
+        pcc = item.data(1)
+        self.render_pcc_info(pcc)
 
     def button_edit_pcc(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
@@ -388,7 +408,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def double_click_invoice(self, item):
-        self.edit_invoice(item.data(1))
+        invoice = item.data(1)
+        self.edit_invoice(invoice)
 
     def double_click_invoice_tree(self, item):
         self.edit_invoice(item.data(1, QtCore.Qt.UserRole))
@@ -537,13 +558,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def double_click_cost_group(self, item):
         self.edit_cost_group(item.data(1))
 
+    def double_click_cost_group_tree(self, item):
+        self.edit_cost_group(item.data(1, QtCore.Qt.UserRole))
+
     def click_cost_group(self, item):
         cost_group = item.data(1)
         self.render_cost_group_info(cost_group)
 
+    def click_cost_group_tree(self, item):
+        cost_group = item.data(1, QtCore.Qt.UserRole)
+        self.render_cost_group_info(cost_group)
+
     def button_edit_cost_group(self):
-        if self.tableWidget_cost_groups.currentItem():
-            self.edit_cost_group(self.tableWidget_cost_groups.currentItem().data(1))
+        if len(self.treeWidget_cost_groups.selectedItems())>0:
+            cost_group = self.treeWidget_cost_groups.selectedItems()[0].data(1, QtCore.Qt.UserRole)
+            self.edit_cost_group(cost_group)
         else:
             raise Exception("No cost_group selected!")
 
@@ -568,7 +597,12 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     #
     #   RENDER VIEWS
-    #   functions to render the objects to the respective widgets
+    #   functions to render the objects to the respective widgets.
+    #   Structure:
+    #       - the render_* function will always render the actual items to a table or treewidget
+    #       - the render_*_info function will render the info of a selected item (from above table/tree/list) to the right sidepanel
+    #       - the following functions of each section will be helper functions for the above two (like actually setting text to labels
+    #         or activating buttons etc.).
     #
     """
     """ render
@@ -928,14 +962,14 @@ class MainWindow(QtWidgets.QMainWindow):
         for psd in paid_safety_deposits:
             helper.add_item_to_tree(content_item=psd,
                                     parent=self.treeWidget_paid_safety_desposits,
-                                    cols=[str(psd["date"]), amount_w_currency_str(psd["amount"], self.currency), psd["comment"]])
+                                    cols=[str(psd["date"].toPyDate()), amount_w_currency_str(psd["amount"], self.currency), psd["comment"]])
 
     def set_job_additions_of_job(self, job_additions):
         self.treeWidget_job_additions.clear()
         for job_addition in job_additions:
             helper.add_item_to_tree(content_item=job_addition,
                                     parent=self.treeWidget_job_additions,
-                                    cols=[str(job_addition["date"]), job_addition["name"], amount_w_currency_str(job_addition["amount"], self.currency), job_addition["comment"]])
+                                    cols=[str(job_addition["date"].toPyDate()), job_addition["name"], amount_w_currency_str(job_addition["amount"], self.currency), job_addition["comment"]])
 
     #   Fill the listwidget with the invoices
     def set_invoices_of_job(self, invoices_of_job):
@@ -1088,18 +1122,45 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def render_cost_groups(self, set_width=False):
         self.activate_cost_group_buttons()
-        amount_cols = ["budget"]
-        helper.render_to_table(content=self.app_data.project.cost_groups,
-                                table=self.tableWidget_cost_groups,
-                                cols=self.cost_group_cols,
-                                titles=self.app_data.titles,
-                                amount_cols=amount_cols,
-                                currency=self.currency,
-                                set_width=set_width)
-        item = self.tableWidget_cost_groups.currentItem()
-        if item:
-            curr_cost_group = item.data(1)
+        # TREE WIDGET
+        self.render_cost_groups_to_treewidget()
+        sel_items = self.treeWidget_cost_groups.selectedItems()
+        if len(sel_items)>0:
+            curr_cost_group = sel_items[0].data(1, QtCore.Qt.UserRole)
             self.render_cost_group_info(curr_cost_group)
+
+    """
+    #
+    #   COST GROUPS to TreeWidget
+    #       Its a little harder to get the tree structure, so the following two functions
+    #       help us to render the cost_groups with the tree-structure.
+    """
+    def render_cost_groups_to_treewidget(self):
+        self.treeWidget_cost_groups.clear()
+        for cost_group in self.app_data.project.cost_groups:
+            cols = [
+                str(cost_group.id),
+                cost_group.name,
+                cost_group.description,
+                amount_w_currency_str(cost_group.budget, self.currency)
+                ]
+            self.recursive_cc_nodes(self.treeWidget_cost_groups, cost_group, cols)
+        helper.resize_tree_columns(self.treeWidget_cost_groups)
+
+    def recursive_cc_nodes(self, root, cost_group, cols):
+        if cost_group.parent is None:
+            parent = root
+        else:
+            parent = self.recursive_cc_nodes(root, cost_group.parent, cols)
+        return_node = None
+        existing_nodes = root.findItems(str(cost_group.id), QtCore.Qt.MatchFlag.MatchExactly|QtCore.Qt.MatchFlag.MatchRecursive)
+        if len(existing_nodes) == 0:
+            return_node = helper.add_item_to_tree(content_item=cost_group,
+                                            parent=parent,
+                                            cols=cols)
+        else:
+            return_node = existing_nodes[0]
+        return return_node
 
     def render_cost_group_info(self, cost_group):
         if cost_group.is_not_deleted():
@@ -1110,7 +1171,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reset_cost_group_info()
 
     def activate_cost_group_buttons(self):
-        if self.tableWidget_cost_groups.currentItem():
+        if len(self.treeWidget_cost_groups.selectedItems())>0:
             self.pushButton_edit_cost_group.setEnabled(True)
         else:
             self.pushButton_edit_cost_group.setEnabled(False)
@@ -1152,6 +1213,66 @@ class MainWindow(QtWidgets.QMainWindow):
                                 date_cols=date_cols,
                                 currency=self.currency,
                                 set_width=set_width)
+
+    def render_pcc_info(self, pcc):
+        if pcc.is_not_deleted():
+            args = vars(pcc).copy()
+            self.set_pcc_data(**args,
+                                total_cost=pcc.total_cost)
+            self.set_costs_of_cost_group_of_pcc(pcc)
+            self.set_costs_of_trade_of_pcc(pcc)
+            self.activate_pcc_buttons()
+        else:
+            self.reset_pcc_info()
+
+    def activate_pcc_buttons(self):
+        if self.tableWidget_project_cost_calculations.currentItem():
+            self.pushButton_edit_pcc.setEnabled(True)
+            self.pushButton_copy_pcc.setEnabled(True)
+        else:
+            self.pushButton_edit_pcc.setEnabled(False)
+            self.pushButton_copy_pcc.setEnabled(False)
+
+    def reset_pcc_info(self):
+        self.treeWidget_pcc_cost_group_details.clear()
+        self.treeWidget_pcc_trade_details.clear()
+        self.set_pcc_data()
+        self.activate_pcc_buttons()
+
+    def set_pcc_data(self, *, _uid=None, name="", date="", total_cost=0, **kwargs):
+        """ meta data """
+        self.label_pcc_uid.setText(_uid.labelize() if _uid else "-")
+
+        self.label_pcc_name.setText(str(name))
+        self.label_pcc_date.setText(qdate_to_str(date) if date else "-")
+
+        """ total cost """
+        self.label_pcc_total_cost.setText(amount_w_currency_str(total_cost, self.currency))
+
+    def set_costs_of_cost_group_of_pcc(self, pcc):
+        self.treeWidget_pcc_cost_group_details.clear()
+        for cost_group in self.app_data.project.cost_groups:
+            cols = [
+                str(cost_group.id),
+                str(len(pcc.get_cost_group_items(cost_group))),
+                amount_w_currency_str(pcc.get_cost_group_prognosis(cost_group), self.currency),
+                amount_w_currency_str(pcc.get_main_cost_group_prognosis(cost_group.get_main_cost_group(), self.app_data.project.cost_groups), self.currency)
+            ]
+            self.recursive_cc_nodes(self.treeWidget_pcc_cost_group_details, cost_group, cols)
+        helper.resize_tree_columns(self.treeWidget_pcc_cost_group_details)
+
+    def set_costs_of_trade_of_pcc(self, pcc):
+        self.treeWidget_pcc_trade_details.clear()
+        for trade in self.app_data.project.trades:
+            cols = [
+                str(trade.name),
+                str(len(pcc.get_trade_items(trade))),
+                amount_w_currency_str(pcc.get_trade_prognosis(trade), self.currency)
+            ]
+            helper.add_item_to_tree(content_item=trade,
+                                            parent=self.treeWidget_pcc_trade_details,
+                                            cols=cols)
+        helper.resize_tree_columns(self.treeWidget_pcc_trade_details)
 
     """ render
     #
@@ -1204,10 +1325,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """ address """
         if address:
             self.label_person_street_2.setText(address.street)
-            self.label_person_house_number_2.setText(address.house_number)
+            self.label_person_house_number_2.setText(str(address.house_number))
             self.label_person_city_2.setText(address.city)
             self.label_person_state_2.setText(address.state)
-            self.label_person_zipcode_2.setText(address.zipcode)
+            self.label_person_zipcode_2.setText(str(address.zipcode))
             self.label_person_country_2.setText(address.country)
         else:
             self.label_person_street_2.setText("-")
@@ -1220,7 +1341,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     """
     #
-    #   RENDER INVERACTIONS
+    #   VIEW INVERACTIONS
     #   functions that change views or current tabs
     #
     """
@@ -1340,13 +1461,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def edit_pcc(self, pcc):
         pcc = helper.edit_pcc(self.app_data, pcc)
         if pcc:
+            self.render_pcc_info(pcc)
             self.update_ui()
+            self.activate_pcc_buttons()
 
     @debug.log
     def copy_pcc(self, pcc):
         pcc_copy = pcc.__copy__()
         self.app_data.project.add_pcc(pcc_copy)
         self.update_ui()
+        self.activate_pcc_buttons()
+
     """ func
     #
     #   INVOICE
@@ -1440,7 +1565,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def edit_cost_group(self, cost_group):
         cost_group = helper.edit_cost_group(self.app_data, cost_group)
         if cost_group:
-            self.render_cost_group_info(cost_group)
+            self.reset_cost_group_info()
             self.update_ui()
             self.activate_cost_group_buttons()
 
@@ -1484,6 +1609,152 @@ class MainWindow(QtWidgets.QMainWindow):
     #   DEBUG FUNCTIONS
     #
     """
+    def run_test(self):
+        print("This is a test!")
+        self.add_random_jobs()
+        self.add_random_invoices()
+        self.add_random_psds()
+        self.add_random_job_additions()
+        self.add_random_cost_calculations()
+        self.add_contact_people()
+
+        self.update_ui()
+
+    def add_random_jobs(self, max_jobs=50):
+        number_of_jobs = random.randint(1, max_jobs)
+        for i in range(number_of_jobs):
+            company = random.choice(self.app_data.project.companies)
+            id = self.app_data.project.get_max_job_number(company)+1
+            trade = random.choice(self.app_data.project.trades)
+            job_sum = rnd(random.random()*150000)
+
+            input_job_args = {
+                "company": company,
+                "id": id,
+                "trade": trade,
+                "job_sum": job_sum
+            }
+            self.app_data.project.input_new_job(input_job_args)
+
+    def add_random_invoices(self, max_invoices=150):
+        number_of_invoices = random.randint(1, max_invoices)
+        for i in range(number_of_invoices):
+            invoice_id_length = random.randint(5, 15)
+            invoice_id = id_generator(invoice_id_length)
+            job = random.choice(self.app_data.project.jobs)
+            company = job.company
+            cumulative = random.randint(0,1)
+            w_discount = random.randint(0,1)
+            invoice_date = QDate.currentDate()
+            amount = rnd(random.random()*100000)
+            if cumulative == 1:
+                prev_invoices = self.app_data.project.get_prev_invoices(company=company, job=job, invoice_date=invoice_date, invoice_created_date=datetime.datetime.now())
+                if len(prev_invoices)>0:
+                    amount += prev_invoices[0].amount
+            input_invoice_args = {
+                "id": invoice_id,
+                "job": job,
+                "cumulative": cumulative,
+                "company": company,
+                "invoice_date": invoice_date,
+                "amount": amount,
+                "verified_amount": amount+rnd(random.random()*100)-rnd(random.random()*100),
+                "rebate": rnd(random.random()*0.15),
+                #"reduction_insurance_costs": rnd(random.random()*0.5),
+                #"reduction_usage_costs": rnd(random.random()*0.5),
+                "safety_deposit": rnd(random.random()*0.05),
+                "discount": rnd(random.random()*0.05) if w_discount else 0,
+                "due_date": QDate.currentDate(),
+                "due_date_discount": QDate.currentDate() if w_discount else None,
+            }
+            self.app_data.project.input_new_invoice(input_invoice_args)
+
+    def add_random_psds(self, max_psds=600):
+        number_of_psds = random.randint(1, max_psds)
+        for i in range(number_of_psds):
+            job = random.choice(self.app_data.project.jobs)
+            date = QDate.currentDate()
+            amount = rnd(random.random()*500)
+            comment_length = random.randint(0,350)
+            comment = id_generator(comment_length)
+            job.pay_safety_deposit(date, amount, comment)
+
+    def add_random_job_additions(self, max_job_additions=600):
+        number_of_job_additions = random.randint(1, max_job_additions)
+        for i in range(number_of_job_additions):
+            job = random.choice(self.app_data.project.jobs)
+            date = QDate.currentDate()
+            amount = rnd(random.random()*100000)
+            name_length = random.randint(0,15)
+            name = id_generator(name_length)
+            comment_length = random.randint(0,350)
+            comment = id_generator(comment_length)
+            job.add_job_addition(date, name, amount, comment)
+
+    def add_random_cost_calculations(self, max_cost_calculations=50):
+        number_of_cost_calculations = random.randint(1, max_cost_calculations)
+        for i in range(number_of_cost_calculations):
+
+            name_length = random.randint(0,12)
+            name = id_generator(name_length)
+            pcc = proj.ProjectCostCalculation(name=name, date=QDate.currentDate())
+            self.app_data.project.add_pcc(pcc)
+            number_of_inventory_items = random.randint(1, 150)
+            for j in range(number_of_inventory_items):
+                item = self.random_inventory_item()
+                pcc.add_inventory_item(item)
+
+    def random_inventory_item(self):
+        name_length = random.randint(1,10)
+        description_length = random.randint(0,350)
+        trade = random.choice(self.app_data.project.trades)
+        inventory_item_args = {
+            "name": id_generator(name_length),
+            "description": id_generator(description_length),
+            "price_per_unit": rnd(random.random()*15),
+            "units": random.randint(1,1500),
+            "unit_type": random.choice(["m", "m²", "m³", "kg"]),
+            "is_active": random.randint(0,1),
+            "trade": trade,
+            "cost_group": trade.cost_group
+        }
+        return proj.InventoryItem(**inventory_item_args)
+
+    def add_contact_people(self):
+        for company in self.app_data.project.companies:
+            if company.contact_person is None:
+                random_person = self.random_person()
+                company.add_contact_person(random_person)
+                self.app_data.project.add_person(random_person)
+
+    def random_person(self, company=None):
+        first_name_length = random.randint(1,10)
+        last_name_length = random.randint(1,10)
+
+        person_args = {
+            "first_name": id_generator(first_name_length),
+            "last_name": id_generator(last_name_length),
+            "address": self.random_address(),
+            "telephone": id_generator(size=8, chars=string.digits),
+            "mobile": id_generator(size=10, chars=string.digits),
+            "fax": id_generator(size=8, chars=string.digits),
+            "email": id_generator(9),
+            "company": company
+        }
+        return corp.Person(**person_args)
+
+    def random_address(self):
+        address_args = {
+            "street": id_generator(size=1, chars=string.ascii_uppercase)+id_generator(size=12, chars=string.ascii_lowercase),
+            "house_number": random.randint(1,200),
+            "city": id_generator(size=1, chars=string.ascii_uppercase)+id_generator(size=5, chars=string.ascii_lowercase),
+            "state": id_generator(size=1, chars=string.ascii_uppercase)+id_generator(size=8, chars=string.ascii_lowercase),
+            "zipcode": id_generator(size=6, chars=string.digits),
+            "country": id_generator(size=1, chars=string.ascii_uppercase)+id_generator(size=8, chars=string.ascii_lowercase),
+        }
+        return corp.Address(**address_args)
+
+
     def print_project_info(self):
         if self.app_data.project:
             debug.log(self.app_data.project.__dict__)
@@ -1493,3 +1764,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.app_data.project.invoices:
             for invoice in self.app_data.project.invoices:
                 debug.log(vars(invoice))
+
+
+"""
+#
+#   DEBUG FUNCTIONS
+#
+"""
+def id_generator(size=10, chars=string.ascii_lowercase + string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))

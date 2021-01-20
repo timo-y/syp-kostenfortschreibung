@@ -242,6 +242,9 @@ class Project(IdObject):
     def get_jobs_of_company(self, company):
         return [job for job in self.jobs if job.company is company]
 
+    def get_max_job_number(self, company):
+        return max([job.id for job in self.jobs if job.company is company]+[0])
+
     """ properties
     #
     #   People
@@ -454,19 +457,21 @@ class Project(IdObject):
             invoice.update_prev_invoices_amount()
 
     @debug.log
-    def get_prev_invoices(self, *, invoice=None, invoice_uid=None, company=None, job=None, invoice_date=None, invoice_created_date=None):
+    def get_prev_invoices(self, *, invoice=None, invoice_uid=None, company=None, job=None, invoice_date=None, invoice_created_date=None, cumulative=True):
         prev_invoices = list()
-        if isinstance(invoice, corp.Invoice):
-            invoice_uid = invoice.uid
-            company = invoice.company
-            job = invoice.job
-            invoice_date = invoice.invoice_date
-            invoice_created_date = invoice.uid.created_date
-        if [company, job, invoice_date, invoice_created_date]:
-            """ company and job have to be the same """
-            prev_invoices_company_job = [prev_invoice for prev_invoice in self.invoices if prev_invoice.uid is not invoice_uid and prev_invoice.company is company and prev_invoice.job is job]
-            """ invoice date must be earlier or IF same date, date_created must be earlier """
-            prev_invoices = [prev_invoice for prev_invoice in prev_invoices_company_job if prev_invoice.invoice_date.toJulianDay() < invoice_date.toJulianDay() or (prev_invoice.invoice_date.toJulianDay() == invoice_date.toJulianDay() and prev_invoice.uid.created_date < invoice_created_date)]
+        if cumulative:
+            invoices = [invoice for invoice in self.invoices if invoice.cumulative]
+            if isinstance(invoice, corp.Invoice):
+                invoice_uid = invoice.uid
+                company = invoice.company
+                job = invoice.job
+                invoice_date = invoice.invoice_date
+                invoice_created_date = invoice.uid.created_date
+            if [company, job, invoice_date, invoice_created_date]:
+                """ company and job have to be the same """
+                prev_invoices_company_job = [prev_invoice for prev_invoice in invoices if prev_invoice.uid is not invoice_uid and prev_invoice.company is company and prev_invoice.job is job]
+                """ invoice date must be earlier or IF same date, date_created must be earlier """
+                prev_invoices = [prev_invoice for prev_invoice in prev_invoices_company_job if prev_invoice.invoice_date.toJulianDay() < invoice_date.toJulianDay() or (prev_invoice.invoice_date.toJulianDay() == invoice_date.toJulianDay() and prev_invoice.uid.created_date < invoice_created_date)]
         return prev_invoices
 
     """ func
@@ -730,6 +735,18 @@ class ProjectCostCalculation(IdObject):
         return [item for item in self._inventory if item.is_not_deleted()]
     def add_inventory_item(self, inventory_item):
         self._inventory.append(inventory_item)
+    """
+    #
+    #   Maybe this is not needed
+    #
+    def input_inventory_item(self, name, description="", price_per_unit=0, units=0,
+                            unit_type="", is_active=True, cost_group=None, trade=None):
+        inventory_item = InventoryItem(name=name, description=description,
+                                        price_per_unit=price_per_unit, units=units,
+                                        unit_type=unit_type, is_active=is_active,
+                                        cost_group=cost_group, trade=trade)
+        self.add_inventory_item(inventory_item)
+    """
     def delete_inventory_item(self, inventory_item):
         inventory_item.delete()
 
@@ -743,20 +760,43 @@ class ProjectCostCalculation(IdObject):
     #       Make a prognosis of the costs of a project via the inventory
     #
     """
+    """
+    #
+    #   get_main_cost_group_prognosis
+    #       Since the 100,200,... CostGroups also have their own budgets, the actual budget for the X00 CostGroup
+    #       is the sum of the X00 CostGroup plus the sum of all CostGroups that are below in the CostGroup-tree
+    #       i.e., X00 is their parent or their parents parent
+    #
+    """
     def get_main_cost_group_prognosis(self, main_cost_group, cost_groups):
         if main_cost_group.parent is None:
             cost_group_sum = sum(self.get_cost_group_prognosis(cost_group) for cost_group in cost_groups if (cost_group is main_cost_group or cost_group.is_sub_group_of(main_cost_group)))
             return cost_group_sum
         else:
-            raise Exception("cost_group is not a main cost_group!")
+            raise Exception("main_cost_group is not a main cost_group!")
 
     def get_cost_group_prognosis(self, cost_group):
-        cost_group_sum = sum(item.total_price for item in self.inventory if item.is_active and item.cost_group is cost_group)
+        cost_group_sum = sum(self.get_cost_group_items(cost_group))
         return cost_group_sum
 
     def get_trade_prognosis(self, trade):
-        trade_sum = sum(item.total_price for item in self.inventory if item.is_active and item.trade is trade)
+        trade_sum = sum(self.get_trade_items(trade))
         return trade_sum
+
+    """
+    #
+    #   Items
+    #       Get items of trade/cost_group
+    #
+    """
+    def get_cost_group_items(self, cost_group):
+        cost_group_items = [item.total_price for item in self.inventory if item.is_active and item.cost_group is cost_group]
+        return cost_group_items
+
+    def get_trade_items(self, trade):
+        trade_items = [item.total_price for item in self.inventory if item.is_active and item.trade is trade]
+        return trade_items
+
 
     """
     #

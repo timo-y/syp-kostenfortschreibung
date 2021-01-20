@@ -521,6 +521,15 @@ def select_table_item(table, content_item):
         item_range = QtWidgets.QTableWidgetSelectionRange(row, 0, row, table.columnCount()-1)
         table.setRangeSelected(item_range, True)
         table.setCurrentItem(uid_item)
+"""
+#
+#   FORMAT WIDGETS
+#
+#
+"""
+def resize_tree_columns(treewidget):
+    for i in range(1,treewidget.columnCount()):
+        treewidget.resizeColumnToContents(i)
 
 """
 #

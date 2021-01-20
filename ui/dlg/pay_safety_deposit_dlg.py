@@ -41,7 +41,7 @@ class PaySafetyDepositDialog(QtWidgets.QDialog):
     """
     def get_input(self):
         args = {
-                "date": self.dateEdit_date.date().toPyDate(),
+                "date": self.dateEdit_date.date(),
                 "amount": self.doubleSpinBox_amount.value(),
                 "comment": self.textEdit_comment.toPlainText(),
             }

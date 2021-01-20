@@ -23,6 +23,10 @@ class Company(IdObject):
         """ for restoration only """
         self._contact_person_ref = contact_person_ref
 
+    @debug.log
+    def add_contact_person(self, contact_person):
+        self.contact_person = contact_person
+        contact_person.company = self
     """
     #
     #   UPDATE
@@ -332,7 +336,7 @@ class Invoice(IdObject):
     """ previous payments """
     @property
     def prev_invoices(self):
-        return self._prev_invoices
+        return self._prev_invoices if self.cumulative else list()
     @prev_invoices.setter
     def prev_invoices(self, invoices):
         self._prev_invoices = [invoice for invoice in invoices if self.no_recursion(invoice)]
@@ -352,20 +356,21 @@ class Invoice(IdObject):
             #   Find most max date from previous invoices
             #   then filter previous invoices
             """
-            most_recent_invoice_date = max(invoice.invoice_date for invoice in self.prev_invoices if invoice.cumulative)
-            invoices = [invoice for invoice in self.prev_invoices if invoice.invoice_date == most_recent_invoice_date and invoice.cumulative]
-            if len(invoices)>1:
-                """
-                #
-                #   If there exist more than one previous invoice with
-                #   this date, look at the date created and take the most recent one
-                #   (this is unique).
-                """
-                most_recent_created_date = max(invoice.uid.created_date for invoice in invoices)
-                invoices = [invoice for invoice in invoices if invoice.uid.created_date is most_recent_created_date]
-            return [invoice.verified_amount for invoice in invoices][0]
-        else:
-            return 0
+            cumulative_prev_invoices = [invoice for invoice in self.prev_invoices if invoice.cumulative]
+            if len(cumulative_prev_invoices)>0:
+                most_recent_invoice_date = max(invoice.invoice_date for invoice in cumulative_prev_invoices)
+                invoices = [invoice for invoice in self.prev_invoices if invoice.invoice_date == most_recent_invoice_date and invoice.cumulative]
+                if len(invoices)>1:
+                    """
+                    #
+                    #   If there exist more than one previous invoice with
+                    #   this date, look at the date created and take the most recent one
+                    #   (this is unique).
+                    """
+                    most_recent_created_date = max(invoice.uid.created_date for invoice in invoices)
+                    invoices = [invoice for invoice in invoices if invoice.uid.created_date is most_recent_created_date]
+                return [invoice.verified_amount for invoice in invoices][0]
+        return 0
 
     def update_prev_invoices_amount(self):
         self._prev_invoices_amount = self.get_prev_invoices_amount()
@@ -389,7 +394,7 @@ class Invoice(IdObject):
 
     @property
     def reduction_total(self):
-        return self.reduction_insurance_costs + self.reduction_usage_costs
+        return self.rebate + self.reduction_insurance_costs + self.reduction_usage_costs
 
     @property
     def reduction_total_amount(self):

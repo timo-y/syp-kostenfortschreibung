@@ -249,7 +249,9 @@ class InvoiceDialog(QtWidgets.QDialog):
         args = self.get_input()
         invoice_uid = self.loaded_invoice.uid if self.loaded_invoice else self.tmp_invoice.uid
         invoice_created_date = self.loaded_invoice.uid.created_date if self.loaded_invoice else self.tmp_invoice.uid.created_date
-        self.prev_invoices = self.app_data.project.get_prev_invoices(invoice_uid=invoice_uid, company=args["company"], job=args["job"], invoice_date=args["invoice_date"], invoice_created_date=invoice_created_date)
+        self.prev_invoices = self.app_data.project.get_prev_invoices(invoice_uid=invoice_uid, company=args["company"], job=args["job"],
+                                                                    invoice_date=args["invoice_date"], invoice_created_date=invoice_created_date,
+                                                                    cumulative=args["cumulative"])
 
     """
     #

@@ -292,12 +292,13 @@ class ArchJobDecoder(JSONDecoder):
                 "job_sum": dct["job_sum"],
                 "trade_uid": UIDDecoder().object_hook(dct["trade_uid"]) if dct["trade_uid"] else None,
                 "job_additions": [{
-                    "date": datetime.fromisoformat(job_addition["date"]),
+                    "date": QDate.fromString(job_addition["date"]),
+                    "name": job_addition["name"],
                     "amount": job_addition["amount"],
                     "comment": job_addition["comment"]
                     } for job_addition in dct["job_additions"]],
                 "paid_safety_deposits": [{
-                    "date": datetime.fromisoformat(psd["date"]),
+                    "date": QDate.fromString(psd["date"]),
                     "amount": psd["amount"],
                     "comment": psd["comment"]
                     } for psd in dct["paid_safety_deposits"]]

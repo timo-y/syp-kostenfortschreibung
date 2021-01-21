@@ -127,6 +127,11 @@ def open_delete_prompt(dialog):
     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)
     return reply
 
+def open_u_sure_prompt(dialog):
+    reply = QtWidgets.QMessageBox.question(dialog, 'Übernehmen?', 'Sicher übernehmen?',
+    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Cancel)
+    return reply
+
 def open_save_curr_project_prompt(dialog):
     reply = QtWidgets.QMessageBox.question(dialog, 'Projekt geöffnet...', 'Ein Projekt ist bereits geöffnet. Möchten Sie speichern bevor ein neues geladen wird?',
     QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Cancel)

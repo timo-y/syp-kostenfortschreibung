@@ -27,6 +27,7 @@ from ui.dlg.open_dialogs import open_config_dialog
 from ui.dlg.open_dialogs import open_pay_safety_deposit_dialog
 from ui.dlg.open_dialogs import open_add_job_addition_dialog
 from ui.dlg.open_dialogs import open_delete_prompt
+from ui.dlg.open_dialogs import open_u_sure_prompt
 from ui.dlg.open_dialogs import open_save_curr_project_prompt
 
 del project_dlg

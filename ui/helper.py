@@ -484,7 +484,7 @@ def add_item_to_table(content_item, table, cols, row, date_cols=[], amount_cols=
             sorting_key = date.toJulianDay() if date else float("inf")
             table_item = customqt.DateTableWidgetItem(cell_content, sorting_key=sorting_key)
         elif attr in amount_cols:
-            table_item = QtWidgets.QTableWidgetItem(amount_w_currency_str(getattr(content_item, attr), currency))
+            table_item = customqt.AmountTableWidgetItem(amount_w_currency_str(getattr(content_item, attr), currency), sorting_key=getattr(content_item, attr))
         else:
             table_item = QtWidgets.QTableWidgetItem(str(getattr(content_item, attr)))
         table_item.setData(1, content_item)
@@ -503,7 +503,7 @@ def add_item_to_list(content_item, item_date, item_id, list_widget, tooltip=None
 
 
 def add_item_to_tree(content_item, parent, cols, tooltip=None):
-    item_node = QtWidgets.QTreeWidgetItem(parent, cols)
+    item_node = customqt.TreeWidgetItem(parent, cols) #QtWidgets.QTreeWidgetItem(parent, cols)
     item_node.setData(1, QtCore.Qt.UserRole, content_item)
     if tooltip:
         item_node.setToolTip(1, tooltip)
@@ -530,7 +530,17 @@ def select_table_item(table, content_item):
 def resize_tree_columns(treewidget):
     for i in range(1,treewidget.columnCount()):
         treewidget.resizeColumnToContents(i)
-
+"""
+#
+#   ARE YOU SURE?
+#   Open a prompt asking if sure to do action.
+#
+"""
+def u_sure_prompt(dialog):
+    reply = dlg.open_u_sure_prompt(dialog)
+    if reply == QtWidgets.QMessageBox.Yes:
+        return True
+    return False
 """
 #
 #   DELETE
@@ -577,7 +587,7 @@ def str_to_float(string):
 #   output amounts
 """
 def amount_str(float):
-    if float!=0:
+    if rnd(float)!=0:
         return "{:,.2f}".format(rnd(float)).replace(".","X").replace(",",".").replace("X",",")
     else:
         return "-"

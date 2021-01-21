@@ -4,7 +4,6 @@
 #   This module is for custom PyQt5 objects.
 #
 """
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 """
@@ -18,7 +17,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class TabBar(QtWidgets.QTabBar):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
 
     def tabSizeHint(self, index):
         s = QtWidgets.QTabBar.tabSizeHint(self, index)
@@ -111,83 +109,35 @@ class DateTableWidgetItem(QtWidgets.QTableWidgetItem):
     def __lt__(self, other):
         return self.sorting_key < other.sorting_key
 
-"""
-#
-#   COLLAPSABLE WIDGET
-#   src: https://stackoverflow.com/questions/32476006/how-to-make-an-expandable-collapsable-section-widget-in-qt
-#
-"""
-class Spoiler(QtWidgets.QWidget):
-    def __init__(self, parent=None, title='', animationDuration=300):
+class AmountTableWidgetItem(QtWidgets.QTableWidgetItem):
+    def __init__(self, *args, sorting_key,**kwargs):
+        #call custom constructor with UserType item type
+        super().__init__(*args, **kwargs)
+        self.sorting_key = sorting_key
+    #Qt uses a simple < check for sorting items, override this to use the sortKey
+    def __lt__(self, other):
+        return self.sorting_key < other.sorting_key
+
+class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
+    def __init__(self, *args, **kwargs):
+        QtWidgets.QTreeWidgetItem.__init__(self, *args, **kwargs)
+
+    def __lt__(self, otherItem):
         """
-        References:
-            # Adapted from c++ version
-            http://stackoverflow.com/questions/32476006/how-to-make-an-expandable-collapsable-section-widget-in-qt
+        #
+        #   COMPANRE WHEN SORTING THE COLUMN
+        #       The columns containing money amounts (of the type "12.345,67 €") can't be sorted correctly.
+        #       This "hacky" and unclean approach solves this for now.
+        #
+        #
         """
-        super(Spoiler, self).__init__(parent=parent)
-
-        self.animationDuration = animationDuration
-        self.toggleAnimation = QtCore.QParallelAnimationGroup()
-        self.contentArea = QtGui.QScrollArea()
-        self.headerLine = QtGui.QFrame()
-        self.toggleButton = QtGui.QToolButton()
-        self.mainLayout = QtGui.QGridLayout()
-
-        toggleButton = self.toggleButton
-        toggleButton.setStyleSheet("QToolButton { border: none; }")
-        toggleButton.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
-        toggleButton.setArrowType(QtCore.Qt.RightArrow)
-        toggleButton.setText(str(title))
-        toggleButton.setCheckable(True)
-        toggleButton.setChecked(False)
-
-        headerLine = self.headerLine
-        headerLine.setFrameShape(QtGui.QFrame.HLine)
-        headerLine.setFrameShadow(QtGui.QFrame.Sunken)
-        headerLine.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
-
-        self.contentArea.setStyleSheet("QScrollArea { background-color: white; border: none; }")
-        self.contentArea.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
-        # start out collapsed
-        self.contentArea.setMaximumHeight(0)
-        self.contentArea.setMinimumHeight(0)
-        # let the entire widget grow and shrink with its content
-        toggleAnimation = self.toggleAnimation
-        toggleAnimation.addAnimation(QtCore.QPropertyAnimation(self, b"minimumHeight"))
-        toggleAnimation.addAnimation(QtCore.QPropertyAnimation(self, b"maximumHeight"))
-        toggleAnimation.addAnimation(QtCore.QPropertyAnimation(self.contentArea, b"maximumHeight"))
-        # don't waste space
-        mainLayout = self.mainLayout
-        mainLayout.setVerticalSpacing(0)
-        mainLayout.setContentsMargins(0, 0, 0, 0)
-        row = 0
-        mainLayout.addWidget(self.toggleButton, row, 0, 1, 1, QtCore.Qt.AlignLeft)
-        mainLayout.addWidget(self.headerLine, row, 2, 1, 1)
-        row += 1
-        mainLayout.addWidget(self.contentArea, row, 0, 1, 3)
-        self.setLayout(self.mainLayout)
-
-        def start_animation(checked):
-            arrow_type = QtCore.Qt.DownArrow if checked else QtCore.Qt.RightArrow
-            direction = QtCore.QAbstractAnimation.Forward if checked else QtCore.QAbstractAnimation.Backward
-            toggleButton.setArrowType(arrow_type)
-            self.toggleAnimation.setDirection(direction)
-            self.toggleAnimation.start()
-
-        self.toggleButton.clicked.connect(start_animation)
-
-    def setContentLayout(self, contentLayout):
-        # Not sure if this is equivalent to self.contentArea.destroy()
-        self.contentArea.destroy()
-        self.contentArea.setLayout(contentLayout)
-        collapsedHeight = self.sizeHint().height() - self.contentArea.maximumHeight()
-        contentHeight = contentLayout.sizeHint().height()
-        for i in range(self.toggleAnimation.animationCount()-1):
-            spoilerAnimation = self.toggleAnimation.animationAt(i)
-            spoilerAnimation.setDuration(self.animationDuration)
-            spoilerAnimation.setStartValue(collapsedHeight)
-            spoilerAnimation.setEndValue(collapsedHeight + contentHeight)
-        contentAnimation = self.toggleAnimation.animationAt(self.toggleAnimation.animationCount() - 1)
-        contentAnimation.setDuration(self.animationDuration)
-        contentAnimation.setStartValue(0)
-        contentAnimation.setEndValue(contentHeight)
+        column = self.treeWidget().sortColumn()
+        text = self.text(column)
+        amount_str = text.split(" ")[0].replace(".","").replace(",",".")
+        if amount_str.replace(".","").isnumeric() or amount_str == "-":
+            amount = float(amount_str) if amount_str != "-" else 0
+            other_amount_str = otherItem.text(column).split(" ")[0].replace(".","").replace(",",".")
+            if other_amount_str.replace(".","").isnumeric() or other_amount_str == "-":
+                other_amount = float(other_amount_str) if other_amount_str != "-" else 0
+                return amount < other_amount
+        return text < otherItem.text(column)

@@ -4,16 +4,26 @@
 #   Encoding objects into JSON-format
 #
 """
-import debug
-
-import json
+"""
+#
+#   ULTRA JSON
+#       More performance de- and encoding
+#
+#"""
+try:
+    import ujson as json
+except ImportError:
+    try:
+        import simplejson as json
+    except ImportError:
+        import json
 from json import JSONEncoder
 
 from core.obj import corp, proj, arch
 
 # maybe stupid
 class AllEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, proj.Project):
             ProjectEncoder.default(o)
@@ -39,7 +49,7 @@ class AllEncoder(JSONEncoder):
 
 
 class ProjectEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, proj.Project):
             encoded_project = {
@@ -63,7 +73,7 @@ class ProjectEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class ProjectDataEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, proj.ProjectData):
             encoded_project_data = {
@@ -86,7 +96,7 @@ class ProjectDataEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class ProjectCostCalculationEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, proj.ProjectCostCalculation):
             encoded_pcc = {
@@ -103,7 +113,7 @@ class ProjectCostCalculationEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class InventoryItemEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, proj.InventoryItem):
             encoded_inventory_item = {
@@ -125,7 +135,7 @@ class InventoryItemEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class CompanyEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, corp.Company):
             encoded_company = {
@@ -149,7 +159,7 @@ class CompanyEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class TradeEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, arch.Trade):
             encoded_trade = {
@@ -171,7 +181,7 @@ class TradeEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class CostGroupEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, arch.CostGroup):
             encoded_cost_group = {
@@ -194,7 +204,7 @@ class CostGroupEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class PersonEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, corp.Person):
             encoded_person = {
@@ -216,7 +226,7 @@ class PersonEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class AddressEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, corp.Address):
             encoded_address = {
@@ -236,7 +246,7 @@ class AddressEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class JobEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, corp.Job):
             encoded_job = {
@@ -253,7 +263,7 @@ class JobEncoder(JSONEncoder):
         return JSONEncoder.default(self, o)
 
 class ArchJobEncoder(JobEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, arch.ArchJob):
             encoded_job = {
@@ -273,7 +283,7 @@ class ArchJobEncoder(JobEncoder):
         return JobEncoder.default(self, o)
 
 class InvoiceEncoder(JSONEncoder):
-    @debug.log
+
     def default(self, o):
         if isinstance(o, corp.Invoice):
             encoded_invoice = {

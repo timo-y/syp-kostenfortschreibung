@@ -198,6 +198,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_ui(self):
         if self.app_data.project:
             self.enable_ui()
+            """ set title """
+            mainwindow_title = f"Scharmer-Yu + Partner | Kostenfortschreibung | {self.app_data.project.identifier}"
+            self.setWindowTitle(mainwindow_title)
 
             self.update_labels()
             #update views
@@ -226,7 +229,7 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def closeEvent(self, event):
         pass
-        """#
+        """# TODO: ACTIVATE THIS, ONCE READY
         if self.app_data.project_loaded():
             reply = QtWidgets.QMessageBox.question(self, 'Sichern vor dem Schließen?', 'Möchten Sie das geöffnete Projekt vor dem Beenden speichern?',
                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Cancel)
@@ -265,7 +268,7 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def set_button_actions(self):
         """ DEBUG """
-        self.pushButton_TEST.clicked.connect(self.run_test)
+        self.pushButton_TEST.clicked.connect(lambda:self.run_test())
 
         """ quick links """
         self.pushButton_quick_new_invoice.clicked.connect(lambda:self.input_invoice_to_project())
@@ -398,8 +401,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def button_apply_pcc_budgets(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
-            self.app_data.project.apply_budgets(item.data(1))
-            self.update_ui()
+            reply = helper.u_sure_prompt(self)
+            if reply:
+                self.app_data.project.apply_budgets(item.data(1))
+                self.update_ui()
         else:
             debug.log_warning("Couldn't apply budgets, no project_cost_calculation selected!")
     """ signal
@@ -610,6 +615,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COST STAND-TAB
     #
     """
+    @debug.log
     def render_cost_stand(self, set_width=False):
         # disable sorting when filling the table (to avoid bugs with data field)
         self.tableWidget_cost_stand.setSortingEnabled(False)
@@ -659,11 +665,23 @@ class MainWindow(QtWidgets.QMainWindow):
             "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT_total, self.currency),
             "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT_total*100 / (trade_budget_total * (1+vat))) if trade_budget_total else "-"
         }
+        sorting_keys = {
+            "cost_group": float("inf"),
+            "project_budget": cost_group_budget_total,
+            "project_budget_w_VAT":  cost_group_budget_total * (1+vat),
+            "trade_budget": trade_budget_total,
+            "trade_budget_w_VAT": trade_budget_total * (1+vat),
+            "difference_proj_to_trades_budget": cost_group_budget_total - trade_budget_total,
+            "job_sums": job_sums_total,
+            "job_sums_w_VAT": job_sums_total * (1+vat),
+            "approved_invoices_w_VAT": approved_invoices_w_VAT_total,
+            "approved_invoices_w_VAT_by_tradebudgets": approved_invoices_w_VAT_total*100 / (trade_budget_total * (1+vat)) if trade_budget_total else 0
+        }
         col = 0
         font = QtGui.QFont()
         font.setBold(True)
         for attr in self.cost_stand_cols:
-            table_item = QtWidgets.QTableWidgetItem(str(cost_group_total[attr["title"]]))
+            table_item = customqt.AmountTableWidgetItem(str(cost_group_total[attr["title"]]), sorting_key=sorting_keys[attr["title"]])
             table_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table_item.setFont(font)
             table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
@@ -692,10 +710,21 @@ class MainWindow(QtWidgets.QMainWindow):
             "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT, self.currency),
             "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT*100 / (trade_budget * (1+vat))) if trade_budget else "-"
         }
-
+        sorting_keys = {
+            "cost_group":  int(cost_group.id),
+            "project_budget": cost_group.budget,
+            "project_budget_w_VAT":  cost_group.budget * (1+vat),
+            "trade_budget": trade_budget,
+            "trade_budget_w_VAT": trade_budget * (1+vat),
+            "difference_proj_to_trades_budget": cost_group.budget - trade_budget,
+            "job_sums": job_sums,
+            "job_sums_w_VAT": job_sums * (1+vat),
+            "approved_invoices_w_VAT": approved_invoices_w_VAT,
+            "approved_invoices_w_VAT_by_tradebudgets": approved_invoices_w_VAT*100 / (trade_budget * (1+vat)) if trade_budget else 0
+        }
         col = 0
         for attr in self.cost_stand_cols:
-            table_item = QtWidgets.QTableWidgetItem(str(cost_group_attr[attr["title"]]))
+            table_item = customqt.AmountTableWidgetItem(str(cost_group_attr[attr["title"]]), sorting_key=sorting_keys[attr["title"]])
             table_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
             self.tableWidget_cost_stand.setItem(row, col, table_item)
@@ -710,6 +739,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   render_invoice_view
     #   This functions renders the table of the invoice tab
     """
+    @debug.log
     def render_invoice_view(self, set_width=False):
         self.activate_invoice_buttons()
         date_cols = ["invoice_date", "inbox_date", "checked_date"]
@@ -838,6 +868,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   JOBS-TAB
     #
     """
+    @debug.log
     def render_job_view(self, set_width=False):
         self.activate_job_buttons()
         amount_cols = ["job_sum", "job_sum_w_additions"]
@@ -985,6 +1016,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COMPANIES-TAB
     #
     """
+    @debug.log
     def render_company_view(self, set_width=False):
         self.activate_company_buttons()
         amount_cols = ["budget"]
@@ -1065,6 +1097,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   TRADES-TAB
     #
     """
+    @debug.log
     def render_trades(self, set_width=False):
         self.activate_trade_buttons()
         amount_cols = ["budget"]
@@ -1120,6 +1153,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COST GROUPS-TAB
     #
     """
+    @debug.log
     def render_cost_groups(self, set_width=False):
         self.activate_cost_group_buttons()
         # TREE WIDGET
@@ -1201,6 +1235,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   PROJECT-COST-CALCULATION-TAB
     #
     """
+    @debug.log
     def render_project_cost_calculations(self, set_width=False):
         self.activate_person_buttons()
         amount_cols = ["total_cost"]
@@ -1279,6 +1314,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   PEOPLE-TAB
     #
     """
+    @debug.log
     def render_people(self, set_width=False):
         self.activate_person_buttons()
         amount_cols = ["budget"]
@@ -1370,6 +1406,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   PROJECT
     #
     """
+    @debug.log_info
     def input_new_project(self):
         # TODO: If current project is not empty ask to save
         if self.app_data.project_loaded():
@@ -1382,10 +1419,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.update_ui()
             self.init_column_width()
 
+    @debug.log_info
     def edit_project(self):
         helper.edit_project(self.app_data)
         self.update_ui()
 
+    @debug.log_info
     def load_project(self):
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
@@ -1397,9 +1436,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.update_ui()
             self.init_column_width()
 
+    @debug.log_info
     def save_project(self):
         helper.save_project(self, self.app_data)
 
+    @debug.log_info
     def save_project_as(self):
         helper.save_project_as(self, self.app_data)
         self.update_ui()
@@ -1409,12 +1450,15 @@ class MainWindow(QtWidgets.QMainWindow):
     #   EXPORT
     #
     """
+    @debug.log_info
     def export_companies(self):
         helper.export_companies(self, self.app_data)
 
+    @debug.log_info
     def export_trades(self):
         helper.export_trades(self, self.app_data)
 
+    @debug.log_info
     def export_cost_groups(self):
         helper.export_cost_groups(self, self.app_data)
 
@@ -1423,14 +1467,17 @@ class MainWindow(QtWidgets.QMainWindow):
     #   IMPORT
     #
     """
+    @debug.log_info
     def import_companies(self):
         helper.import_companies(self, self.app_data)
         self.update_ui()
 
+    @debug.log_info
     def import_trades(self):
         helper.import_trades(self, self.app_data)
         self.update_ui()
 
+    @debug.log_info
     def import_cost_groups(self):
         helper.import_cost_groups(self, self.app_data)
         self.update_ui()
@@ -1440,6 +1487,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   CLIENT
     #
     """
+    @debug.log_info
     def input_client(self):
         person = helper.input_person(self.app_data)
         if person:
@@ -1452,12 +1500,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   PROJECT COST CALCULATION
     #
     """
-    @debug.log
+    @debug.log_info
     def input_pcc_to_project(self):
         pcc = helper.input_pcc(self.app_data)
         self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_pcc(self, pcc):
         pcc = helper.edit_pcc(self.app_data, pcc)
         if pcc:
@@ -1465,7 +1513,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.update_ui()
             self.activate_pcc_buttons()
 
-    @debug.log
+    @debug.log_info
     def copy_pcc(self, pcc):
         pcc_copy = pcc.__copy__()
         self.app_data.project.add_pcc(pcc_copy)
@@ -1477,12 +1525,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   INVOICE
     #
     """
-    @debug.log
+    @debug.log_info
     def input_invoice_to_project(self, sel_job=None):
         invoice = helper.input_invoice(self.app_data, sel_job=sel_job)
         self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_invoice(self, invoice):
         invoice = helper.edit_invoice(self.app_data, invoice)
         if invoice:
@@ -1490,7 +1538,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.update_ui()
             self.activate_invoice_buttons()
 
-    @debug.log
+    @debug.log_info
     def invoice_check(self, invoice, save_path=None):
         self.app_data.output_check_invoice(invoice)
         self.app_data.open_invoice_check_dir()
@@ -1502,12 +1550,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   JOB
     #
     """
-    @debug.log
+    @debug.log_info
     def input_job_to_project(self):
         job = helper.input_job(self.app_data)
         self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_job(self, job):
         job = helper.edit_job(self.app_data, job)
         if job:
@@ -1520,12 +1568,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COMPANY
     #
     """
-    @debug.log
+    @debug.log_info
     def input_company_to_project(self):
         company = helper.input_company(self.app_data)
         self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_company(self, company):
         company = helper.edit_company(self.app_data, company)
         if company:
@@ -1538,12 +1586,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   TRADE
     #
     """
-    @debug.log
+    @debug.log_info
     def input_trade_to_project(self):
         trade = helper.input_trade(self.app_data)
         self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_trade(self, trade):
         trade = helper.edit_trade(self.app_data, trade)
         if trade:
@@ -1556,12 +1604,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COST GROUP
     #
     """
-    @debug.log
+    @debug.log_info
     def input_cost_group_to_project(self):
         cost_group = helper.input_cost_group(self.app_data)
         self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_cost_group(self, cost_group):
         cost_group = helper.edit_cost_group(self.app_data, cost_group)
         if cost_group:
@@ -1574,12 +1622,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   Person
     #
     """
-    @debug.log
+    @debug.log_info
     def input_person_to_project(self):
         person = helper.input_person(self.app_data)
         self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_person(self, person):
         person = helper.edit_person(self.app_data, person)
         if person:
@@ -1592,13 +1640,13 @@ class MainWindow(QtWidgets.QMainWindow):
     #   CONFIG
     #
     """
-    @debug.log
+    @debug.log_info
     def edit_app_config(self):
         config = helper.edit_app_config(self.app_data)
         if config:
             self.update_ui()
 
-    @debug.log
+    @debug.log_info
     def edit_proj_config(self):
         config = helper.edit_proj_config(self.app_data)
         if config:
@@ -1609,6 +1657,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   DEBUG FUNCTIONS
     #
     """
+    @debug.log_info
     def run_test(self):
         print("This is a test!")
         self.add_random_jobs()

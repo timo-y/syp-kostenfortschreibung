@@ -629,7 +629,6 @@ class Project(IdObject):
         self.restore_trades()
         self.restore_cost_groups()
 
-    @debug.log
     def restore_client(self):
         if self._client_uid and not(self.client):
             self.client = [person for person in self.people if person.uid == self._client_uid][0]
@@ -637,37 +636,30 @@ class Project(IdObject):
         elif self._client_uid and self.client:
             raise Exception(f"Cannot restore client: client_uid ({self._client_uid}) stored and the client (uid: {self.client.uid}) was already set.")
 
-    @debug.log
     def restore_project_cost_calculations(self):
         for pcc in self.project_cost_calculations:
             pcc.restore(self)
 
-    @debug.log
     def restore_people(self):
         for person in self.people:
             person.restore(self)
 
-    @debug.log
     def restore_companies(self):
         for company in self.companies:
             company.restore(self)
 
-    @debug.log
     def restore_jobs(self):
         for job in self.jobs:
             job.restore(self)
 
-    @debug.log
     def restore_invoices(self):
         for invoice in self.invoices:
             invoice.restore(self)
 
-    @debug.log
     def restore_trades(self):
         for trade in self.trades:
             trade.restore(self)
 
-    @debug.log
     def restore_cost_groups(self):
         for cost_group in self.cost_groups:
             cost_group.restore(self)
@@ -822,7 +814,6 @@ class ProjectCostCalculation(IdObject):
     def restore(self, project):
         self.restore_items(project)
 
-    @debug.log
     def restore_items(self, project):
         for item in self._inventory:
             item.restore(project)
@@ -911,7 +902,6 @@ class InventoryItem(IdObject):
         self.restore_cost_group(project.cost_groups)
         self.restore_trade(project.trades)
 
-    @debug.log
     def restore_cost_group(self, cost_groups):
         if self._cost_group_uid and not(self.cost_group):
             self.cost_group = [cost_group for cost_group in cost_groups if cost_group.uid == self._cost_group_uid][0]
@@ -919,7 +909,6 @@ class InventoryItem(IdObject):
         elif self._cost_group_uid and self.cost_group:
             raise Exception(f"Cannot restore cost_group: cost_group_uid ({self._cost_group_uid}) stored and the cost_group (uid: {self.cost_group.uid}) was already set.")
 
-    @debug.log
     def restore_trade(self, trades):
         if self._trade_uid and not(self.trade):
             self.trade = [trade for trade in trades if trade.uid == self._trade_uid][0]

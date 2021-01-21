@@ -100,7 +100,7 @@ class AppData:
     @debug.log
     def delete_old_autosaves(self):
         max_autosaves = self.config["max_autosaves"]
-        debug.log_debug(f"deleting old autosaves (max_autosaves={max_autosaves})...")
+        debug.debug_msg(f"deleting old autosaves (max_autosaves={max_autosaves})...")
         autosave_dir_path = self.get_autosave_dir()
         file_suffix = self.get_autosave_filename_suffix()
 
@@ -108,7 +108,7 @@ class AppData:
         autosaves.sort(reverse=True) # reversed, so the oldest save(s) gets deleted
         for autosave in autosaves[max_autosaves:]:
             os.remove(os.path.join(autosave_dir_path, autosave))
-        debug.log_debug(f"...{len(autosaves[max_autosaves:])} file(s) deleted...")
+        debug.debug_msg(f"...{len(autosaves[max_autosaves:])} file(s) deleted...")
 
     @debug.log
     def load_project(self, filename):
@@ -301,18 +301,18 @@ class AppData:
     @debug.log
     def load_app_config(self):
         if os.path.isfile("app_config.json"):
-            debug.log_debug("app_config.json found, loading into app_data.config...")
+            debug.debug_msg("app_config.json found, loading into app_data.config...")
             with open("app_config.json", "r") as file:
                 self.config = json.load(file)
-                debug.log_debug("app_data.config loaded!")
+                debug.debug_msg("app_data.config loaded!")
         else:
-            debug.log_debug("app_config.json has not been set up, initializing default config...")
+            debug.debug_msg("app_config.json has not been set up, initializing default config...")
             with open("app_config.json", "w") as file:
                 default_app_config = self.get_default_config()
                 json.dump(default_app_config, file, indent=4)
-                debug.log_debug("app_config.json has been set up")
+                debug.debug_msg("app_config.json has been set up")
                 self.config = default_app_config
-                debug.log_debug("app_data.config loaded!")
+                debug.debug_msg("app_data.config loaded!")
     """
     #   LANGUAGE TITLES
     """
@@ -397,81 +397,67 @@ class AppData:
             webbrowser.open(os.path.join(self.config["SYP_dir"], "02 Projekte"))
 
     # GET
-    @debug.log
     def get_dir(self):
         dir_path = os.getcwd()
         return dir_path
 
-    @debug.log
     def get_syp_dir(self):
         return self.config["SYP_dir"]
 
-    @debug.log
     def get_project_dir(self):
         if self.project:
             path = os.path.join(self.config["SYP_dir"], "02 Projekte", self.project.identifier)
             return path
 
-    @debug.log
     def get_app_invoice_check_dir(self):
         if self.project:
             path = os.path.join(os.getcwd(), self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
             return path
 
-    @debug.log
     def get_autosave_dir(self):
         autosave_dir_path = os.path.join(os.getcwd(), self.config["save_dir"], self.config["autosave_subdir"])
         return autosave_dir_path
 
-    @debug.log
     def get_save_dir(self):
         save_dir_path = os.path.join(os.getcwd(), self.config["save_dir"])
         return save_dir_path
 
-    @debug.log
     def get_lang_dir(self):
         lang_dir_path = os.path.join(os.getcwd(), self.config["lang_dir"])
         return lang_dir_path
 
-    @debug.log
     def get_invoice_check_dir(self):
         #  TODO: maybe outsource this into the config
         invoice_check_dir = "03 Kosten/01 Rechnungsprüfung/"
         invoice_check_dir_path = os.path.join(self.get_project_dir(), invoice_check_dir)
         return invoice_check_dir_path
 
-    @debug.log
     def get_client_correspondence_dir(self):
         #  TODO: maybe outsource this into the config
         correspondence_dir = "02 Schriftverkehr/Bauherr/Ausgang"
         correspondence_dir_path = os.path.join(self.get_project_dir(), correspondence_dir)
         return correspondence_dir_path
 
-    @debug.log
     def get_autosave_filename_suffix(self):
         autosave_filename_suffix = f"autosave-{self.project.identifier}.project"
         return autosave_filename_suffix
 
-    @debug.log
     def get_autosave_path_datetime(self):
         autosave_datetime = datetime.now().strftime('%Y-%m-%d_%H%M%S')
         autosave_filename = f"{autosave_datetime}-{self.get_autosave_filename_suffix()}"
         autosave_path = os.path.join(self.get_autosave_dir(), autosave_filename)
         return autosave_path, autosave_datetime
 
-    @debug.log
     def get_invoice_check_folder_name(self, invoice):
         if self.project_loaded():
             dir_name = f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}-{self.project.identifier}-{invoice.id}"
             return dir_name
 
-    @debug.log
     def set_usersave_path(self, save_path, datetime_str=datetime.now().strftime('%Y-%m-%d_%H%M%S')):
         self.project.set_save_path(save_path, datetime_str)
         self.config["user_save"]["datetime"] = datetime_str
         self.config["user_save"]["path"] = save_path
 
-    @debug.log
     def set_last_autosave_path_(self, save_path, datetime_str=datetime.now().strftime('%Y-%m-%d_%H%M%S')):
         self.project.set_autosave_path(save_path, datetime_str)
         self.config["last_auto_save"]["datetime"] = datetime_str

@@ -59,21 +59,26 @@ class Application(QtWidgets.QApplication):
     #
     #
     """
-    @debug.log
+    @debug.log_info
     def initialize_autosaver(self):
         self.autosave_timer = QTimer()
         self.autosave_timer.timeout.connect(self.autosave_project)
 
-    @debug.log
+    @debug.log_info
     def start_autosaving(self):
         autosave_time = self.app_data.config["autosave_time"]
         self.autosave_timer.start(autosave_time)
 
-    @debug.log
+    @debug.log_info
     def autosave_project(self):
+        debug.info_msg("Checking whether the file has already been saved...")
         if self.app_data.project and self.app_data.project.has_been_saved():
+            debug.info_msg("Yes! Autosaving...")
             self.app_data.autosave_project()
             self.app_data.delete_old_autosaves()
+            debug.info_msg("Saved!")
+        else:
+            debug.info_msg("Not saved yet, skipping autosave...")
 
     """
     #
@@ -81,11 +86,11 @@ class Application(QtWidgets.QApplication):
     #   Catch exceptions and let the programm continue to run
     #
     """
-    @debug.log
+    @debug.log_error
     def exception_hook(self, exctype, value, tb):
         traceback_formated = traceback.format_exception(exctype, value, tb)
         traceback_string = "".join(traceback_formated)
-        debug.log_error(traceback_string)
+        debug.error_msg(traceback_string)
         self.show_exception_box(traceback_string)
         # QtWidgets.QApplication.quit() # activate this, once serious, before we can mess around with exceptions
 

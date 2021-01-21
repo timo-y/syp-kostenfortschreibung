@@ -66,7 +66,6 @@ class Company(IdObject):
     def restore_after_import(self, project):
         self.restore_contact_person_by_name(project.people)
 
-    @debug.log
     def restore_contact_person(self, people):
         if self._contact_person_ref["uid"] and not(self.contact_person):
             self.contact_person = [person for person in people if person.uid == self._contact_person_ref["uid"]][0]
@@ -74,7 +73,6 @@ class Company(IdObject):
         elif self._contact_person_ref and self.contact_person:
             raise Exception(f"Cannot restore contact_person: contact_person_uid ({self._contact_person_ref['uid']}) stored and the contact_person (uid: {self.contact_person.uid}) was already set.")
 
-    @debug.log
     def restore_contact_person_by_name(self, people):
         if isinstance(self.contact_person, str):
             temp_list = [contact_person for contact_person in people if contact_person.first_name == self._contact_person_ref["first_name"] and contact_person.last_name == self._contact_person_ref["last_name"]]
@@ -153,7 +151,6 @@ class Person(IdObject):
     def restore(self, project):
         self.restore_company(project.companies)
 
-    @debug.log
     def restore_company(self, companies):
         if self._company_uid and not(self.company):
             self.company = [company for company in companies if company.uid == self._company_uid][0]
@@ -240,7 +237,6 @@ class Job(IdObject):
     def restore(self, project):
         self.restore_company(project.companies)
 
-    @debug.log
     def restore_company(self, companies):
         if self._company_uid and not(self.company):
             self.company = [company for company in companies if company.uid == self._company_uid][0]
@@ -508,7 +504,6 @@ class Invoice(IdObject):
         self.restore_company(project.companies)
         self.restore_job(project.jobs)
 
-    @debug.log
     def restore_prev_invoices(self, invoices):
         if self._prev_invoices_uids and len(self.prev_invoices)==0:
             self.prev_invoices = [invoice for invoice in invoices if invoice.uid in self._prev_invoices_uids]
@@ -516,7 +511,6 @@ class Invoice(IdObject):
         elif self._prev_invoices_uids and len(self.prev_invoices)>0 :
             raise Exception("Cannot restore invoices, prev_invoices is non-empty!")
 
-    @debug.log
     def restore_company(self, companies):
         if self._company_uid and not(self.company):
             self.company = [company for company in companies if company.uid == self._company_uid][0]
@@ -524,7 +518,6 @@ class Invoice(IdObject):
         elif self._company_uid and self.company:
             raise Exception(f"Cannot restore company: company_uid ({self._company_uid}) stored and the company (uid: {self.company.uid}) was already set.")
 
-    @debug.log
     def restore_job(self, jobs):
         if self._job_uid and not(self.job):
             self.job = [job for job in jobs if job.uid == self._job_uid][0]

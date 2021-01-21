@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Scharmer-Yu + Partner | Kostenfortschreibung</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -329,7 +329,7 @@
          <enum>QTabWidget::South</enum>
         </property>
         <property name="currentIndex">
-         <number>7</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_overview">
          <attribute name="title">
@@ -2497,7 +2497,7 @@
                      <item>
                       <widget class="QTabWidget" name="tabWidget_2">
                        <property name="currentIndex">
-                        <number>0</number>
+                        <number>2</number>
                        </property>
                        <widget class="QWidget" name="tabWidget_2Page1">
                         <attribute name="title">
@@ -2722,6 +2722,12 @@
                               </item>
                               <item>
                                <widget class="QTreeWidget" name="treeWidget_paid_safety_desposits">
+                                <property name="alternatingRowColors">
+                                 <bool>true</bool>
+                                </property>
+                                <property name="sortingEnabled">
+                                 <bool>true</bool>
+                                </property>
                                 <column>
                                  <property name="text">
                                   <string notr="true">1</string>
@@ -2763,6 +2769,12 @@
                           <layout class="QVBoxLayout" name="verticalLayout_26">
                            <item>
                             <widget class="QTreeWidget" name="treeWidget_job_additions">
+                             <property name="alternatingRowColors">
+                              <bool>true</bool>
+                             </property>
+                             <property name="sortingEnabled">
+                              <bool>true</bool>
+                             </property>
                              <column>
                               <property name="text">
                                <string notr="true">1</string>
@@ -2804,6 +2816,9 @@
                              <horstretch>0</horstretch>
                              <verstretch>0</verstretch>
                             </sizepolicy>
+                           </property>
+                           <property name="alternatingRowColors">
+                            <bool>true</bool>
                            </property>
                            <property name="sortingEnabled">
                             <bool>true</bool>

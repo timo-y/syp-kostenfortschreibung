@@ -102,7 +102,6 @@ class ArchJob(corp.Job):
         super(ArchJob, self).restore(project)
         self.restore_trade(project.trades)
 
-    @debug.log
     def restore_trade(self, trades):
         if self._trade_uid and not(self.trade):
             self.trade = [trade for trade in trades if trade.uid == self._trade_uid][0]
@@ -153,7 +152,6 @@ class Trade(IdObject):
     def restore_after_import(self, project):
         self.restore_cost_group_by_id(project.cost_groups)
 
-    @debug.log
     def restore_cost_group(self, cost_groups):
         if self._cost_group_ref and not(self.cost_group):
             self.cost_group = [cost_group for cost_group in cost_groups if cost_group.uid == self._cost_group_ref["uid"]][0]
@@ -161,7 +159,6 @@ class Trade(IdObject):
         elif self._cost_group_ref and self.cost_group:
             raise Exception(f"Cannot restore cost_group: cost_group_uid ({self._cost_group_ref['uid']}) stored and the cost_group (uid: {self.cost_group.uid}) was already set.")
 
-    @debug.log
     def restore_cost_group_by_id(self, cost_groups):
         if self._cost_group_ref and not(self.cost_group):
             temp_list = [cost_group for cost_group in cost_groups if cost_group.id == self._cost_group_ref["id"]]
@@ -260,7 +257,6 @@ class CostGroup(IdObject):
     def restore_after_import(self, project):
         self.restore_parent_by_id(project.cost_groups)
 
-    @debug.log
     def restore_parent(self, cost_groups):
         if self._parent_ref and not(self.parent):
             self.parent = [cost_group for cost_group in cost_groups if cost_group.uid == self._parent_ref["uid"]][0]
@@ -269,7 +265,6 @@ class CostGroup(IdObject):
         elif self._parent_ref and self.parent:
             raise Exception(f"Cannot restore parent: parent_uid ({self._parent_ref['uid']}) stored and the parent (uid: {self.parent.uid}) was already set.")
 
-    @debug.log
     def restore_parent_by_id(self, cost_groups):
         if self._parent_ref and not(self.parent):
             temp_list = [cost_group for cost_group in cost_groups if cost_group.id == self._parent_ref["id"]]

@@ -130,14 +130,14 @@ class IdObject:
         return self._deleted
     def is_not_deleted(self):
         return not(self._deleted)
-    @debug.log
+
     def delete(self):
         if self.is_not_deleted():
             self._deleted = True
             self.edited()
         else:
             raise Exception("Object was already deleted!")
-    @debug.log
+
     def undelete(self):
         if self.deleted:
             self._deleted = False

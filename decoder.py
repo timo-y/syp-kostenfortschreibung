@@ -4,10 +4,21 @@
 #   Decoding JSON into objects
 #
 """
-import debug
-
 import uuid
-import json
+
+"""
+#
+#   ULTRA JSON
+#       More performance de- and encoding
+#
+#"""
+try:
+    import ujson as json
+except ImportError:
+    try:
+        import simplejson as json
+    except ImportError:
+        import json
 from json import JSONDecoder
 from datetime import datetime
 
@@ -20,7 +31,7 @@ class AllDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "UID" in dct:
             UIDDecoder.dict_to_object(dct)
@@ -51,7 +62,7 @@ class UIDDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "UID" in dct:
             args = {
@@ -67,7 +78,7 @@ class ProjectDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "Project" in dct:
             args = {
@@ -91,7 +102,6 @@ class ProjectDataDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
     def dict_to_object(self, dct):
         if "ProjectData" in dct:
             args = {
@@ -114,7 +124,7 @@ class ProjectCostCalculationDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "ProjectCostCalculation" in dct:
             args = {
@@ -131,7 +141,7 @@ class InventoryItemDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "InventoryItem" in dct:
             args = {
@@ -153,7 +163,7 @@ class CompanyDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "Company" in dct:
             args = {
@@ -177,7 +187,7 @@ class TradeDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "Trade" in dct:
             args = {
@@ -199,7 +209,7 @@ class CostGroupDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "CostGroup" in dct:
             args = {
@@ -222,7 +232,7 @@ class PersonDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "Person" in dct:
             args = {
@@ -244,7 +254,7 @@ class AddressDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "Address" in dct:
             args = {
@@ -264,7 +274,7 @@ class JobDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "Job" in dct:
             args = {
@@ -281,7 +291,7 @@ class ArchJobDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "ArchJob" in dct:
             args = {
@@ -310,7 +320,7 @@ class InvoiceDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-    @debug.log
+
     def dict_to_object(self, dct):
         if "Invoice" in dct:
             args = {

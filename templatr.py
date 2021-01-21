@@ -11,14 +11,15 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from openpyxl.styles.borders import Border, Side
 
-from datetime import datetime
 import os
 from os.path import expanduser
+
+from ui import helper
 
 class Template():
     """docstring for Template"""
     def __init__(self, template_dir, template_filename, save_path):
-        self.template_dir_path = os.path.join(os.getcwd(), template_dir)
+        self.template_dir_path = template_dir
         self.template_file_path = os.path.join(self.template_dir_path, template_filename)
 
         self.wb = openpyxl.load_workbook(self.template_file_path)
@@ -41,10 +42,9 @@ class Template():
 
     @debug.log
     def add_rows(self, before_row, number_of_rows):
+        #   Add rows, by simply moving "everything" (A-AA and 99 rows) down by
+        #   the amount of rows you want to add
         self.ws.move_range(f"A{before_row}:AA{99+before_row}", rows=number_of_rows, cols=0)
-        #   the actuall insertion is not needed, we can just move the bottom part down!
-        # self.ws.insert_rows(before_row, number_of_rows)
-        # self.ws.move_range(f"AA1:BA{100}", rows=+(number_of_rows+before_row-1), cols=-26)
 
     @debug.log
     def make_cell(self, excel_data):
@@ -75,13 +75,13 @@ class Template():
 class InvoiceCheckExcelTemplate(Template):
     """docstring for InvoiceCheckExcelTemplate"""
     def __init__(self, app_data, invoice, save_dir, filename=None):
-        date = datetime.today().strftime("%Y-%m-%d")
+        date = helper.today_str()
         self.template_dir = app_data.config["template_subdir"]
         self.template_filename = "invoice_check.xlsx"
 
         self.filename = filename if filename else f"{date}-invoice_check-{invoice.id.replace(' ', '_')}"
         self.save_dir = save_dir
-        self.save_path = os.path.join(self.save_dir, f"{self.filename}.xlsx")
+        self.save_path = os.path.join(app_data.get_dir(), self.save_dir, f"{self.filename}.xlsx")
 
         super(InvoiceCheckExcelTemplate, self).__init__(template_dir=self.template_dir,
                                                         template_filename=self.template_filename,
@@ -155,14 +155,13 @@ class InvoiceCheckExcelTemplate(Template):
 class CompanyOverviewExcelTemplate(Template):
     """docstring for JobOverviewExcelTemplate"""
     def __init__(self, app_data, company, save_dir, filename=None):
-        date = datetime.today().strftime("%Y-%m-%d")
-        self.app_data = app_data
+        date = helper.today_str()
         self.template_dir = app_data.config["template_subdir"]
         self.template_filename = "company_overview.xlsx"
 
         self.filename = filename if filename else f"{date}-job_overview-{company.name.replace(' ', '_')}"
         self.save_dir = save_dir
-        self.save_path = os.path.join(self.save_dir, f"{self.filename}.xlsx")
+        self.save_path = os.path.join(app_data.get_dir(), self.save_dir, f"{self.filename}.xlsx")
 
         self.last_row_index = 9 # last row used to define the printed area
 

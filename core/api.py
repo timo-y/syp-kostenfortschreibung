@@ -15,16 +15,21 @@ DEFAULT_LANG_DIR = "lang"
 DEFAULT_AUTOSAVE_SUBDIR = "autosaves"
 DEFAULT_TEMPLATE_SUBDIR = "templates"
 DEFAULT_INVOICE_CHECK_SUBDIR = "invoice_check"
-DEFAULT_LOG_FILENAME = 'info.log'
+DEFAULT_LOG_FILENAME = 'log.log'
 
 import os
 import webbrowser
 import json
 import shutil
-from datetime import datetime
+
+import main # just for root directory
+MAIN_DIRECTORY = main.MAIN_DIRECTORY
+del main
 
 import zipr, templatr, pdfexportr, encoder, decoder
+from ui import helper
 from core.obj import  (proj, corp, arch)
+
 
 class AppData:
     def __init__(self, project=None, init_companies=None, init_trades=None):
@@ -217,7 +222,7 @@ class AppData:
                                                             save_dir=create_at_path)
         invoice_check_xlsx.make_file()
         # Export PDF
-        dir_path = os.path.dirname(os.path.realpath(invoice_check_xlsx.save_path))
+        dir_path = os.path.dirname(invoice_check_xlsx.save_path)
         pdf_filename = f"{invoice_check_xlsx.filename}.pdf"
         pdf_save_path = os.path.join(dir_path, pdf_filename)
         pdfexportr.PDFExportr().create_pdf(invoice_check_xlsx.save_path, pdf_save_path)
@@ -234,7 +239,7 @@ class AppData:
                                                             save_dir=create_at_path)
         job_overview_xlsx.make_file()
         # Export PDF
-        jo_dir_path = os.path.dirname(os.path.realpath(job_overview_xlsx.save_path))
+        jo_dir_path = os.path.dirname(job_overview_xlsx.save_path)
         jo_pdf_filename = f"{job_overview_xlsx.filename}.pdf"
         jo_pdf_save_path = os.path.join(jo_dir_path, jo_pdf_filename)
         pdfexportr.PDFExportr().create_pdf(job_overview_xlsx.save_path, jo_pdf_save_path)
@@ -360,12 +365,18 @@ class AppData:
     @debug.log
     def open_autosave_dir(self):
         path = self.get_autosave_dir()
-        webbrowser.open(os.path.realpath(path))
+        if os.path.exists(path):
+            webbrowser.open(os.path.realpath(path))
+        else:
+            self.open_dir()
 
     @debug.log
     def open_save_dir(self):
         path = self.get_save_dir()
-        webbrowser.open(os.path.realpath(path))
+        if os.path.exists(path):
+            webbrowser.open(os.path.realpath(path))
+        else:
+            self.open_dir()
 
     @debug.log
     def open_invoice_check_dir(self):
@@ -373,7 +384,7 @@ class AppData:
         if os.path.exists(path):
             webbrowser.open(os.path.realpath(path))
         else:
-            webbrowser.open(self.get_dir())
+            self.open_dir()
 
     @debug.log
     def open_client_correspondence_dir(self):
@@ -381,12 +392,15 @@ class AppData:
         if os.path.exists(path):
             webbrowser.open(os.path.realpath(path))
         else:
-            webbrowser.open(self.get_dir())
+            self.open_dir()
 
     @debug.log
     def open_syp_dir(self):
         path = self.get_syp_dir()
-        webbrowser.open(os.path.realpath(path))
+        if os.path.exists(path):
+            webbrowser.open(os.path.realpath(path))
+        else:
+            self.open_dir()
 
     @debug.log
     def open_project_dir(self):
@@ -394,11 +408,11 @@ class AppData:
         if os.path.exists(path):
             webbrowser.open(os.path.realpath(path))
         else:
-            webbrowser.open(os.path.join(self.config["SYP_dir"], "02 Projekte"))
+            self.open_dir()
 
     # GET
     def get_dir(self):
-        dir_path = os.getcwd()
+        dir_path = MAIN_DIRECTORY
         return dir_path
 
     def get_syp_dir(self):
@@ -411,19 +425,19 @@ class AppData:
 
     def get_app_invoice_check_dir(self):
         if self.project:
-            path = os.path.join(os.getcwd(), self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
+            path = os.path.join(self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
             return path
 
     def get_autosave_dir(self):
-        autosave_dir_path = os.path.join(os.getcwd(), self.config["save_dir"], self.config["autosave_subdir"])
+        autosave_dir_path = os.path.join(self.config["save_dir"], self.config["autosave_subdir"])
         return autosave_dir_path
 
     def get_save_dir(self):
-        save_dir_path = os.path.join(os.getcwd(), self.config["save_dir"])
+        save_dir_path = self.config["save_dir"]
         return save_dir_path
 
     def get_lang_dir(self):
-        lang_dir_path = os.path.join(os.getcwd(), self.config["lang_dir"])
+        lang_dir_path = self.config["lang_dir"]
         return lang_dir_path
 
     def get_invoice_check_dir(self):
@@ -443,22 +457,22 @@ class AppData:
         return autosave_filename_suffix
 
     def get_autosave_path_datetime(self):
-        autosave_datetime = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+        autosave_datetime = helper.now_str()
         autosave_filename = f"{autosave_datetime}-{self.get_autosave_filename_suffix()}"
         autosave_path = os.path.join(self.get_autosave_dir(), autosave_filename)
         return autosave_path, autosave_datetime
 
     def get_invoice_check_folder_name(self, invoice):
         if self.project_loaded():
-            dir_name = f"{datetime.now().strftime('%Y-%m-%d_%H%M%S')}-{self.project.identifier}-{invoice.id}"
+            dir_name = f"{helper.now_str()}-{self.project.identifier}-{invoice.id}"
             return dir_name
 
-    def set_usersave_path(self, save_path, datetime_str=datetime.now().strftime('%Y-%m-%d_%H%M%S')):
+    def set_usersave_path(self, save_path, datetime_str=helper.now_str()):
         self.project.set_save_path(save_path, datetime_str)
         self.config["user_save"]["datetime"] = datetime_str
         self.config["user_save"]["path"] = save_path
 
-    def set_last_autosave_path_(self, save_path, datetime_str=datetime.now().strftime('%Y-%m-%d_%H%M%S')):
+    def set_last_autosave_path_(self, save_path, datetime_str=helper.now_str()):
         self.project.set_autosave_path(save_path, datetime_str)
         self.config["last_auto_save"]["datetime"] = datetime_str
         self.config["last_auto_save"]["path"] = save_path

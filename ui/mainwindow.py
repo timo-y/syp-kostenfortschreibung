@@ -1467,7 +1467,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def export_trades(self):
         helper.export_trades(self, self.app_data)
 
-    @debug.log_info
+    #@debug.log_info
     def export_cost_groups(self):
         helper.export_cost_groups(self, self.app_data)
 
@@ -1660,7 +1660,20 @@ class MainWindow(QtWidgets.QMainWindow):
         config = helper.edit_proj_config(self.app_data)
         if config:
             self.update_ui()
+    """
+    #
+    #   UTIL
+    #
+    #
+    """
+    """
+    #   visually indicate, that an autosaving is in progress
+    """
+    def start_autosaving(self):
+        pass
 
+    def stop_autosaving(self):
+        pass
     """
     #
     #   DEBUG FUNCTIONS

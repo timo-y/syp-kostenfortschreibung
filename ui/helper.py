@@ -80,7 +80,7 @@ def save_project_as(mainwindow, app_data):
         f_dialog = QtWidgets.QFileDialog()
         save_path, _ = f_dialog.getSaveFileName(mainwindow,"Speichern...", save_dir_path, "Project save (*.project)")
         if save_path:
-            app_data.save_project(save_path)
+            app_data.save_project(os.path.normpath(save_path))
             """ logging """
             debug.log(f"Project saved: \"{app_data.project.identifier}\" as {save_path}")
 
@@ -91,7 +91,7 @@ def save_project_as(mainwindow, app_data):
 """
 def export_companies(mainwindow, app_data):
     if app_data.project:
-        filename = "companies.json"
+        filename = f"{today_str()}-{app_data.project.identifier}-companies.json"
         save_dir_path = os.path.join(app_data.get_save_dir(), filename)
         f_dialog = QtWidgets.QFileDialog()
         save_path, _ = f_dialog.getSaveFileName(mainwindow,"Firmenverzeichniss exportieren...", save_dir_path, "Company-JSON (*.json)")
@@ -102,7 +102,7 @@ def export_companies(mainwindow, app_data):
 
 def export_trades(mainwindow, app_data):
     if app_data.project:
-        filename = "trades.json"
+        filename = f"{today_str()}-{app_data.project.identifier}-trades.json"
         save_dir_path = os.path.join(app_data.get_save_dir(), filename)
         f_dialog = QtWidgets.QFileDialog()
         save_path, _ = f_dialog.getSaveFileName(mainwindow,"Gewerkeverzeichniss exportieren...", save_dir_path, "Trade-JSON (*.json)")
@@ -113,7 +113,7 @@ def export_trades(mainwindow, app_data):
 
 def export_cost_groups(mainwindow, app_data):
     if app_data.project:
-        filename = "cost_groups.json"
+        filename = f"{today_str()}-{app_data.project.identifier}-cost_groups.json"
         save_dir_path = os.path.join(app_data.get_save_dir(), filename)
         f_dialog = QtWidgets.QFileDialog()
         save_path, _ = f_dialog.getSaveFileName(mainwindow,"Kostengruppen exportieren...", save_dir_path, "Kostengruppen-JSON (*.json)")
@@ -621,3 +621,13 @@ def rnd(amount):
 def qdate_to_str(qdate):
     format = '%d.%m.%Y'
     return qdate.toPyDate().strftime(format)
+
+
+"""
+#   datetime.now() string
+"""
+def now_str():
+    return datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S')
+
+def today_str():
+    return datetime.datetime.today().strftime("%Y-%m-%d")

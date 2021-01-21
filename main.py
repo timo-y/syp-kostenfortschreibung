@@ -19,6 +19,8 @@ from PyQt5.QtCore import QTimer
 from ui import mainwindow
 from core import api
 
+MAIN_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
 class Application(QtWidgets.QApplication):
     """docstring for Application"""
     def __init__(self, *args, project_file = None, **kwargs):
@@ -27,6 +29,8 @@ class Application(QtWidgets.QApplication):
         self.initialize_logger()
 
         self.app_data = api.AppData()
+
+        self.window = mainwindow.MainWindow(self.app_data)
 
         self.initialize_style()
         self.initialize_autosaver()
@@ -74,8 +78,12 @@ class Application(QtWidgets.QApplication):
         debug.info_msg("Checking whether the file has already been saved...")
         if self.app_data.project and self.app_data.project.has_been_saved():
             debug.info_msg("Yes! Autosaving...")
+            # activate visual indicator, that autosaving is in progress
+            self.window.start_autosaving()
             self.app_data.autosave_project()
             self.app_data.delete_old_autosaves()
+            # deactivate visual indicator
+            self.window.stopp_autosaving()
             debug.info_msg("Saved!")
         else:
             debug.info_msg("Not saved yet, skipping autosave...")
@@ -113,6 +121,5 @@ class Application(QtWidgets.QApplication):
 
 if __name__ == '__main__':
     app = Application(sys.argv)
-    window = mainwindow.MainWindow(app.app_data)
-    window.show()
+    app.window.show()
     sys.exit(app.exec_())

@@ -451,6 +451,8 @@ def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], 
     table.setHorizontalHeaderLabels(header_labels)
     # set title height
     table.horizontalHeader().setFixedHeight(50)
+    # let the columns be moved
+    table.horizontalHeader().setSectionsMovable(True)
 
     # hide the UID column
     table.setColumnHidden(0, True)
@@ -599,7 +601,7 @@ def amount_w_currency_str(float, currency):
 #   output percent string
 """
 def percent_str(float):
-    if float!=0:
+    if rnd(float)!=0:
         return "{:.1f}".format(rnd(float)).replace(".",",")
     else:
         return "-"
@@ -611,7 +613,7 @@ def percent_str_w_sign(float):
 #   handle numbers
 """
 def rnd(amount):
-    return round(amount, 2)
+    return float(round(amount, 2))
 
 """
 #   QDate to String

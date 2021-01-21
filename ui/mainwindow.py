@@ -57,12 +57,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.invoice_cols = [
             {"title": "id", "width": 150},
-            #{"title": "internal_index", "width": 100},
-            #{"title": "cumulative", "width": 100},
+            {"title": "invoice_date", "width": 110},
             {"title": "company", "width": 120},
             {"title": "job", "width": 60},
-            {"title": "invoice_date", "width": 100},
-            {"title": "inbox_date", "width": 95},
+            {"title": "cumulative", "width": 60},
+            #{"title": "inbox_date", "width": 95},
             {"title": "checked_date", "width": 95},
             {"title": "trade", "width": 105},
             {"title": "cost_group", "width": 90},
@@ -137,7 +136,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def initialize_ui(self):
         uic.loadUi('ui/mainwindow.ui', self) # Load the .ui file
         self.initialize_tabwidget()
-        self.init_tree_widget_columns()
+        self.init_tree_header()
 
     def initialize_tabwidget(self):
         self.tabWidget_content.clear()
@@ -154,7 +153,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget_content.addTab(self.tab_project_cost_calculation, "Kostenberechnung")
         #self.tabWidget_content.addTab(self.tab_invoice_check, "???")
 
-    def init_column_width(self):
+    def init_table_header(self):
         self.render_cost_stand(set_width=True)
         self.render_invoice_view(set_width=True)
         self.render_job_view(set_width=True)
@@ -163,7 +162,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.render_cost_groups(set_width=True)
         self.render_people(set_width=True)
 
-    def init_tree_widget_columns(self):
+    def init_tree_header(self):
         """ TODO: figure out where to put this """
         company_tree_view_cols = ["job", "invoice", "verified_amount"] # maybe put on top of file
         self.treeWidget_company_invoices_by_job.setHeaderLabels([self.app_data.titles[col] for col in company_tree_view_cols])
@@ -1171,30 +1170,33 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def render_cost_groups_to_treewidget(self):
         self.treeWidget_cost_groups.clear()
-        for cost_group in self.app_data.project.cost_groups:
-            cols = [
-                str(cost_group.id),
-                cost_group.name,
-                cost_group.description,
-                amount_w_currency_str(cost_group.budget, self.currency)
+        # go layer by layer
+        tree_depth = 0
+        cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
+        cost_groups.sort(key=lambda cost_group:int(cost_group.id), reverse=True)
+        while len(cost_groups)>0:
+            for cost_group in cost_groups:
+                cols = [
+                    str(cost_group.id),
+                    cost_group.name,
+                    cost_group.description,
+                    amount_w_currency_str(cost_group.budget, self.currency)
                 ]
-            self.recursive_cc_nodes(self.treeWidget_cost_groups, cost_group, cols)
+                self.render_cc_nodes(self.treeWidget_cost_groups, cost_group, cols)
+            tree_depth += 1
+            cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
         helper.resize_tree_columns(self.treeWidget_cost_groups)
 
-    def recursive_cc_nodes(self, root, cost_group, cols):
+    def render_cc_nodes(self, tree_widget, cost_group, cols):
+        parent_node = None
         if cost_group.parent is None:
-            parent = root
+            parent_node = tree_widget
         else:
-            parent = self.recursive_cc_nodes(root, cost_group.parent, cols)
-        return_node = None
-        existing_nodes = root.findItems(str(cost_group.id), QtCore.Qt.MatchFlag.MatchExactly|QtCore.Qt.MatchFlag.MatchRecursive)
-        if len(existing_nodes) == 0:
-            return_node = helper.add_item_to_tree(content_item=cost_group,
-                                            parent=parent,
+            # Since we are rendering layer by layer, we can assume, that the parent node already exists and thus the below list is never empty
+            parent_node = tree_widget.findItems(str(cost_group.parent.id), QtCore.Qt.MatchFlag.MatchExactly|QtCore.Qt.MatchFlag.MatchRecursive)[0]
+        helper.add_item_to_tree(content_item=cost_group,
+                                            parent=parent_node,
                                             cols=cols)
-        else:
-            return_node = existing_nodes[0]
-        return return_node
 
     def render_cost_group_info(self, cost_group):
         if cost_group.is_not_deleted():
@@ -1286,15 +1288,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def set_costs_of_cost_group_of_pcc(self, pcc):
         self.treeWidget_pcc_cost_group_details.clear()
-        for cost_group in self.app_data.project.cost_groups:
-            cols = [
-                str(cost_group.id),
-                str(len(pcc.get_cost_group_items(cost_group))),
-                amount_w_currency_str(pcc.get_cost_group_prognosis(cost_group), self.currency),
-                amount_w_currency_str(pcc.get_main_cost_group_prognosis(cost_group.get_main_cost_group(), self.app_data.project.cost_groups), self.currency)
-            ]
-            self.recursive_cc_nodes(self.treeWidget_pcc_cost_group_details, cost_group, cols)
+        # go layer by layer
+        tree_depth = 0
+        cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
+        while len(cost_groups)>0:
+            for cost_group in cost_groups:
+                cols = [
+                    str(cost_group.id),
+                    str(len(pcc.get_cost_group_items(cost_group))),
+                    amount_w_currency_str(pcc.get_cost_group_prognosis(cost_group), self.currency),
+                    amount_w_currency_str(pcc.get_main_cost_group_prognosis(cost_group.get_main_cost_group(), self.app_data.project.cost_groups), self.currency)
+                ]
+                self.render_cc_nodes(self.treeWidget_pcc_cost_group_details, cost_group, cols)
+            tree_depth += 1
+            cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
         helper.resize_tree_columns(self.treeWidget_pcc_cost_group_details)
+
 
     def set_costs_of_trade_of_pcc(self, pcc):
         self.treeWidget_pcc_trade_details.clear()
@@ -1417,7 +1426,7 @@ class MainWindow(QtWidgets.QMainWindow):
             helper.input_new_project(self.app_data)
         if self.app_data.project_loaded():
             self.update_ui()
-            self.init_column_width()
+            self.init_table_header()
 
     @debug.log_info
     def edit_project(self):
@@ -1434,7 +1443,7 @@ class MainWindow(QtWidgets.QMainWindow):
             helper.load_project(self, self.app_data)
         if self.app_data.project_loaded():
             self.update_ui()
-            self.init_column_width()
+            self.init_table_header()
 
     @debug.log_info
     def save_project(self):
@@ -1692,8 +1701,8 @@ class MainWindow(QtWidgets.QMainWindow):
             invoice_id = id_generator(invoice_id_length)
             job = random.choice(self.app_data.project.jobs)
             company = job.company
-            cumulative = random.randint(0,1)
-            w_discount = random.randint(0,1)
+            cumulative = bool(random.getrandbits(1))
+            w_discount = bool(random.getrandbits(1))
             invoice_date = QDate.currentDate()
             amount = rnd(random.random()*100000)
             if cumulative == 1:
@@ -1763,7 +1772,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "price_per_unit": rnd(random.random()*15),
             "units": random.randint(1,1500),
             "unit_type": random.choice(["m", "m²", "m³", "kg"]),
-            "is_active": random.randint(0,1),
+            "is_active": bool(random.getrandbits(1)),
             "trade": trade,
             "cost_group": trade.cost_group
         }

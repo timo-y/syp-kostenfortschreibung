@@ -61,7 +61,11 @@ class CostGroupDialog(QtWidgets.QDialog):
         self.comboBox_parent.clear()
         self.comboBox_parent.addItem("Keine", None)
         for cost_group in self.cost_groups:
-            self.comboBox_parent.addItem(str(cost_group.id), cost_group)
+            if self.loaded_cost_group:
+                if cost_group is not self.loaded_cost_group and not(cost_group.is_sub_group_of(self.loaded_cost_group)):
+                    self.comboBox_parent.addItem(str(cost_group.id), cost_group)
+            else:
+                self.comboBox_parent.addItem(str(cost_group.id), cost_group)
 
     def set_default_labels(self):
         pass

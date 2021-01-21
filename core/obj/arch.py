@@ -186,7 +186,7 @@ class CostGroup(IdObject):
         self.name = name
         self.description = description
         self.budget = budget
-        self.parent = parent
+        self._parent = parent
 
         """ for restoration only """
         self._parent_ref = parent_ref
@@ -197,6 +197,17 @@ class CostGroup(IdObject):
     #
     #
     """
+    @property
+    def parent(self):
+        return self._parent
+    @parent.setter
+    def parent(self, cost_group):
+        if self.parent_allowed(cost_group):
+            self._parent = cost_group
+        else:
+            self._parent = None
+            debug.warning_msg(f"Setting parent of {self.id} / {self.name} to {cost_group.id} / {cost_group.name} failed, due to recursion! Setting parent to None.")
+
     def is_main_group(self):
         if self.parent is None:
             return True
@@ -214,7 +225,6 @@ class CostGroup(IdObject):
                 return True
             else:
                 return self.parent.is_sub_group_of(cost_group)
-
     """
     #
     #   GETTER
@@ -227,6 +237,36 @@ class CostGroup(IdObject):
         else:
             return self.parent.get_main_cost_group()
 
+    """
+    #
+    #   get_tree_level
+    #       In order to render the CostGroups in a TreeWidget
+    #       we need to know the layer they are at in the CostGroup-tree.
+    #       Then, we can go render them layer by layer.
+    """
+    def get_tree_level(self):
+        if self.parent is None:
+            return 0
+        else:
+            return 1+self.parent.get_tree_level()
+
+
+    """
+    #
+    #   UNTILITY
+    #
+    #
+    """
+    #   Check, if setting the parent to an existing
+    #   cost_group is allowed (i.e. there is no recursion)
+    @debug.log
+    def parent_allowed(self, parent):
+        if parent and parent is not self and parent.parent:
+            if parent.parent is self:
+                return False
+            else:
+                self.parent_allowed(parent.parent)
+        return True
     """
     #
     #   MANIPULATE

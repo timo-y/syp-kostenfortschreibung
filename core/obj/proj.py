@@ -174,7 +174,9 @@ class Project(IdObject):
 
     @property
     def cost_groups(self):
-        return [cost_group for cost_group in self._cost_groups if cost_group.is_not_deleted()]
+        cost_groups = [cost_group for cost_group in self._cost_groups if cost_group.is_not_deleted()]
+        cost_groups.sort(key=lambda cost_group:cost_group.id)
+        return cost_groups
     @cost_groups.setter
     def cost_groups(self, cost_groups):
         if not(self._cost_groups):
@@ -450,12 +452,23 @@ class Project(IdObject):
 
     @debug.log
     def update_all_prev_invoices(self):
+        # sort_invoices needed here, because we dont know if an invoice was edited
         self.sort_invoices()
         for invoice in self.invoices:
             prev_invoices = self.get_prev_invoices(invoice=invoice)
             invoice.prev_invoices = prev_invoices
             invoice.update_prev_invoices_amount()
 
+    """
+    #
+    #   get_prev_invoices
+    #       Get the previous invoices based on either an invoice, or the info
+    #       of company, job, date and (for same date invoices) date of the creation
+    #       The invoices MUST be sorted reversely by date (see: sort_invoices()).
+    #       For perfomance's sake, the invoices are not sorted everytime, but only
+    #       at the points, after the invoices-list got edited.
+    #
+    """
     @debug.log
     def get_prev_invoices(self, *, invoice=None, invoice_uid=None, company=None, job=None, invoice_date=None, invoice_created_date=None, cumulative=True):
         prev_invoices = list()
@@ -548,17 +561,9 @@ class Project(IdObject):
         #TODO: What happens with linked objects?
         return cost_group
 
-    #   Check, if setting the parent to an existing
-    #   cost_group is allowed (i.e. there is no recursion)
     @debug.log
-    def cost_group_parent_allowed(self, cost_group, parent):
-        if parent.parent:
-            if parent.parent is cost_group:
-                return False
-            else:
-                self.cost_group_parent_allowed(cost_group, parent.parent)
-        else:
-            return True
+    def get_cost_groups_of_level(self, level):
+        return [cost_group for cost_group in self.cost_groups if cost_group.get_tree_level() == level]
 
     """ func
     #

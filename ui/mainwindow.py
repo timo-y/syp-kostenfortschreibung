@@ -17,6 +17,7 @@ import json, uuid
 from PyQt5 import QtWidgets, QtCore, QtGui, uic
 from PyQt5.QtWidgets import (QDialog, QInputDialog, QFileDialog, QGraphicsColorizeEffect)
 from PyQt5.QtCore import QEvent, QDate, QPropertyAnimation
+from PyQt5.QtCore import pyqtSlot, QObject
 from ui import customqt
 
 from core.obj import (proj, corp, arch)
@@ -175,6 +176,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.treeWidget_job_additions.setHeaderLabels([self.app_data.titles[col] for col in job_additions_cols])
         cost_groups_costs_cols = ["id", "name", "description", "budget"]
         self.treeWidget_cost_groups.setHeaderLabels([self.app_data.titles[col] for col in cost_groups_costs_cols])
+        # order CostGroup view by first column of the TreeWidget
+        self.treeWidget_cost_groups.sortItems(0, QtCore.Qt.AscendingOrder)
         pcc_cost_group_costs_cols = ["cost_group", "inventory_items", "prognosed_costs", "prognosed_costs_main_cost_group"]
         self.treeWidget_pcc_cost_group_details.setHeaderLabels([self.app_data.titles[col] for col in pcc_cost_group_costs_cols])
         pcc_trade_costs_cols = ["trade", "inventory_items", "prognosed_costs"]
@@ -184,10 +187,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def enable_ui(self):
         self.centralwidget.setEnabled(True)
         self.menuProjekt.setEnabled(True)
+        self.menuImport.setEnabled(True)
+        self.menuExport.setEnabled(True)
 
     def disable_ui(self):
         self.centralwidget.setEnabled(False)
         self.menuProjekt.setEnabled(False)
+        self.menuImport.setEnabled(False)
+        self.menuExport.setEnabled(False)
 
     def center_window(self):
         qr = self.frameGeometry()
@@ -268,14 +275,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_TEST.clicked.connect(lambda:self.run_test())
 
         """ quick links """
-        self.pushButton_quick_new_invoice.clicked.connect(lambda:self.input_invoice_to_project())
-        self.pushButton_quick_new_job.clicked.connect(lambda:self.input_job_to_project())
+        self.pushButton_quick_new_invoice.clicked.connect(self.button_input_invoice_to_project)
+        self.pushButton_quick_new_job.clicked.connect(self.button_input_job_to_project)
         self.pushButton_quick_invoice_check_dir.clicked.connect(lambda:self.app_data.open_invoice_check_dir())
         self.pushButton_quick_syp_dir.clicked.connect(lambda:self.app_data.open_syp_dir())
         self.pushButton_quick_proj_dir.clicked.connect(lambda:self.app_data.open_project_dir())
 
         """ project cost calculation buttons """
-        self.pushButton_new_pcc.clicked.connect(lambda:self.input_pcc_to_project())
+        self.pushButton_new_pcc.clicked.connect(self.button_input_pcc_to_project)
         self.pushButton_edit_pcc.clicked.connect(self.button_edit_pcc)
         self.pushButton_copy_pcc.clicked.connect(self.button_copy_pcc)
         self.pushButton_pcc_apply_budgets.clicked.connect(self.button_apply_pcc_budgets)
@@ -283,13 +290,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_pcc_apply_budgets_trades.clicked.connect(self.button_apply_pcc_budgets_trades)
 
         """ invoice buttons """
-        self.pushButton_new_invoice.clicked.connect(self.input_invoice_to_project)
+        self.pushButton_new_invoice.clicked.connect(self.button_input_invoice_to_project)
         self.pushButton_edit_invoice.clicked.connect(self.button_edit_invoice)
         self.pushButton_invoice_check.clicked.connect(self.button_invoice_check)
-        self.pushButton_go_to_job.clicked.connect(self.set_job_view_sel_invoice)
+        self.pushButton_go_to_job.clicked.connect(self.button_set_job_view_sel_invoice)
 
         """ job buttons """
-        self.pushButton_new_job.clicked.connect(lambda:self.input_job_to_project())
+        self.pushButton_new_job.clicked.connect(self.button_input_job_to_project)
         self.pushButton_edit_job.clicked.connect(self.button_edit_job)
         self.pushButton_add_invoice_for_curr_job.clicked.connect(self.button_input_invoice_w_curr_job)
         self.pushButton_pay_safety_deposit.clicked.connect(self.button_pay_safety_deposit)
@@ -298,15 +305,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_remove_job_addition.clicked.connect(self.button_remove_job_addition)
 
         """ company buttons """
-        self.pushButton_new_company.clicked.connect(lambda:self.input_company_to_project())
+        self.pushButton_new_company.clicked.connect(self.button_input_company_to_project)
         self.pushButton_edit_company.clicked.connect(self.button_edit_company)
 
         """ trade buttons """
-        self.pushButton_new_trade.clicked.connect(lambda:self.input_trade_to_project())
+        self.pushButton_new_trade.clicked.connect(self.button_input_trade_to_project)
         self.pushButton_edit_trade.clicked.connect(self.button_edit_trade)
 
         """ cost_group buttons """
-        self.pushButton_new_cost_group.clicked.connect(lambda:self.input_cost_group_to_project())
+        self.pushButton_new_cost_group.clicked.connect(self.button_input_cost_group_to_project)
         self.pushButton_edit_cost_group.clicked.connect(self.button_edit_cost_group)
 
         """ person buttons """
@@ -318,7 +325,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tableWidget_project_cost_calculations.itemClicked.connect(self.table_click_pcc)
         self.tableWidget_project_cost_calculations.currentItemChanged.connect(self.table_click_pcc)
         """ invoice signals """
-        self.listWidget_invoices.itemDoubleClicked.connect(self.table_double_click_invoice)
+        self.listWidget_invoices.itemDoubleClicked.connect(self.list_double_click_invoice)
         self.tableWidget_invoices.itemDoubleClicked.connect(self.table_double_click_invoice)
         self.tableWidget_invoices.itemClicked.connect(self.table_click_invoice)
         self.tableWidget_invoices.currentItemChanged.connect(self.table_click_invoice)
@@ -383,15 +390,22 @@ class MainWindow(QtWidgets.QMainWindow):
     #   PROJECT COST CALCULATION
     #
     """
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_pcc(self, item):
         pcc = item.data(1)
         self.edit_pcc(pcc)
 
-    def table_click_pcc(self, item, prev_item=None):
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
+    def table_click_pcc(self, item):
         if item:
             pcc = item.data(1)
             self.render_pcc_info(pcc)
 
+    @pyqtSlot()
+    def button_input_pcc_to_project(self):
+        self.input_pcc_to_project()
+
+    @pyqtSlot()
     def button_edit_pcc(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
@@ -399,6 +413,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             debug.log_warning("Couldn't edit project_cost_calculation, no project_cost_calculation selected!")
 
+    @pyqtSlot()
     def button_copy_pcc(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
@@ -406,6 +421,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             debug.log_warning("Couldn't copy project_cost_calculation, no project_cost_calculation selected!")
 
+    @pyqtSlot()
     def button_apply_pcc_budgets(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
@@ -416,6 +432,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             debug.log_warning("Couldn't apply budgets, no project_cost_calculation selected!")
 
+    @pyqtSlot()
     def button_apply_pcc_budgets_cost_groups(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
@@ -426,6 +443,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             debug.log_warning("Couldn't apply CostGroup budgets, no project_cost_calculation selected!")
 
+    @pyqtSlot()
     def button_apply_pcc_budgets_trades(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
@@ -441,18 +459,40 @@ class MainWindow(QtWidgets.QMainWindow):
     #   INVOICE
     #
     """
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_invoice(self, item):
         invoice = item.data(1)
         self.edit_invoice(invoice)
 
+    @pyqtSlot(QtWidgets.QListWidgetItem)
+    def list_double_click_invoice(self, item):
+        invoice = item.data(1)
+        self.edit_invoice(invoice)
+
+    @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_double_click_invoice(self, item):
         self.edit_invoice(item.data(1, QtCore.Qt.UserRole))
 
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_invoice(self, item, prev_item=None):
         if item:
             invoice = item.data(1)
             self.render_invoice_info(invoice)
 
+    @pyqtSlot()
+    def button_input_invoice_to_project(self):
+        self.input_invoice_to_project()
+
+    @pyqtSlot()
+    def button_input_invoice_w_curr_job(self):
+        item = self.tableWidget_jobs.currentItem()
+        if item:
+            sel_job = item.data(1)
+            self.input_invoice_to_project(sel_job=sel_job)
+        else:
+            raise Exception("No job selected!")
+
+    @pyqtSlot()
     def button_edit_invoice(self):
         item = self.tableWidget_invoices.currentItem()
         if item:
@@ -460,6 +500,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             debug.log_warning("Couldn't edit invoice, no invoice selected!")
 
+    @pyqtSlot()
     def button_invoice_check(self):
         item = self.tableWidget_invoices.currentItem()
         if item:
@@ -472,28 +513,28 @@ class MainWindow(QtWidgets.QMainWindow):
     #   JOB
     #
     """
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_job(self, item):
         self.edit_job(item.data(1))
 
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_job(self, item, prev_item=None):
         if item:
             job = item.data(1)
             self.render_job_info(job)
 
+    @pyqtSlot()
+    def button_input_job_to_project(self):
+        self.input_job_to_project()
+
+    @pyqtSlot()
     def button_edit_job(self):
         if self.tableWidget_jobs.currentItem():
             self.edit_job(self.tableWidget_jobs.currentItem().data(1))
         else:
             raise Exception("No job selected!")
 
-    def button_input_invoice_w_curr_job(self):
-        item = self.tableWidget_jobs.currentItem()
-        if item:
-            sel_job = item.data(1)
-            self.input_invoice_to_project(sel_job=sel_job)
-        else:
-            raise Exception("No job selected!")
-
+    @pyqtSlot()
     def button_pay_safety_deposit(self):
         item = self.tableWidget_jobs.currentItem()
         if item:
@@ -504,6 +545,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             raise Exception("No job selected!")
 
+    @pyqtSlot()
     def button_remove_psd(self):
         item = self.tableWidget_jobs.currentItem()
         if item:
@@ -522,6 +564,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             raise Exception("No job selected!")
 
+    @pyqtSlot()
     def button_add_job_addition(self):
         item = self.tableWidget_jobs.currentItem()
         if item:
@@ -532,6 +575,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             raise Exception("No job selected!")
 
+    @pyqtSlot()
     def button_remove_job_addition(self):
         item = self.tableWidget_jobs.currentItem()
         if item:
@@ -555,14 +599,21 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COMPANY
     #
     """
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_company(self, item):
         self.edit_company(item.data(1))
 
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_company(self, item, prev_item=None):
         if item:
             company = item.data(1)
             self.render_company_info(company)
 
+    @pyqtSlot()
+    def button_input_company_to_project(self):
+        self.input_company_to_project()
+
+    @pyqtSlot()
     def button_edit_company(self):
         if self.tableWidget_companies.currentItem():
             self.edit_company(self.tableWidget_companies.currentItem().data(1))
@@ -574,14 +625,21 @@ class MainWindow(QtWidgets.QMainWindow):
     #   TRADE
     #
     """
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_trade(self, item):
         self.edit_trade(item.data(1))
 
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_trade(self, item, prev_item=None):
         if item:
             trade = item.data(1)
             self.render_trade_info(trade)
 
+    @pyqtSlot()
+    def button_input_trade_to_project(self):
+        self.input_trade_to_project()
+
+    @pyqtSlot()
     def button_edit_trade(self):
         if self.tableWidget_trades.currentItem():
             self.edit_trade(self.tableWidget_trades.currentItem().data(1))
@@ -593,22 +651,31 @@ class MainWindow(QtWidgets.QMainWindow):
     #  COST GROUP
     #
     """
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_cost_group(self, item):
         self.edit_cost_group(item.data(1))
 
+    @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_double_click_cost_group(self, item):
         self.edit_cost_group(item.data(1, QtCore.Qt.UserRole))
 
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_cost_group(self, item, prev_item=None):
         if item:
             cost_group = item.data(1)
             self.render_cost_group_info(cost_group)
 
+    @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_click_cost_group(self, item):
         if item:
             cost_group = item.data(1, QtCore.Qt.UserRole)
             self.render_cost_group_info(cost_group)
 
+    @pyqtSlot()
+    def button_input_cost_group_to_project(self):
+        self.input_cost_group_to_project()
+
+    @pyqtSlot()
     def button_edit_cost_group(self):
         if len(self.treeWidget_cost_groups.selectedItems())>0:
             cost_group = self.treeWidget_cost_groups.selectedItems()[0].data(1, QtCore.Qt.UserRole)
@@ -621,14 +688,17 @@ class MainWindow(QtWidgets.QMainWindow):
     #  PERSON
     #
     """
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_person(self, item):
         self.edit_person(item.data(1))
 
+    @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_person(self, item, prev_item=None):
         if item:
             person = item.data(1)
             self.render_person_info(person)
 
+    @pyqtSlot()
     def button_edit_person(self):
         if self.tableWidget_people.currentItem():
             self.edit_person(self.tableWidget_people.currentItem().data(1))
@@ -1435,7 +1505,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #   functions that change views or current tabs
     #
     """
-    def set_job_view_sel_invoice(self):
+    @pyqtSlot()
+    def button_set_job_view_sel_invoice(self):
         sel_invoice = self.tableWidget_invoices.currentItem().data(1)
         self.set_job_view(sel_job=sel_invoice.job)
         self.render_job_info(sel_invoice.job)
@@ -1460,6 +1531,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #   PROJECT
     #
     """
+    @pyqtSlot()
     @debug.log_info
     def input_new_project(self):
         # TODO: If current project is not empty ask to save
@@ -1483,8 +1555,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
             if reply:
-                self.app_data._project = None
-                self.update_ui()
                 helper.load_project(self, self.app_data)
         else:
             helper.load_project(self, self.app_data)
@@ -1506,15 +1576,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   EXPORT
     #
     """
-    @debug.log_info
     def export_companies(self):
         helper.export_companies(self, self.app_data)
 
-    @debug.log_info
     def export_trades(self):
         helper.export_trades(self, self.app_data)
 
-    #@debug.log_info
     def export_cost_groups(self):
         helper.export_cost_groups(self, self.app_data)
 
@@ -1528,24 +1595,19 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
             if reply:
-                self.app_data._project = None
-                self.update_ui()
                 helper.import_project(self, self.app_data)
         else:
             helper.import_project(self, self.app_data)
         self.update_ui()
 
-    @debug.log_info
     def import_companies(self):
         helper.import_companies(self, self.app_data)
         self.update_ui()
 
-    @debug.log_info
     def import_trades(self):
         helper.import_trades(self, self.app_data)
         self.update_ui()
 
-    @debug.log_info
     def import_cost_groups(self):
         helper.import_cost_groups(self, self.app_data)
         self.update_ui()

@@ -13,13 +13,13 @@ import logging
 import logging.config
 import logging.handlers
 
+MAIN_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
 from ui import mainwindow
 from core import api
-
-MAIN_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 class Application(QtWidgets.QApplication):
     """docstring for Application"""
@@ -100,8 +100,8 @@ class Application(QtWidgets.QApplication):
         traceback_string = "".join(traceback_formated)
         debug.error_msg(traceback_string)
         self.show_exception_box(traceback_string)
-        # QtWidgets.QApplication.quit() # activate this, once serious, before we can mess around with exceptions
-
+        # activate this, if the application should exit after an exception
+        # QtWidgets.QApplication.quit()
     @debug.log
     def show_exception_box(self, log_msg):
         errorbox = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Critical, "Oops... Error!", f"Oops. An unexpected error occured:\n{log_msg}")

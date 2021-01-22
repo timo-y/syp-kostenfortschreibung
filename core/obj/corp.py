@@ -12,7 +12,19 @@ from core.obj import restore
 from core.obj.uid import IdObject
 
 class Company(IdObject):
-    """docstring for Company"""
+    """Company object representing a company.
+
+    This class represents a company.
+
+    Attributes:
+        name - string - the name of the company
+        service - string - the service the company provides
+        service_type - string - the type of service (i.e. planning, execution, ...)
+        budget - float - the budget of the company for this project
+        contact_person - corp.Person - the contact person of the company
+
+    If a contact person was set this object needs to restore the link after loading (see: core.obj.restore).
+    """
 
     def __init__(self, name, service, service_type, *, uid=None, deleted=False, budget=0, contact_person=None, contact_person_ref=None):
         super().__init__(self, uid=uid, deleted=deleted)
@@ -82,7 +94,22 @@ class Company(IdObject):
         return str(self.name)
 
 class Person(IdObject):
-    """docstring for Person"""
+    """Person object representing a Person.
+
+    This class represents a person.
+
+    Attributes:
+        first_name - string - the first name of the person
+        last_name - string - the last name the person
+        address - corp.Address - the address of the person
+        telephone - string - the telephone number of the person
+        fax - string - the fax number of the person
+        mobile - string - the mobilephone number of the person
+        email - string - the e-mail address of the person
+        company - corp.Company - the company, whose contact person this person is
+
+    If a company was set this object needs to restore the link after loading (see: core.obj.restore).
+    """
 
     def __init__(self,*, first_name="", last_name="", uid=None, deleted=False,  address=None,
                 telephone=None, fax=None, mobile=None, email=None, company=None, company_ref=None

@@ -127,6 +127,16 @@ def export_cost_groups(mainwindow, app_data):
 #   IMPORT
 #
 """
+def import_project(mainwindow, app_data):
+    filename = "*-Kostenfortschreibung.xlsm"
+    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    f_dialog = QtWidgets.QFileDialog()
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Projekt importieren...",  save_dir_path, "Kostenfortschreibung-Excelmappe (*.xlsm);;All Files (*)")
+    if file_path:
+        app_data.import_project(file_path)
+        """ logging """
+        debug.log(f"Project successfully imported")
+
 def import_companies(mainwindow, app_data):
     filename = "companies.json"
     save_dir_path = os.path.join(app_data.get_save_dir(), filename)

@@ -26,7 +26,7 @@ import main # just for root directory
 MAIN_DIRECTORY = main.MAIN_DIRECTORY
 del main
 
-import zipr, templatr, pdfexportr, encoder, decoder
+import zipr, importr, templatr, pdfexportr, encoder, decoder
 from ui import helper
 from core.obj import  (proj, corp, arch)
 
@@ -160,6 +160,26 @@ class AppData:
     """
     #   IMPORT
     """
+    @debug.log
+    def import_project(self, file_path):
+        kf_importer = importr.KFImporter(file_path=file_path)
+        kf_importer.import_data()
+        kf_importer.create_objects()
+
+        project = proj.Project(config=self.get_init_proj_config(), cost_groups=self.get_init_cost_groups(), identifier=kf_importer.identifier, companies=kf_importer.companies,
+                                trades=kf_importer.trades, jobs=kf_importer.jobs, invoices=kf_importer.invoices)
+        # TODO: Create restore functions for after import like this
+        for company in project.companies:
+            company.restore_after_import(project)
+        for trade in project.trades:
+            trade.restore_after_import(project)
+        for job in project.jobs:
+            job.restore_after_import(project)
+        for invoice in project.invoices:
+            invoice.restore_after_import(project)
+        project.update_all_prev_invoices()
+        self.project = project
+
     @debug.log
     def import_companies(self, file_path):
         imported_companies = self.from_json_file(file_path=file_path, decoder=decoder.CompanyDecoder)
@@ -514,7 +534,8 @@ class AppData:
             args = line.split(";")
             while line:
                 name = args[0]
-                cost_group = [cost_group for cost_group in self.project.cost_groups if str(cost_group.id) == args[1]][0]
+                candidates = [cost_group for cost_group in self.project.cost_groups if str(cost_group.id) == args[1]]
+                cost_group = candidates[0] if len(candidates)>0 else None
                 budget = args[2]
                 comment = args[3]
                 trades.append(arch.Trade(name=name, cost_group=cost_group, budget=budget, comment=comment))

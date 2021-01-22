@@ -9,12 +9,12 @@
     "template_subdir": "templates",
     "invoice_check_subdir": "invoice_check",
     "user_save": {
-        "datetime": null,
-        "path": null
+        "datetime": "2021-01-22_112524",
+        "path": "G:\\Eigene Dateien\\Google Drive\\02 Arbeit\\00 Fyuture\\01 Learning\\Python\\00 Projekte\\Kostenfortschreibung\\Application\\projects\\Test.project"
     },
     "last_auto_save": {
-        "datetime": "2021-01-21_161814",
-        "path": "projects\\autosaves\\2021-01-21_161814-autosave-Test.project"
+        "datetime": "2021-01-22_113235",
+        "path": "projects\\autosaves\\2021-01-22_113235-autosave-Test.project"
     },
     "autosave_time": 80000,
     "max_autosaves": 5,

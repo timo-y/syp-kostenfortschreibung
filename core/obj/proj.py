@@ -9,15 +9,16 @@ import debug
 from datetime import datetime
 from PyQt5.QtCore import QDate
 
-from core.obj import IdObject
 from core.obj import corp, arch, proj
+from core.obj import IdObject
+from core.obj import restore
 
 class Project(IdObject):
 
     def __init__(self, identifier, *, config=None, uid=None, deleted=False,  construction_scheme="", address=None, client=None,
                         project_data=None, project_cost_calculations=None, companies=None, trades=None, cost_groups=None,
                         invoices=None, jobs=None, people=None, commissioned_date=None, planning_finished_date = None,
-                        billed_date=None, planning_status=None, address_uid=None, client_uid=None
+                        billed_date=None, planning_status=None, address_uid=None, client_ref=None
                         ):
         super().__init__(self, uid=uid, deleted=deleted)
 
@@ -77,7 +78,7 @@ class Project(IdObject):
         self.planning_status = planning_status
 
         """ for restoration only """
-        self._client_uid = client_uid
+        self._client_ref = client_ref
 
     """
     #
@@ -384,7 +385,6 @@ class Project(IdObject):
         for trade in self.trades:
             trade.budget = pcc.get_trade_prognosis(trade)
 
-
     """ func
     #
     #   Jobs
@@ -627,19 +627,16 @@ class Project(IdObject):
     def restore(self):
         self.restore_client()
         self.restore_people()
+        self.restore_cost_groups()
         self.restore_project_cost_calculations()
+        self.restore_trades()
         self.restore_companies()
         self.restore_jobs()
         self.restore_invoices()
-        self.restore_trades()
-        self.restore_cost_groups()
+        self.update_all_prev_invoices()
 
     def restore_client(self):
-        if self._client_uid and not(self.client):
-            self.client = [person for person in self.people if person.uid == self._client_uid][0]
-            self._client_uid = None
-        elif self._client_uid and self.client:
-            raise Exception(f"Cannot restore client: client_uid ({self._client_uid}) stored and the client (uid: {self.client.uid}) was already set.")
+        self._client = restore.restore_by(self.client, self._client_ref, self.people)
 
     def restore_project_cost_calculations(self):
         for pcc in self.project_cost_calculations:
@@ -834,7 +831,7 @@ class ProjectCostCalculation(IdObject):
         for item in self.inventory:
             new_item = InventoryItem(name=item.name, description=item.description, price_per_unit=item.price_per_unit,
                                     units=item.units, unit_type=item.unit_type, is_active=item.is_active, cost_group=item.cost_group,
-                                    cost_group_uid=item._cost_group_uid, trade=item.trade, trade_uid=item._trade_uid)
+                                    cost_group_ref=item._cost_group_ref, trade=item.trade, trade_ref=item._trade_ref)
             new_inventory.append(new_item)
         new_pcc = ProjectCostCalculation(name=f"{self.name} copy", date=QDate.currentDate(), inventory=new_inventory)
         return new_pcc
@@ -845,8 +842,8 @@ class InventoryItem(IdObject):
     """docstring for InventoryItem"""
     def __init__(self, name, *, description="", price_per_unit=0, units=0,
                         unit_type="", is_active=True,
-                        cost_group=None, cost_group_uid=None,
-                        trade=None, trade_uid=None,
+                        cost_group=None, cost_group_ref=None,
+                        trade=None, trade_ref=None,
                          uid=None, deleted=False
                         ):
         super().__init__(self, uid=uid, deleted=deleted)
@@ -862,8 +859,8 @@ class InventoryItem(IdObject):
         self.trade = trade
 
         """ for restoration only """
-        self._cost_group_uid = cost_group_uid
-        self._trade_uid = trade_uid
+        self._cost_group_ref = cost_group_ref
+        self._trade_ref = trade_ref
 
     """
     #
@@ -904,19 +901,5 @@ class InventoryItem(IdObject):
     """
     @debug.log
     def restore(self, project):
-        self.restore_cost_group(project.cost_groups)
-        self.restore_trade(project.trades)
-
-    def restore_cost_group(self, cost_groups):
-        if self._cost_group_uid and not(self.cost_group):
-            self.cost_group = [cost_group for cost_group in cost_groups if cost_group.uid == self._cost_group_uid][0]
-            self._cost_group_uid = None
-        elif self._cost_group_uid and self.cost_group:
-            raise Exception(f"Cannot restore cost_group: cost_group_uid ({self._cost_group_uid}) stored and the cost_group (uid: {self.cost_group.uid}) was already set.")
-
-    def restore_trade(self, trades):
-        if self._trade_uid and not(self.trade):
-            self.trade = [trade for trade in trades if trade.uid == self._trade_uid][0]
-            self._trade_uid = None
-        elif self._trade_uid and self.trade:
-            raise Exception(f"Cannot restore trade: trade_uid ({self._trade_uid}) stored and the trade (uid: {self.trade.uid}) was already set.")
+        self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups)
+        self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades)

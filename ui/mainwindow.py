@@ -227,8 +227,6 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def closeEvent(self, event):
-        pass
-        """# TODO: ACTIVATE THIS, ONCE READY
         if self.app_data.project_loaded():
             reply = QtWidgets.QMessageBox.question(self, 'Sichern vor dem Schließen?', 'Möchten Sie das geöffnete Projekt vor dem Beenden speichern?',
                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Cancel)
@@ -243,7 +241,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             event.accept()
 
-        #"""
 
     """
     #
@@ -281,6 +278,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_edit_pcc.clicked.connect(self.button_edit_pcc)
         self.pushButton_copy_pcc.clicked.connect(self.button_copy_pcc)
         self.pushButton_pcc_apply_budgets.clicked.connect(self.button_apply_pcc_budgets)
+        self.pushButton_pcc_apply_budgets_cost_groups.clicked.connect(self.button_apply_pcc_budgets_cost_groups)
+        self.pushButton_pcc_apply_budgets_trades.clicked.connect(self.button_apply_pcc_budgets_trades)
 
         """ invoice buttons """
         self.pushButton_new_invoice.clicked.connect(self.input_invoice_to_project)
@@ -360,6 +359,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionExportAllTrades.triggered.connect(self.export_trades)
         self.actionExportAllCostGroups.triggered.connect(self.export_cost_groups)
         """ IMPORT """
+        self.actionImportProject.triggered.connect(lambda:self.import_project())
         self.actionImportCompanies.triggered.connect(self.import_companies)
         self.actionImportTrades.triggered.connect(self.import_trades)
         self.actionImportCostGroups.triggered.connect(self.import_cost_groups)
@@ -406,6 +406,26 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.update_ui()
         else:
             debug.log_warning("Couldn't apply budgets, no project_cost_calculation selected!")
+
+    def button_apply_pcc_budgets_cost_groups(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        if item:
+            reply = helper.u_sure_prompt(self)
+            if reply:
+                self.app_data.project.apply_cost_group_budgets(item.data(1))
+                self.update_ui()
+        else:
+            debug.log_warning("Couldn't apply CostGroup budgets, no project_cost_calculation selected!")
+
+    def button_apply_pcc_budgets_trades(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        if item:
+            reply = helper.u_sure_prompt(self)
+            if reply:
+                self.app_data.project.apply_trade_budgets(item.data(1))
+                self.update_ui()
+        else:
+            debug.log_warning("Couldn't apply Trade budgets, no project_cost_calculation selected!")
     """ signal
     #
     #   INVOICE
@@ -822,9 +842,11 @@ class MainWindow(QtWidgets.QMainWindow):
         """ cumulative """
         f = self.label_cumulative.font()
         if not(cumulative):
+            self.label_cumulative.setEnabled(False)
             f.setStrikeOut(True)
             self.label_cumulative.setFont(f)
         else:
+            self.label_cumulative.setEnabled(True)
             f.setStrikeOut(False)
             self.label_cumulative.setFont(f)
         """ company and job """
@@ -1264,9 +1286,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def activate_pcc_buttons(self):
         if self.tableWidget_project_cost_calculations.currentItem():
+            self.pushButton_pcc_apply_budgets.setEnabled(True)
+            self.pushButton_pcc_apply_budgets_cost_groups.setEnabled(True)
+            self.pushButton_pcc_apply_budgets_trades.setEnabled(True)
             self.pushButton_edit_pcc.setEnabled(True)
             self.pushButton_copy_pcc.setEnabled(True)
         else:
+            self.pushButton_pcc_apply_budgets.setEnabled(False)
+            self.pushButton_pcc_apply_budgets_cost_groups.setEnabled(False)
+            self.pushButton_pcc_apply_budgets_trades.setEnabled(False)
             self.pushButton_edit_pcc.setEnabled(False)
             self.pushButton_copy_pcc.setEnabled(False)
 
@@ -1438,6 +1466,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
             if reply:
+                self.app_data.project = None
+                self.update_ui()
                 helper.load_project(self, self.app_data)
         else:
             helper.load_project(self, self.app_data)
@@ -1476,6 +1506,18 @@ class MainWindow(QtWidgets.QMainWindow):
     #   IMPORT
     #
     """
+    @debug.log_info
+    def import_project(self):
+        if self.app_data.project_loaded():
+            reply = helper.save_curr_project_prompt(self, self.app_data)
+            if reply:
+                self.app_data.project = None
+                self.update_ui()
+                helper.import_project(self, self.app_data)
+        else:
+            helper.import_project(self, self.app_data)
+        self.update_ui()
+
     @debug.log_info
     def import_companies(self):
         helper.import_companies(self, self.app_data)

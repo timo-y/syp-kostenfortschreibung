@@ -6,36 +6,37 @@
 """
 import debug
 
-from core.obj.uid import IdObject
 from core.obj import corp
+from core.obj import IdObject
+from core.obj import restore
 
 class ArchJob(corp.Job):
     """docstring for ArchJob"""
 
-    def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None,
-                    company_uid=None, trade=None, trade_uid=None, job_additions=None,
+    def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None, comment="",
+                    company_ref=None, trade=None, trade_ref=None, job_additions=None,
                     paid_safety_deposits=None):
-        super(ArchJob, self).__init__(id, uid=uid, deleted=deleted, company=company, job_sum=job_sum, company_uid=company_uid)
+        super(ArchJob, self).__init__(id, uid=uid, deleted=deleted, company=company, job_sum=job_sum, comment=comment, company_ref=company_ref)
         self.trade = trade
         """
         #   job_additions
-        #   List containing dicts d with d.keys() = ["date", "amount", "comment"], where d["date"]  = "date of addition" and  d["amount"] = "amount added".
-        #   These are to extend the job_sum. The final job_sum then, is the initial job_sum plus sum of the amounts in this dict.
+        #       List containing dicts d with d.keys() = ["date", "amount", "comment"], where d["date"]  = "date of addition" and  d["amount"] = "amount added".
+        #       These are to extend the job_sum. The final job_sum then, is the initial job_sum plus sum of the amounts in this dict.
         #
         """
         self._job_additions = job_additions if job_additions else list()
 
         """
         #   payed_safety_deposits
-        #   List containing dicts d with d.keys() = ["date", "amount", "comment"], where d["date"]  = "date of payment" and  d["amount"] = "payment amount".
-        #   Then, the sum of these should eventually equal the sum of safety deposits of the invoices of the
-        #   ArchJob. This would indicate, that the safety deposit is fully payed.
+        #       List containing dicts d with d.keys() = ["date", "amount", "comment"], where d["date"]  = "date of payment" and  d["amount"] = "payment amount".
+        #       Then, the sum of these should eventually equal the sum of safety deposits of the invoices of the
+        #       ArchJob. This would indicate, that the safety deposit is fully payed.
         #
         """
         self._paid_safety_deposits = paid_safety_deposits if paid_safety_deposits else list()
 
         """ for restoration only """
-        self._trade_uid = trade_uid
+        self._trade_ref = trade_ref
 
     """
     #
@@ -82,7 +83,7 @@ class ArchJob(corp.Job):
     """
     #
     #   MANIPULATE
-    #   Fuctions manipulating the job
+    #       Fuctions manipulating the job
     #
     """
     @debug.log
@@ -100,14 +101,12 @@ class ArchJob(corp.Job):
     @debug.log
     def restore(self, project):
         super(ArchJob, self).restore(project)
-        self.restore_trade(project.trades)
+        self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades)
 
-    def restore_trade(self, trades):
-        if self._trade_uid and not(self.trade):
-            self.trade = [trade for trade in trades if trade.uid == self._trade_uid][0]
-            self._trade_uid = None
-        elif self._trade_uid and self.trade:
-            raise Exception(f"Cannot restore trade: trade_uid ({self._trade_uid}) stored and the trade (uid: {self.trade.uid}) was already set.")
+    @debug.log
+    def restore_after_import(self, project):
+        super(ArchJob, self).restore_after_import(project)
+        self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades, by=["name"])
 
 
 class Trade(IdObject):
@@ -126,7 +125,7 @@ class Trade(IdObject):
     """
     #
     #   MANIPULATE
-    #   Fuctions manipulating the trade
+    #       Fuctions manipulating the trade
     #
     """
     @debug.log
@@ -146,27 +145,11 @@ class Trade(IdObject):
     """
     @debug.log
     def restore(self, project):
-        self.restore_cost_group(project.cost_groups)
+        self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups)
 
     @debug.log
     def restore_after_import(self, project):
-        self.restore_cost_group_by_id(project.cost_groups)
-
-    def restore_cost_group(self, cost_groups):
-        if self._cost_group_ref and not(self.cost_group):
-            self.cost_group = [cost_group for cost_group in cost_groups if cost_group.uid == self._cost_group_ref["uid"]][0]
-            self._cost_group_ref = None
-        elif self._cost_group_ref and self.cost_group:
-            raise Exception(f"Cannot restore cost_group: cost_group_uid ({self._cost_group_ref['uid']}) stored and the cost_group (uid: {self.cost_group.uid}) was already set.")
-
-    def restore_cost_group_by_id(self, cost_groups):
-        if self._cost_group_ref and not(self.cost_group):
-            temp_list = [cost_group for cost_group in cost_groups if cost_group.id == self._cost_group_ref["id"]]
-            if len(temp_list)>0:
-                self.cost_group = temp_list[0]
-                self._cost_group_ref = None
-            else:
-                debug.log_warning(f"Can't restore cost_group by id, since there was no cost_group with the given id")
+        self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups, by=["id"])
 
     """
     #
@@ -270,7 +253,7 @@ class CostGroup(IdObject):
     """
     #
     #   MANIPULATE
-    #   Fuctions manipulating the cost_group
+    #       Fuctions manipulating the cost_group
     #
     """
     @debug.log
@@ -291,28 +274,11 @@ class CostGroup(IdObject):
     """
     @debug.log
     def restore(self, project):
-        self.restore_parent(project.cost_groups)
+        self.parent = restore.restore_by(self.parent, self._parent_ref, project.cost_groups)
 
     @debug.log
     def restore_after_import(self, project):
-        self.restore_parent_by_id(project.cost_groups)
-
-    def restore_parent(self, cost_groups):
-        if self._parent_ref and not(self.parent):
-            self.parent = [cost_group for cost_group in cost_groups if cost_group.uid == self._parent_ref["uid"]][0]
-            self._parent_ref = None
-
-        elif self._parent_ref and self.parent:
-            raise Exception(f"Cannot restore parent: parent_uid ({self._parent_ref['uid']}) stored and the parent (uid: {self.parent.uid}) was already set.")
-
-    def restore_parent_by_id(self, cost_groups):
-        if self._parent_ref and not(self.parent):
-            temp_list = [cost_group for cost_group in cost_groups if cost_group.id == self._parent_ref["id"]]
-            if len(temp_list)>0:
-                self.parent = temp_list[0]
-                self._parent_uid = None
-            else:
-                debug.log_warning(f"Can't restore parent by id, since there was no cost_group with the given id")
+        self.parent = restore.restore_by(self.parent, self._parent_ref, project.cost_groups, by=["id"])
 
     """
     #

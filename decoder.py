@@ -88,7 +88,12 @@ class ProjectDecoder(JSONDecoder):
                 "identifier": dct["identifier"],
                 "construction_scheme": dct["construction_scheme"],
                 "address": AddressDecoder().object_hook(dct["address"]) if dct["address"] else None,
-                "client_uid": UIDDecoder().object_hook(dct["client_uid"]) if dct["client_uid"] else None,
+                "client_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["client_ref"]["uid"]),
+                    "first_name": dct["client_ref"]["first_name"],
+                    "last_name": dct["client_ref"]["last_name"],
+                } if dct["client_ref"] else None,
                 "project_data": ProjectDataDecoder().object_hook(dct["project_data"]) if dct["project_data"] else None,
                 "commissioned_date": QDate.fromString(dct["commissioned_date"]) if dct["commissioned_date"] else None,
                 "planning_finished_date": QDate.fromString(dct["planning_finished_date"]) if dct["planning_finished_date"] else None,
@@ -124,7 +129,6 @@ class ProjectCostCalculationDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "ProjectCostCalculation" in dct:
             args = {
@@ -141,7 +145,6 @@ class InventoryItemDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "InventoryItem" in dct:
             args = {
@@ -153,8 +156,16 @@ class InventoryItemDecoder(JSONDecoder):
                 "units": dct["units"],
                 "unit_type": dct["unit_type"],
                 "is_active": dct["is_active"],
-                "cost_group_uid": UIDDecoder().object_hook(dct["cost_group_uid"]),
-                "trade_uid": UIDDecoder().object_hook(dct["trade_uid"]),
+                "cost_group_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["cost_group_ref"]["uid"]),
+                    "id": dct["cost_group_ref"]["id"]
+                } if dct["cost_group_ref"] else None,
+                "trade_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["trade_ref"]["uid"]),
+                    "name": dct["trade_ref"]["name"]
+                } if dct["trade_ref"] else None
             }
             return proj.InventoryItem(**args)
         return dct
@@ -245,7 +256,11 @@ class PersonDecoder(JSONDecoder):
                 "fax": dct["fax"],
                 "mobile": dct["mobile"],
                 "email": dct["email"],
-                "company_uid": UIDDecoder().object_hook(dct["company_uid"]) if dct["company_uid"] else None,
+                "company_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
+                    "name": dct["company_ref"]["name"],
+                } if dct["company_ref"] else None,
             }
             return corp.Person(**args)
         return dct
@@ -274,14 +289,17 @@ class JobDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "Job" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "id": dct["id"],
-                "company_uid": UIDDecoder().object_hook(dct["company_uid"]) if dct["company_uid"] else None,
+                "company_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
+                    "name": dct["company_ref"]["name"]
+                } if dct["company_ref"] else None,
                 "job_sum": dct["job_sum"]
             }
             return corp.Job(**args)
@@ -291,16 +309,23 @@ class ArchJobDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "ArchJob" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "id": dct["id"],
-                "company_uid": UIDDecoder().object_hook(dct["company_uid"]) if dct["company_uid"] else None,
+                "company_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
+                    "name": dct["company_ref"]["name"]
+                } if dct["company_ref"] else None,
                 "job_sum": dct["job_sum"],
-                "trade_uid": UIDDecoder().object_hook(dct["trade_uid"]) if dct["trade_uid"] else None,
+                "trade_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["trade_ref"]["uid"]),
+                    "name": dct["trade_ref"]["name"]
+                } if dct["trade_ref"] else None,
                 "job_additions": [{
                     "date": QDate.fromString(job_addition["date"]),
                     "name": job_addition["name"],
@@ -320,15 +345,23 @@ class InvoiceDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "Invoice" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "id": dct["id"],
-                "company_uid": UIDDecoder().object_hook(dct["company_uid"]) if dct["company_uid"] else None,
-                "job_uid": UIDDecoder().object_hook(dct["job_uid"]) if dct["job_uid"] else None,
+                "company_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
+                    "name": dct["company_ref"]["name"]
+                } if dct["company_ref"] else None,
+                "job_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["job_ref"]["uid"]),
+                    "id": dct["job_ref"]["id"],
+                    "company.name": dct["job_ref"]["company.name"]
+                } if dct["job_ref"] else None,
                 "cumulative": dct["cumulative"],
                 "invoice_date": QDate.fromString(dct["invoice_date"]) if dct["invoice_date"] else None,
                 "inbox_date": QDate.fromString(dct["inbox_date"]) if dct["inbox_date"] else None,

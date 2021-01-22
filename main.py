@@ -83,7 +83,7 @@ class Application(QtWidgets.QApplication):
             self.app_data.autosave_project()
             self.app_data.delete_old_autosaves()
             # deactivate visual indicator
-            self.window.stopp_autosaving()
+            self.window.stop_autosaving()
             debug.info_msg("Saved!")
         else:
             debug.info_msg("Not saved yet, skipping autosave...")

@@ -316,6 +316,7 @@ class InvoiceDialog(QtWidgets.QDialog):
                     verified_amount=0, rebate=0, reduction_insurance_costs=0, reduction_usage_costs=0,
                     reduce_prev_invoices=True, safety_deposit=0, _safety_deposit_amount=None, discount=0,
                     due_date=QDate.currentDate(), due_date_discount=QDate.currentDate(), **kwargs):
+
         """ meta data """
         self.label_uid.setText(_uid.labelize() if _uid else "-")
         w_VAT = True if VAT else False

@@ -6,8 +6,10 @@
 """
 import debug
 
-from core.obj.uid import IdObject
 DEFAULT_VAT = 0.16
+
+from core.obj import restore
+from core.obj.uid import IdObject
 
 class Company(IdObject):
     """docstring for Company"""
@@ -53,7 +55,7 @@ class Company(IdObject):
     """
     @debug.log
     def restore(self, project):
-        self.restore_contact_person(project.people)
+        self.contact_person = restore.restore_by(self.contact_person, self._contact_person_ref, project.people)
 
     """
     #
@@ -64,20 +66,8 @@ class Company(IdObject):
     """
     @debug.log
     def restore_after_import(self, project):
-        self.restore_contact_person_by_name(project.people)
+        self.contact_person = restore.restore_by(self.contact_person, self._contact_person_ref, project.people, by=["first_name", "last_name"])
 
-    def restore_contact_person(self, people):
-        if self._contact_person_ref["uid"] and not(self.contact_person):
-            self.contact_person = [person for person in people if person.uid == self._contact_person_ref["uid"]][0]
-            self._contact_person_ref = None
-        elif self._contact_person_ref and self.contact_person:
-            raise Exception(f"Cannot restore contact_person: contact_person_uid ({self._contact_person_ref['uid']}) stored and the contact_person (uid: {self.contact_person.uid}) was already set.")
-
-    def restore_contact_person_by_name(self, people):
-        if isinstance(self.contact_person, str):
-            temp_list = [contact_person for contact_person in people if contact_person.first_name == self._contact_person_ref["first_name"] and contact_person.last_name == self._contact_person_ref["last_name"]]
-            self.contact_person = temp_list[0] if len(temp_list)>0 else None
-            self._contact_person_ref = None
     """
     #
     #   __FUNCTIONS__
@@ -95,7 +85,7 @@ class Person(IdObject):
     """docstring for Person"""
 
     def __init__(self,*, first_name="", last_name="", uid=None, deleted=False,  address=None,
-                telephone=None, fax=None, mobile=None, email=None, company=None, company_uid=None
+                telephone=None, fax=None, mobile=None, email=None, company=None, company_ref=None
                 ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.first_name = first_name
@@ -109,7 +99,7 @@ class Person(IdObject):
         self.company = company
 
         """ for restoration only """
-        self._company_uid = company_uid
+        self._company_ref = company_ref
 
     """
     #
@@ -149,14 +139,7 @@ class Person(IdObject):
     """
     @debug.log
     def restore(self, project):
-        self.restore_company(project.companies)
-
-    def restore_company(self, companies):
-        if self._company_uid and not(self.company):
-            self.company = [company for company in companies if company.uid == self._company_uid][0]
-            self._company_uid = None
-        elif self._company_uid and self.company:
-            raise Exception(f"Cannot restore company: company_uid ({self._company_uid}) stored and the company (uid: {self.company.uid}) was already set.")
+        self.company = restore.restore_by(self.company, self._company_ref, project.companies)
 
     """
     #
@@ -204,14 +187,15 @@ class Address(IdObject):
 class Job(IdObject):
     """docstring for Job"""
 
-    def __init__(self, id, *, uid=None, deleted=False,  company=None, job_sum=None, company_uid=None):
+    def __init__(self, id, *, uid=None, deleted=False,  company=None, job_sum=None, comment="", company_ref=None):
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
         self.company = company
         self.job_sum = job_sum
+        self.comment = comment
 
         """ for restoration only """
-        self._company_uid = company_uid
+        self._company_ref = company_ref
 
     """
     #
@@ -235,14 +219,11 @@ class Job(IdObject):
     """
     @debug.log
     def restore(self, project):
-        self.restore_company(project.companies)
+        self.company = restore.restore_by(self.company, self._company_ref, project.companies)
 
-    def restore_company(self, companies):
-        if self._company_uid and not(self.company):
-            self.company = [company for company in companies if company.uid == self._company_uid][0]
-            self._company_uid = None
-        elif self._company_uid and self.company:
-            raise Exception(f"Cannot restore company: company_uid ({self._company_uid}) stored and the company (uid: {self.company.uid}) was already set.")
+    @debug.log
+    def restore_after_import(self, project):
+        self.company = restore.restore_by(self.company, self._company_ref, project.companies, by=["name"])
 
     """
     #
@@ -262,7 +243,7 @@ class Invoice(IdObject):
                     reduction_insurance_costs=0, reduction_usage_costs=0, reduce_prev_invoices=True,
                     prev_invoices=None, prev_invoices_uids=None, prev_invoices_amount=None,
                     VAT=DEFAULT_VAT, safety_deposit=0, safety_deposit_amount=None, discount=0,
-                    due_date=None, due_date_discount=None, company_uid=None, job_uid=None
+                    due_date=None, due_date_discount=None, company_ref=None, job_ref=None
                     ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
@@ -289,8 +270,8 @@ class Invoice(IdObject):
         self.due_date_discount = due_date_discount
 
         """ for restoration only """
-        self._company_uid = company_uid
-        self._job_uid = job_uid
+        self._company_ref = company_ref
+        self._job_ref = job_ref
         self._prev_invoices_uids = prev_invoices_uids if prev_invoices_uids is not None else list()
 
     """
@@ -501,8 +482,13 @@ class Invoice(IdObject):
     @debug.log
     def restore(self, project):
         self.restore_prev_invoices(project.invoices)
-        self.restore_company(project.companies)
-        self.restore_job(project.jobs)
+        self.company = restore.restore_by(self.company, self._company_ref, project.companies)
+        self.job = restore.restore_by(self.job, self._job_ref, project.jobs)
+
+    @debug.log
+    def restore_after_import(self, project):
+        self.company = restore.restore_by(self.company, self._company_ref, project.companies, by=["name"])
+        self.job = restore.restore_by(self.job, self._job_ref, project.jobs, by=["id", "company.name"])
 
     def restore_prev_invoices(self, invoices):
         if self._prev_invoices_uids and len(self.prev_invoices)==0:
@@ -510,20 +496,6 @@ class Invoice(IdObject):
             self._prev_invoices_uids = None
         elif self._prev_invoices_uids and len(self.prev_invoices)>0 :
             raise Exception("Cannot restore invoices, prev_invoices is non-empty!")
-
-    def restore_company(self, companies):
-        if self._company_uid and not(self.company):
-            self.company = [company for company in companies if company.uid == self._company_uid][0]
-            self._company_uid = None
-        elif self._company_uid and self.company:
-            raise Exception(f"Cannot restore company: company_uid ({self._company_uid}) stored and the company (uid: {self.company.uid}) was already set.")
-
-    def restore_job(self, jobs):
-        if self._job_uid and not(self.job):
-            self.job = [job for job in jobs if job.uid == self._job_uid][0]
-            self._job_uid = None
-        elif self._job_uid and self.job:
-            raise Exception(f"Cannot restore job: job_uid ({self._job_uid}) stored and the job (uid: {self.job.uid}) was already set.")
 
     """
     #

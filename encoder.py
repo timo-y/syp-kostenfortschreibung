@@ -62,7 +62,12 @@ class ProjectEncoder(JSONEncoder):
                 "construction_scheme": o.construction_scheme,
                 "identifier": o.identifier,
                 "address": AddressEncoder().default(o.address) if o.address else None,
-                "client_uid": o.client.uid_to_json() if o.client else None,
+                "client_ref":
+                {
+                    "uid": o.client.uid_to_json(),
+                    "first_name": o.client.first_name,
+                    "last_name": o.client.last_name
+                } if o.client else None,
                 "project_data": ProjectDataEncoder().default(o.project_data),
                 "commissioned_date": o.commissioned_date.toString() if o.commissioned_date else None,
                 "planning_finished_date": o.planning_finished_date.toString() if o.planning_finished_date else None,
@@ -128,8 +133,16 @@ class InventoryItemEncoder(JSONEncoder):
                 "units": o.units,
                 "unit_type": o.unit_type,
                 "is_active": o.is_active,
-                "cost_group_uid": o.cost_group.uid_to_json(),
-                "trade_uid": o.trade.uid_to_json()
+                "cost_group_ref":
+                {
+                    "uid": o.cost_group.uid_to_json(),
+                    "id": o.cost_group.id
+                } if o.cost_group else None,
+                "trade_ref":
+                {
+                    "uid": o.trade.uid_to_json(),
+                    "name": o.trade.name
+                } if o.trade else None,
             }
             return encoded_inventory_item
         return JSONEncoder.default(self, o)
@@ -220,7 +233,11 @@ class PersonEncoder(JSONEncoder):
                 "fax": o.fax,
                 "mobile": o.mobile,
                 "email": o.email,
-                "company_uid": o.company.uid_to_json() if o.company else None,
+                "company_ref":
+                {
+                    "uid": o.company.uid_to_json(),
+                    "name": o.company.name
+                } if o.company else None,
             }
             return encoded_person
         return JSONEncoder.default(self, o)
@@ -256,7 +273,11 @@ class JobEncoder(JSONEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "id": o.id,
-                "company_uid": o.company.uid_to_json() if o.company else None,
+                "company_ref":
+                {
+                    "uid": o.company.uid_to_json(),
+                    "name": o.company.name
+                } if o.company else None,
                 "job_sum": o.job_sum
             }
             return encoded_job
@@ -273,9 +294,17 @@ class ArchJobEncoder(JobEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "id": o.id,
-                "company_uid": o.company.uid_to_json() if o.company else None,
+                "company_ref":
+                {
+                    "uid": o.company.uid_to_json(),
+                    "name": o.company.name
+                } if o.company else None,
                 "job_sum": o.job_sum,
-                "trade_uid": o.trade.uid_to_json() if o.trade else None,
+                "trade_ref":
+                {
+                    "uid": o.trade.uid_to_json(),
+                    "name": o.trade.name
+                } if o.trade else None,
                 "job_additions": [{"date": job_addition["date"].toString(), "name": job_addition["name"], "amount": job_addition["amount"], "comment": job_addition["comment"]} for job_addition in o.job_additions],
                 "paid_safety_deposits": [{"date": psd["date"].toString(), "amount": psd["amount"], "comment": psd["comment"]} for psd in o.paid_safety_deposits],
             }
@@ -293,8 +322,17 @@ class InvoiceEncoder(JSONEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "id": o.id,
-                "company_uid": o.company.uid_to_json() if o.company else None,
-                "job_uid": o.job.uid_to_json() if o.job else None,
+                "company_ref":
+                {
+                    "uid": o.company.uid_to_json(),
+                    "name": o.company.name
+                } if o.company else None,
+                "job_ref":
+                {
+                    "uid": o.job.uid_to_json(),
+                    "id": o.job.id,
+                    "company.name": o.company.name
+                } if o.job else None,
                 "cumulative": o.cumulative,
                 "invoice_date": o.invoice_date.toString() if o.invoice_date else None,
                 "inbox_date": o.inbox_date.toString() if o.inbox_date else None,

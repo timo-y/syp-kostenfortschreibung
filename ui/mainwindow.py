@@ -161,6 +161,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.render_trades(set_width=True)
         self.render_cost_groups(set_width=True)
         self.render_people(set_width=True)
+        self.render_project_cost_calculations(set_width=True)
 
     def init_tree_header(self):
         """ TODO: figure out where to put this """
@@ -259,7 +260,7 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     #
     #   SIGNALS, ACTIONS & BUTTONS
-    #   catch the signals from the mainwindow and set functions to them
+    #       catch the signals from the mainwindow and set functions to them
     #
     """
     def set_button_actions(self):
@@ -313,32 +314,39 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def load_widget_signals(self):
         """ project cost calculation signals """
-        self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.double_click_pcc)
-        self.tableWidget_project_cost_calculations.itemClicked.connect(self.click_pcc)
+        self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.table_double_click_pcc)
+        self.tableWidget_project_cost_calculations.itemClicked.connect(self.table_click_pcc)
+        self.tableWidget_project_cost_calculations.currentItemChanged.connect(self.table_click_pcc)
         """ invoice signals """
-        self.listWidget_invoices.itemDoubleClicked.connect(self.double_click_invoice)
-        self.tableWidget_invoices.itemDoubleClicked.connect(self.double_click_invoice)
-        self.tableWidget_invoices.itemClicked.connect(self.click_invoice)
+        self.listWidget_invoices.itemDoubleClicked.connect(self.table_double_click_invoice)
+        self.tableWidget_invoices.itemDoubleClicked.connect(self.table_double_click_invoice)
+        self.tableWidget_invoices.itemClicked.connect(self.table_click_invoice)
+        self.tableWidget_invoices.currentItemChanged.connect(self.table_click_invoice)
         """ job signals """
-        self.tableWidget_jobs.itemDoubleClicked.connect(self.double_click_job)
-        self.tableWidget_jobs.itemClicked.connect(self.click_job)
-        self.treeWidget_invoices_of_curr_job.itemDoubleClicked.connect(self.double_click_invoice_tree)
+        self.tableWidget_jobs.itemDoubleClicked.connect(self.table_double_click_job)
+        self.tableWidget_jobs.itemClicked.connect(self.table_click_job)
+        self.tableWidget_jobs.currentItemChanged.connect(self.table_click_job)
+        self.treeWidget_invoices_of_curr_job.itemDoubleClicked.connect(self.tree_double_click_invoice)
         self.treeWidget_paid_safety_desposits.itemClicked.connect(self.activate_job_buttons)
         self.treeWidget_job_additions.itemClicked.connect(self.activate_job_buttons)
         """ company signals """
-        self.tableWidget_companies.itemDoubleClicked.connect(self.double_click_company)
-        self.tableWidget_companies.itemClicked.connect(self.click_company)
+        self.tableWidget_companies.itemDoubleClicked.connect(self.table_double_click_company)
+        self.tableWidget_companies.itemClicked.connect(self.table_click_company)
+        self.tableWidget_companies.currentItemChanged.connect(self.table_click_company)
         """ trade signals """
-        self.tableWidget_trades.itemDoubleClicked.connect(self.double_click_trade)
-        self.tableWidget_trades.itemClicked.connect(self.click_trade)
+        self.tableWidget_trades.itemDoubleClicked.connect(self.table_double_click_trade)
+        self.tableWidget_trades.itemClicked.connect(self.table_click_trade)
+        self.tableWidget_trades.currentItemChanged.connect(self.table_click_trade)
         """ cost_group signals """
-        #self.tableWidget_cost_groups.itemDoubleClicked.connect(self.double_click_cost_group)
-        #self.tableWidget_cost_groups.itemClicked.connect(self.click_cost_group)
-        self.treeWidget_cost_groups.itemDoubleClicked.connect(self.double_click_cost_group_tree)
-        self.treeWidget_cost_groups.itemClicked.connect(self.click_cost_group_tree)
+        #self.tableWidget_cost_groups.itemDoubleClicked.connect(self.table_double_click_cost_group)
+        #self.tableWidget_cost_groups.itemClicked.connect(self.table_click_cost_group)
+        self.treeWidget_cost_groups.itemDoubleClicked.connect(self.tree_double_click_cost_group)
+        self.treeWidget_cost_groups.itemClicked.connect(self.tree_click_cost_group)
+        self.treeWidget_cost_groups.currentItemChanged.connect(self.tree_click_cost_group)
         """ people signals """
-        self.tableWidget_people.itemDoubleClicked.connect(self.double_click_person)
-        self.tableWidget_people.itemClicked.connect(self.click_person)
+        self.tableWidget_people.itemDoubleClicked.connect(self.table_double_click_person)
+        self.tableWidget_people.itemClicked.connect(self.table_click_person)
+        self.tableWidget_people.currentItemChanged.connect(self.table_click_person)
 
 
     def load_action_signals(self):
@@ -375,13 +383,14 @@ class MainWindow(QtWidgets.QMainWindow):
     #   PROJECT COST CALCULATION
     #
     """
-    def double_click_pcc(self, item):
+    def table_double_click_pcc(self, item):
         pcc = item.data(1)
         self.edit_pcc(pcc)
 
-    def click_pcc(self, item):
-        pcc = item.data(1)
-        self.render_pcc_info(pcc)
+    def table_click_pcc(self, item, prev_item=None):
+        if item:
+            pcc = item.data(1)
+            self.render_pcc_info(pcc)
 
     def button_edit_pcc(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
@@ -426,21 +435,23 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.update_ui()
         else:
             debug.log_warning("Couldn't apply Trade budgets, no project_cost_calculation selected!")
+
     """ signal
     #
     #   INVOICE
     #
     """
-    def double_click_invoice(self, item):
+    def table_double_click_invoice(self, item):
         invoice = item.data(1)
         self.edit_invoice(invoice)
 
-    def double_click_invoice_tree(self, item):
+    def tree_double_click_invoice(self, item):
         self.edit_invoice(item.data(1, QtCore.Qt.UserRole))
 
-    def click_invoice(self, item):
-        invoice = item.data(1)
-        self.render_invoice_info(invoice)
+    def table_click_invoice(self, item, prev_item=None):
+        if item:
+            invoice = item.data(1)
+            self.render_invoice_info(invoice)
 
     def button_edit_invoice(self):
         item = self.tableWidget_invoices.currentItem()
@@ -461,12 +472,13 @@ class MainWindow(QtWidgets.QMainWindow):
     #   JOB
     #
     """
-    def double_click_job(self, item):
+    def table_double_click_job(self, item):
         self.edit_job(item.data(1))
 
-    def click_job(self, item):
-        job = item.data(1)
-        self.render_job_info(job)
+    def table_click_job(self, item, prev_item=None):
+        if item:
+            job = item.data(1)
+            self.render_job_info(job)
 
     def button_edit_job(self):
         if self.tableWidget_jobs.currentItem():
@@ -543,12 +555,13 @@ class MainWindow(QtWidgets.QMainWindow):
     #   COMPANY
     #
     """
-    def double_click_company(self, item):
+    def table_double_click_company(self, item):
         self.edit_company(item.data(1))
 
-    def click_company(self, item):
-        company = item.data(1)
-        self.render_company_info(company)
+    def table_click_company(self, item, prev_item=None):
+        if item:
+            company = item.data(1)
+            self.render_company_info(company)
 
     def button_edit_company(self):
         if self.tableWidget_companies.currentItem():
@@ -561,12 +574,13 @@ class MainWindow(QtWidgets.QMainWindow):
     #   TRADE
     #
     """
-    def double_click_trade(self, item):
+    def table_double_click_trade(self, item):
         self.edit_trade(item.data(1))
 
-    def click_trade(self, item):
-        trade = item.data(1)
-        self.render_trade_info(trade)
+    def table_click_trade(self, item, prev_item=None):
+        if item:
+            trade = item.data(1)
+            self.render_trade_info(trade)
 
     def button_edit_trade(self):
         if self.tableWidget_trades.currentItem():
@@ -579,19 +593,21 @@ class MainWindow(QtWidgets.QMainWindow):
     #  COST GROUP
     #
     """
-    def double_click_cost_group(self, item):
+    def table_double_click_cost_group(self, item):
         self.edit_cost_group(item.data(1))
 
-    def double_click_cost_group_tree(self, item):
+    def tree_double_click_cost_group(self, item):
         self.edit_cost_group(item.data(1, QtCore.Qt.UserRole))
 
-    def click_cost_group(self, item):
-        cost_group = item.data(1)
-        self.render_cost_group_info(cost_group)
+    def table_click_cost_group(self, item, prev_item=None):
+        if item:
+            cost_group = item.data(1)
+            self.render_cost_group_info(cost_group)
 
-    def click_cost_group_tree(self, item):
-        cost_group = item.data(1, QtCore.Qt.UserRole)
-        self.render_cost_group_info(cost_group)
+    def tree_click_cost_group(self, item):
+        if item:
+            cost_group = item.data(1, QtCore.Qt.UserRole)
+            self.render_cost_group_info(cost_group)
 
     def button_edit_cost_group(self):
         if len(self.treeWidget_cost_groups.selectedItems())>0:
@@ -605,12 +621,13 @@ class MainWindow(QtWidgets.QMainWindow):
     #  PERSON
     #
     """
-    def double_click_person(self, item):
+    def table_double_click_person(self, item):
         self.edit_person(item.data(1))
 
-    def click_person(self, item):
-        person = item.data(1)
-        self.render_person_info(person)
+    def table_click_person(self, item, prev_item=None):
+        if item:
+            person = item.data(1)
+            self.render_person_info(person)
 
     def button_edit_person(self):
         if self.tableWidget_people.currentItem():
@@ -1107,8 +1124,8 @@ class MainWindow(QtWidgets.QMainWindow):
             for invoice in invoices_of_company_and_job:
                 helper.add_item_to_tree(content_item=invoice,
                                             parent=job_node,
-                                            cols=["", str(invoice.id), amount_w_currency_str(invoice.verified_amount, currency)])
-                job_sum += invoice.verified_amount
+                                            cols=["", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
+                job_sum += invoice.amount_wout_prev_payments
             job_node.setText(0, f"{job.id} ({self.app_data.titles['job_sum']}: {amount_w_currency_str(job.job_sum, currency)})")
             job_node.setText(1, f"{len(invoices_of_company_and_job)}")
             job_node.setText(2, amount_w_currency_str(job_sum, currency))
@@ -1261,7 +1278,7 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_project_cost_calculations(self, set_width=False):
-        self.activate_person_buttons()
+        self.activate_pcc_buttons()
         amount_cols = ["total_cost"]
         date_cols = ["date"]
         helper.render_to_table(content=self.app_data.project.project_cost_calculations,
@@ -1466,7 +1483,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
             if reply:
-                self.app_data.project = None
+                self.app_data._project = None
                 self.update_ui()
                 helper.load_project(self, self.app_data)
         else:
@@ -1511,7 +1528,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
             if reply:
-                self.app_data.project = None
+                self.app_data._project = None
                 self.update_ui()
                 helper.import_project(self, self.app_data)
         else:

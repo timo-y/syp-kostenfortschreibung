@@ -1,7 +1,7 @@
 {
     "language": "de-DE",
     "currency": "\u20ac",
-    "default_vat": 0.16,
+    "default_vat": 0.19,
     "SYP_dir": "G:/SYP/",
     "save_dir": "projects",
     "lang_dir": "lang",
@@ -9,12 +9,12 @@
     "template_subdir": "templates",
     "invoice_check_subdir": "invoice_check",
     "user_save": {
-        "datetime": "2021-01-22_112524",
-        "path": "G:\\Eigene Dateien\\Google Drive\\02 Arbeit\\00 Fyuture\\01 Learning\\Python\\00 Projekte\\Kostenfortschreibung\\Application\\projects\\Test.project"
+        "datetime": null,
+        "path": null
     },
     "last_auto_save": {
-        "datetime": "2021-01-22_113235",
-        "path": "projects\\autosaves\\2021-01-22_113235-autosave-Test.project"
+        "datetime": "2021-01-22_142407",
+        "path": "projects\\autosaves\\2021-01-22_142407-autosave-ROS.project"
     },
     "autosave_time": 80000,
     "max_autosaves": 5,
@@ -67,5 +67,5 @@
             "Objektbetreuung"
         ]
     ],
-    "log_filename": "info.log"
+    "log_filename": "log.log"
 }

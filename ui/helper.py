@@ -556,7 +556,8 @@ def u_sure_prompt(dialog):
 """
 #
 #   DELETE
-#   Ask first via prompt, if yes close dialog and return signal -1.
+#       This function is called within the a dialo from ui.dlg.
+#       Ask first via prompt, if yes close dialog and return signal -1.
 #
 """
 def delete(dialog, object):
@@ -570,6 +571,7 @@ def delete_prompt(dialog):
     if reply == QtWidgets.QMessageBox.Yes:
         return True
     return False
+
 """
 #
 #   INPUT MANAGEMENT

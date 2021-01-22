@@ -68,7 +68,7 @@ class ProjectEncoder(JSONEncoder):
                     "first_name": o.client.first_name,
                     "last_name": o.client.last_name
                 } if o.client else None,
-                "project_data": ProjectDataEncoder().default(o.project_data),
+                "project_data": ProjectDataEncoder().default(o.project_data) if o.project_data else None,
                 "commissioned_date": o.commissioned_date.toString() if o.commissioned_date else None,
                 "planning_finished_date": o.planning_finished_date.toString() if o.planning_finished_date else None,
                 "billed_date": o.billed_date.toString() if o.billed_date else None,

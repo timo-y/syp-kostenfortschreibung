@@ -8,7 +8,7 @@ import debug
 
 DEFAULT_LANGUAGE = "de-DE"
 DEFAULT_CURRENCY = "€"
-DEFAULT_VAT = 0.16
+DEFAULT_VAT = 0.19
 DEFAULT_SYP_DIR = "G:/SYP/"
 DEFAULT_SAVE_DIR = "projects"
 DEFAULT_LANG_DIR = "lang"
@@ -166,7 +166,8 @@ class AppData:
         kf_importer.import_data()
         kf_importer.create_objects()
 
-        project = proj.Project(config=self.get_init_proj_config(), cost_groups=self.get_init_cost_groups(), identifier=kf_importer.identifier, companies=kf_importer.companies,
+        project = proj.Project(config=self.get_init_proj_config(), cost_groups=self.get_init_cost_groups(),
+                                identifier=kf_importer.identifier, companies=kf_importer.companies,
                                 trades=kf_importer.trades, jobs=kf_importer.jobs, invoices=kf_importer.invoices)
         # TODO: Create restore functions for after import like this
         for company in project.companies:

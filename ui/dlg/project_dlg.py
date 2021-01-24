@@ -21,7 +21,8 @@ class ProjectDialog(QtWidgets.QDialog):
 
         self.initialize_ui()
         """ set title """
-        dialog_title = f"Projekt ({loaded_project.identifier}) bearbeiten..." if loaded_project else "Neue Projekt"
+        dialog_title = f"Projekt ({loaded_project.identifier}) " \
+                    + "bearbeiten..." if loaded_project else "Neue Projekt"
         self.setWindowTitle(dialog_title)
         """ fixed window size """
         # self.setFixedSize(self.size())
@@ -36,7 +37,8 @@ class ProjectDialog(QtWidgets.QDialog):
 
         if self.loaded_project:
             """ load invoice data to input """
-            self.sel_client = self.loaded_project.client if self.loaded_project.client else None
+            self.sel_client = self.loaded_project.client \
+                                if self.loaded_project.client else None
             loaded_args = vars(self.loaded_project).copy()
             self.set_input(**loaded_args)
 
@@ -85,26 +87,58 @@ class ProjectDialog(QtWidgets.QDialog):
     """
     def set_button_actions(self):
         """ date buttons """
-        self.pushButton_commissioned_date_set_today.clicked.connect(lambda:self.dateEdit_commissioned_date.setDate(QDate.currentDate()))
-        self.pushButton_planning_finished_date_set_today.clicked.connect(lambda:self.dateEdit_planning_finished_date.setDate(QDate.currentDate()))
-        self.pushButton_billed_date_set_today.clicked.connect(lambda:self.dateEdit_billed_date.setDate(QDate.currentDate()))
+        self.pushButton_commissioned_date_set_today.clicked.connect(
+            lambda:self.dateEdit_commissioned_date.setDate(
+                QDate.currentDate()
+                )
+            )
+        self.pushButton_planning_finished_date_set_today.clicked.connect(
+            lambda:self.dateEdit_planning_finished_date.setDate(
+                QDate.currentDate()
+                )
+            )
+        self.pushButton_billed_date_set_today.clicked.connect(
+            lambda:self.dateEdit_billed_date.setDate(
+                QDate.currentDate()
+                )
+            )
 
         """ add client """
         self.pushButton_add_new_client.clicked.connect(self.add_new_client)
 
     def set_check_box_actions(self):
-        self.checkBox_commissioned.toggled.connect(self.dateEdit_commissioned_date.setEnabled)
-        self.checkBox_commissioned.toggled.connect(self.pushButton_commissioned_date_set_today.setEnabled)
-        self.checkBox_planning_finished.toggled.connect(self.dateEdit_planning_finished_date.setEnabled)
-        self.checkBox_planning_finished.toggled.connect(self.pushButton_planning_finished_date_set_today.setEnabled)
-        self.checkBox_billed.toggled.connect(self.dateEdit_billed_date.setEnabled)
-        self.checkBox_billed.toggled.connect(self.pushButton_billed_date_set_today.setEnabled)
-        self.checkBox_execution_period.toggled.connect(self.dateEdit_execution_period_date_1.setEnabled)
-        self.checkBox_execution_period.toggled.connect(self.dateEdit_execution_period_date_2.setEnabled)
-        self.checkBox_execution_period.toggled.connect(self.label_to.setEnabled)
+        self.checkBox_commissioned.toggled.connect(
+            self.dateEdit_commissioned_date.setEnabled
+            )
+        self.checkBox_commissioned.toggled.connect(
+            self.pushButton_commissioned_date_set_today.setEnabled
+            )
+        self.checkBox_planning_finished.toggled.connect(
+            self.dateEdit_planning_finished_date.setEnabled
+            )
+        self.checkBox_planning_finished.toggled.connect(
+            self.pushButton_planning_finished_date_set_today.setEnabled
+            )
+        self.checkBox_billed.toggled.connect(
+            self.dateEdit_billed_date.setEnabled
+            )
+        self.checkBox_billed.toggled.connect(
+            self.pushButton_billed_date_set_today.setEnabled
+            )
+        self.checkBox_execution_period.toggled.connect(
+            self.dateEdit_execution_period_date_1.setEnabled
+            )
+        self.checkBox_execution_period.toggled.connect(
+            self.dateEdit_execution_period_date_2.setEnabled
+            )
+        self.checkBox_execution_period.toggled.connect(
+            self.label_to.setEnabled
+            )
 
     def set_combo_box_actions(self):
-        self.comboBox_planning_status.currentIndexChanged.connect(self.set_planning_phase_desc)
+        self.comboBox_planning_status.currentIndexChanged.connect(
+            self.set_planning_phase_desc
+            )
 
     def set_event_handler(self):
         self.keyReleaseEvent = self.eventHandler
@@ -133,14 +167,26 @@ class ProjectDialog(QtWidgets.QDialog):
     """
     def set_planning_phase_desc(self):
         planning_phase = self.comboBox_planning_status.currentData()
-        self.label_planning_status.setText(planning_phase[1] if planning_phase else "-")
+        self.label_planning_status.setText(
+            planning_phase[1] if planning_phase else "-"
+            )
 
     def set_date_today(self):
-        self.dateEdit_commissioned_date.setDate(QDate.currentDate())
-        self.dateEdit_planning_finished_date.setDate(QDate.currentDate())
-        self.dateEdit_billed_date.setDate(QDate.currentDate())
-        self.dateEdit_execution_period_date_1.setDate(QDate.currentDate())
-        self.dateEdit_execution_period_date_2.setDate(QDate.currentDate())
+        self.dateEdit_commissioned_date.setDate(
+            QDate.currentDate()
+            )
+        self.dateEdit_planning_finished_date.setDate(
+            QDate.currentDate()
+            )
+        self.dateEdit_billed_date.setDate(
+            QDate.currentDate()
+            )
+        self.dateEdit_execution_period_date_1.setDate(
+            QDate.currentDate()
+            )
+        self.dateEdit_execution_period_date_2.setDate(
+            QDate.currentDate()
+            )
 
     def set_building_class_to(self, building_class):
         index = self.comboBox_building_class.findData(building_class)
@@ -154,13 +200,20 @@ class ProjectDialog(QtWidgets.QDialog):
         """ client """
         self.label_client_first_name.setText(client.first_name)
         self.label_client_last_name.setText(client.last_name)
-        self.label_client_street_a_number.setText(" ,".join([client.address.street, client.address.house_number]))
-        self.label_client_zip_a_state.setText(" ,".join([client.address.zipcode, client.address.state]))
+        self.label_client_street_a_number.setText(" ,".join(
+            [client.address.street, client.address.house_number]
+            ))
+        self.label_client_zip_a_state.setText(" ,".join(
+            [client.address.zipcode, client.address.state]
+            ))
 
-    def set_input(self, *, _uid="-", identifier="", construction_scheme="", _address=None, _client=None,
-                    _project_data=None, commissioned_date=QDate.currentDate(), planning_finished_date=QDate.currentDate(),
-                    billed_date=QDate.currentDate(), planning_status=None, **kwargs
-                    ):
+    def set_input(self, *, _uid="-", identifier="", construction_scheme="",
+                  _address=None, _client=None, _project_data=None,
+                  commissioned_date=QDate.currentDate(),
+                  planning_finished_date=QDate.currentDate(),
+                  billed_date=QDate.currentDate(), planning_status=None,
+                  **kwargs
+                  ):
         address = _address
         client = _client
         project_data = _project_data
@@ -179,35 +232,59 @@ class ProjectDialog(QtWidgets.QDialog):
             self.lineEdit_country.setText(address.country)
         """ project data """
         if project_data:
-            self.lineEdit_commissioned_services.setText(project_data.commissioned_services)
-            self.doubleSpinBox_property_size.setValue(project_data.property_size)
-            self.doubleSpinBox_usable_floor_space_nuf.setValue(project_data.usable_floor_space_nuf)
-            self.doubleSpinBox_usable_floor_space_bgf.setValue(project_data.usable_floor_space_bgf)
-            self.doubleSpinBox_construction_costs_kg300_400.setValue(project_data.construction_costs_kg300_400)
-            self.doubleSpinBox_production_costs.setValue(project_data.production_costs)
-            self.doubleSpinBox_contract_fee.setValue(project_data.contract_fee)
-            self.set_building_class_to(project_data.building_class)
+            self.lineEdit_commissioned_services.setText(
+                project_data.commissioned_services
+                )
+            self.doubleSpinBox_property_size.setValue(
+                project_data.property_size
+                )
+            self.doubleSpinBox_usable_floor_space_nuf.setValue(
+                project_data.usable_floor_space_nuf
+                )
+            self.doubleSpinBox_usable_floor_space_bgf.setValue(
+                project_data.usable_floor_space_bgf
+                )
+            self.doubleSpinBox_construction_costs_kg300_400.setValue(
+                project_data.construction_costs_kg300_400
+                )
+            self.doubleSpinBox_production_costs.setValue(
+                project_data.production_costs
+                )
+            self.doubleSpinBox_contract_fee.setValue(
+                project_data.contract_fee)
+            self.set_building_class_to(project_data.building_class
+                )
             if project_data.execution_period:
                 self.checkBox_execution_period.setChecked(True)
-                self.dateEdit_execution_period_date_1.setDate(project_data.execution_period[0])
-                self.dateEdit_execution_period_date_2.setDate(project_data.execution_period[1])
+                self.dateEdit_execution_period_date_1.setDate(
+                    project_data.execution_period[0]
+                    )
+                self.dateEdit_execution_period_date_2.setDate(
+                    project_data.execution_period[1]
+                    )
             else:
                 self.checkBox_execution_period.setChecked(False)
 
         """ dates """
         if commissioned_date:
             self.checkBox_commissioned.setChecked(True)
-            self.dateEdit_commissioned_date.setDate(commissioned_date)
+            self.dateEdit_commissioned_date.setDate(
+                commissioned_date
+                )
         else:
             self.checkBox_commissioned.setChecked(False)
         if planning_finished_date:
             self.checkBox_planning_finished.setChecked(True)
-            self.dateEdit_planning_finished_date.setDate(planning_finished_date)
+            self.dateEdit_planning_finished_date.setDate(
+                planning_finished_date
+                )
         else:
             self.checkBox_planning_finished.setChecked(False)
         if billed_date:
             self.checkBox_billed.setChecked(True)
-            self.dateEdit_billed_date.setDate(billed_date)
+            self.dateEdit_billed_date.setDate(
+                billed_date
+                )
         else:
             self.checkBox_billed.setChecked(False)
 
@@ -215,35 +292,64 @@ class ProjectDialog(QtWidgets.QDialog):
 
     def get_input(self):
         address = {
-                "street": self.lineEdit_street.text(),
-                "house_number": self.lineEdit_house_number.text(),
-                "city": self.lineEdit_city.text(),
-                "state": self.lineEdit_state.text(),
-                "zipcode": self.lineEdit_zipcode.text(),
-                "country": self.lineEdit_country.text()
-            }
+                "street":
+                    self.lineEdit_street.text(),
+                "house_number":
+                    self.lineEdit_house_number.text(),
+                "city":
+                    self.lineEdit_city.text(),
+                "state":
+                    self.lineEdit_state.text(),
+                "zipcode":
+                    self.lineEdit_zipcode.text(),
+                "country":
+                    self.lineEdit_country.text()
+                }
         project_data = {
-                "commissioned_services": self.lineEdit_commissioned_services.text(),
-                "property_size": self.doubleSpinBox_property_size.value(),
-                "usable_floor_space_nuf": self.doubleSpinBox_usable_floor_space_nuf.value(),
-                "usable_floor_space_bgf": self.doubleSpinBox_usable_floor_space_bgf.value(),
-                "building_class": self.comboBox_building_class.currentData(),
-                "construction_costs_kg300_400": self.doubleSpinBox_construction_costs_kg300_400.value(),
-                "production_costs": self.doubleSpinBox_production_costs.value(),
-                "contract_fee": self.doubleSpinBox_contract_fee.value(),
-                "execution_period": (self.dateEdit_execution_period_date_1.date(), self.dateEdit_execution_period_date_2.date()) if self.checkBox_execution_period.isChecked() else None
-            }
+                "commissioned_services":
+                    self.lineEdit_commissioned_services.text(),
+                "property_size":
+                    self.doubleSpinBox_property_size.value(),
+                "usable_floor_space_nuf":
+                    self.doubleSpinBox_usable_floor_space_nuf.value(),
+                "usable_floor_space_bgf":
+                    self.doubleSpinBox_usable_floor_space_bgf.value(),
+                "building_class":
+                    self.comboBox_building_class.currentData(),
+                "construction_costs_kg300_400":
+                    self.doubleSpinBox_construction_costs_kg300_400.value(),
+                "production_costs":
+                    self.doubleSpinBox_production_costs.value(),
+                "contract_fee":
+                    self.doubleSpinBox_contract_fee.value(),
+                "execution_period":
+                    (self.dateEdit_execution_period_date_1.date(),
+                    self.dateEdit_execution_period_date_2.date()) \
+                    if self.checkBox_execution_period.isChecked() else None
+                }
         args = {
-                "identifier": self.lineEdit_id.text(),
-                "construction_scheme": self.lineEdit_construction_scheme.text(),
-                "address": corp.Address(**address),
-                "client": self.sel_client,
-                "project_data": proj.ProjectData(**project_data),
-                "commissioned_date": self.dateEdit_commissioned_date.date() if self.checkBox_commissioned.isChecked() else None,
-                "planning_finished_date": self.dateEdit_planning_finished_date.date() if self.checkBox_planning_finished.isChecked() else None,
-                "billed_date": self.dateEdit_billed_date.date() if self.checkBox_billed.isChecked() else None,
-                "planning_status": self.comboBox_planning_status.currentData()
-            }
+                "identifier":
+                    self.lineEdit_id.text(),
+                "construction_scheme":
+                    self.lineEdit_construction_scheme.text(),
+                "address":
+                    corp.Address(**address),
+                "client":
+                    self.sel_client,
+                "project_data":
+                    proj.ProjectData(**project_data),
+                "commissioned_date":
+                    self.dateEdit_commissioned_date.date() \
+                    if self.checkBox_commissioned.isChecked() else None,
+                "planning_finished_date":
+                    self.dateEdit_planning_finished_date.date() \
+                    if self.checkBox_planning_finished.isChecked() else None,
+                "billed_date":
+                    self.dateEdit_billed_date.date() \
+                    if self.checkBox_billed.isChecked() else None,
+                "planning_status":
+                    self.comboBox_planning_status.currentData()
+                }
         return args
 
     """

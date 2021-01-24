@@ -30,6 +30,63 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.app_data = app_data
 
+        self.def_table_header_vars()
+
+        self.initialize_ui()
+        self.set_window_icon()
+        self.center_window()
+        self.set_button_actions()
+        self.load_widget_signals()
+        self.load_action_signals()
+        self.load_line_edit_signals()
+
+        if self.app_data.project is None:
+            self.disable_ui()
+
+    @property
+    def currency(self):
+        return self.app_data.project.get_currency() if self.app_data.project_loaded() else self.app_data.get_currency()
+
+    """
+    #
+    #   INITIALIZE, EN/-DISABLE & UPDATE THE GUI
+    #
+    #
+    """
+    def initialize_ui(self):
+        uic.loadUi('ui/mainwindow.ui', self) # Load the .ui file
+        self.initialize_tabwidget()
+        self.init_tree_header()
+
+    def set_window_icon(self):
+        self.setWindowIcon(QtGui.QIcon('images/icon.png'))
+
+    def initialize_tabwidget(self):
+        self.tabWidget_content.clear()
+        self.tabWidget_content.setTabBar(customqt.TabBar(self))
+        self.tabWidget_content.setTabPosition(QtWidgets.QTabWidget.West)
+        #self.tabWidget_content.addTab(self.tab_overview, "Übersicht")
+        self.tabWidget_content.addTab(self.tab_cost_stand, "Kostenstand")
+        self.tabWidget_content.addTab(self.tab_invoice_table, "Rechnungen")
+        self.tabWidget_content.addTab(self.tab_jobs_table, "Aufträge")
+        self.tabWidget_content.addTab(self.tab_companies_table, "Firmen")
+        self.tabWidget_content.addTab(self.tab_trades_table, "Gewerke")
+        self.tabWidget_content.addTab(self.tab_cost_groups_table, "Kostengruppen")
+        self.tabWidget_content.addTab(self.tab_people, "Beteiligten")
+        self.tabWidget_content.addTab(self.tab_project_cost_calculation, "Kostenberechnung")
+        #self.tabWidget_content.addTab(self.tab_invoice_check, "???")
+
+    def init_table_header(self):
+        self.render_cost_stand(set_width=True)
+        self.render_invoice_view(set_width=True)
+        self.render_job_view(set_width=True)
+        self.render_company_view(set_width=True)
+        self.render_trades(set_width=True)
+        self.render_cost_groups(set_width=True)
+        self.render_people(set_width=True)
+        self.render_project_cost_calculations(set_width=True)
+
+    def def_table_header_vars(self):
         """
         #
         #   COLUMNS OF TABLE VIEWS
@@ -114,55 +171,6 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "email", "width": 150},
             {"title": "company", "width": 150}
         ]
-
-        self.initialize_ui()
-        self.center_window()
-        self.set_button_actions()
-        self.load_widget_signals()
-        self.load_action_signals()
-
-        if self.app_data.project is None:
-            self.disable_ui()
-
-    @property
-    def currency(self):
-        return self.app_data.project.get_currency() if self.app_data.project_loaded() else self.app_data.get_currency()
-
-    """
-    #
-    #   INITIALIZE, EN/-DISABLE & UPDATE THE GUI
-    #
-    #
-    """
-    def initialize_ui(self):
-        uic.loadUi('ui/mainwindow.ui', self) # Load the .ui file
-        self.initialize_tabwidget()
-        self.init_tree_header()
-
-    def initialize_tabwidget(self):
-        self.tabWidget_content.clear()
-        self.tabWidget_content.setTabBar(customqt.TabBar(self))
-        self.tabWidget_content.setTabPosition(QtWidgets.QTabWidget.West)
-        #self.tabWidget_content.addTab(self.tab_overview, "Übersicht")
-        self.tabWidget_content.addTab(self.tab_cost_stand, "Kostenstand")
-        self.tabWidget_content.addTab(self.tab_invoice_table, "Rechnungen")
-        self.tabWidget_content.addTab(self.tab_jobs_table, "Aufträge")
-        self.tabWidget_content.addTab(self.tab_companies_table, "Firmen")
-        self.tabWidget_content.addTab(self.tab_trades_table, "Gewerke")
-        self.tabWidget_content.addTab(self.tab_cost_groups_table, "Kostengruppen")
-        self.tabWidget_content.addTab(self.tab_people, "Beteiligten")
-        self.tabWidget_content.addTab(self.tab_project_cost_calculation, "Kostenberechnung")
-        #self.tabWidget_content.addTab(self.tab_invoice_check, "???")
-
-    def init_table_header(self):
-        self.render_cost_stand(set_width=True)
-        self.render_invoice_view(set_width=True)
-        self.render_job_view(set_width=True)
-        self.render_company_view(set_width=True)
-        self.render_trades(set_width=True)
-        self.render_cost_groups(set_width=True)
-        self.render_people(set_width=True)
-        self.render_project_cost_calculations(set_width=True)
 
     def init_tree_header(self):
         """ TODO: figure out where to put this """
@@ -294,6 +302,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_edit_invoice.clicked.connect(self.button_edit_invoice)
         self.pushButton_invoice_check.clicked.connect(self.button_invoice_check)
         self.pushButton_go_to_job.clicked.connect(self.button_set_job_view_sel_invoice)
+        self.pushButton_invoice_search.clicked.connect(lambda:self.render_invoice_view())
+        self.pushButton_reset_invoice_search.clicked.connect(self.button_reset_invoice_search)
 
         """ job buttons """
         self.pushButton_new_job.clicked.connect(self.button_input_job_to_project)
@@ -379,6 +389,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionImportTrades.triggered.connect(self.import_trades)
         self.actionImportCostGroups.triggered.connect(self.import_cost_groups)
 
+    def load_line_edit_signals(self):
+        self.lineEdit_invoice_search.returnPressed.connect(lambda:self.render_invoice_view())
     """
     #
     #   SIGNAL FUNCTIONS
@@ -507,6 +519,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.invoice_check(item.data(1))
         else:
             debug.log_warning("Couldn't create invoice check, no invoice selected!")
+
+    @pyqtSlot()
+    def button_reset_invoice_search(self):
+        self.lineEdit_invoice_search.setText("")
+        self.render_invoice_view()
 
     """ signal
     #
@@ -849,7 +866,22 @@ class MainWindow(QtWidgets.QMainWindow):
     def render_invoice_view(self, set_width=False):
         self.activate_invoice_buttons()
         date_cols = ["invoice_date", "inbox_date", "checked_date"]
-        helper.render_to_table(content=self.app_data.project.invoices,
+        search_terms = self.lineEdit_invoice_search.text().split(" ") \
+                       if len(self.lineEdit_invoice_search.text())>0 else None
+        """
+        #
+        #   invoices_to_render
+        #       Filter the invoices by the search terms.
+        #
+        """
+        invoices_to_render = {invoice for invoice in
+                              self.app_data.project.invoices
+                              for search_term in search_terms
+                              for invoice_info in [str(invoice.id).lower(), str(invoice.company.name).lower()]
+                              if str(search_term).lower() in invoice_info
+                             } if search_terms else self.app_data.project.invoices
+
+        helper.render_to_table(content=invoices_to_render,
                                 table=self.tableWidget_invoices,
                                 cols=self.invoice_cols,
                                 titles=self.app_data.titles,

@@ -1,0 +1,1289 @@
+[
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "5cdbebcb-0212-4d25-9206-f3590ab08daa",
+            "created_date": "2021-01-25T11:25:15.143506",
+            "edited_date": "2021-01-25T11:36:54.158781"
+        },
+        "deleted": false,
+        "id": "100",
+        "name": "Grundst\u00fcck",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": null
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "5170268f-81a5-47cc-83d6-db4d773d49a3",
+            "created_date": "2021-01-25T11:25:32.654514",
+            "edited_date": "2021-01-25T11:36:24.249483"
+        },
+        "deleted": false,
+        "id": "110",
+        "name": "Grundst\u00fcckswert",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "5cdbebcb-0212-4d25-9206-f3590ab08daa",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": "2021-01-25T11:36:54.158781"
+            },
+            "id": "100"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "b0aee746-8b6d-4ecd-82f3-efecebc7421a",
+            "created_date": "2021-01-25T11:25:39.294530",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "120",
+        "name": "Grundst\u00fccksnebenkosten",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "5cdbebcb-0212-4d25-9206-f3590ab08daa",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": "2021-01-25T11:36:54.158781"
+            },
+            "id": "100"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "364c5191-e3e2-4cfd-a333-37fb0a42dd1a",
+            "created_date": "2021-01-25T11:25:56.847250",
+            "edited_date": "2021-01-25T11:26:37.591224"
+        },
+        "deleted": false,
+        "id": "130",
+        "name": "Rechte Dritter/Freimachen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "5cdbebcb-0212-4d25-9206-f3590ab08daa",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": "2021-01-25T11:36:54.158781"
+            },
+            "id": "100"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "2361ab12-8e7b-441a-bf73-34abc7191537",
+            "created_date": "2021-01-25T11:25:15.143506",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "200",
+        "name": "Herrichten und Erschlie\u00dfen",
+        "description": "",
+        "budget": 0,
+        "parent_ref": null
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "2245ab83-7eea-4b1e-aa8a-fb6ecfd646a0",
+            "created_date": "2021-01-25T11:27:11.805523",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "210",
+        "name": "Herrichten",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "2361ab12-8e7b-441a-bf73-34abc7191537",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "200"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "914f928e-0e15-459a-9e74-5f257129a0e8",
+            "created_date": "2021-01-25T11:27:22.605520",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "220",
+        "name": "\u00d6ffentliche Erschlie\u00dfung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "2361ab12-8e7b-441a-bf73-34abc7191537",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "200"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "1d6c9e82-e6c4-4dd6-ab95-06d8da2caf9c",
+            "created_date": "2021-01-25T11:27:31.385548",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "230",
+        "name": "Nicht\u00f6ffentliche Erschlie\u00dfung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "2361ab12-8e7b-441a-bf73-34abc7191537",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "200"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "f580f88b-e741-4e66-b603-05b6eb66dd94",
+            "created_date": "2021-01-25T11:27:42.618700",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "240",
+        "name": "Ausgleichsma\u00dfnahmen und -abgaben",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "2361ab12-8e7b-441a-bf73-34abc7191537",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "200"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "20978a17-4e42-4507-ae2e-a021e2ef3a6e",
+            "created_date": "2021-01-25T11:27:54.291522",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "250",
+        "name": "\u00dcbergangsma\u00dfnahmen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "2361ab12-8e7b-441a-bf73-34abc7191537",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "200"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+            "created_date": "2021-01-25T11:25:15.143506",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "300",
+        "name": "Bauwerk und Baukonstruktionen",
+        "description": "",
+        "budget": 0,
+        "parent_ref": null
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "f60a79eb-b0c7-40c0-8abf-b91b9986dabd",
+            "created_date": "2021-01-25T11:28:15.814521",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "310",
+        "name": "Baugrube/Erdbau",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "e4ec539f-bf48-4023-89da-36357aec4676",
+            "created_date": "2021-01-25T11:28:27.525507",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "320",
+        "name": "Gr\u00fcndung, Unterbau",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "51c5bde0-4c55-45d0-9442-afa9655ccccb",
+            "created_date": "2021-01-25T11:28:40.289058",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "330",
+        "name": "Au\u00dfenw\u00e4nde/Vertikale Baukonstruktionen, au\u00dfen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "c43886bf-a781-45eb-b160-eae6bbc097e8",
+            "created_date": "2021-01-25T11:28:53.809516",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "340",
+        "name": "Innenw\u00e4nde/Vertikale Baukonstruktionen, innen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "191c28b5-66ae-423e-ac60-132e2cf3c355",
+            "created_date": "2021-01-25T11:29:06.003720",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "350",
+        "name": "Decken/Horizontale Baukonstruktionen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "e2fc3612-d787-4870-b38d-dc42b5052df1",
+            "created_date": "2021-01-25T11:29:15.543518",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "360",
+        "name": "D\u00e4cher",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "af97b48f-4687-4c8a-82d3-48be763107f6",
+            "created_date": "2021-01-25T11:29:38.394526",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "370",
+        "name": "Infrastrukturanlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "13bd367e-0a5e-4d14-9187-5a07056ff8c3",
+            "created_date": "2021-01-25T11:29:48.912516",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "380",
+        "name": "Baukonstruktive Einbauten",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "72cb8bc7-5fce-4386-b542-d1a4f9498fbe",
+            "created_date": "2021-01-25T11:29:59.589406",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "390",
+        "name": "Sonstige Ma\u00dfnahmen f\u00fcr Baukonstruktionen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "73ce1a52-d65d-44e4-a5a3-503eedf16755",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "300"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+            "created_date": "2021-01-25T11:25:15.143506",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "400",
+        "name": "Bauwerk und Technische Anlagen",
+        "description": "",
+        "budget": 0,
+        "parent_ref": null
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "f9caf3f4-b42b-4b7d-9c7a-8503e1511749",
+            "created_date": "2021-01-25T11:30:19.751387",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "410",
+        "name": "Abwasser-, Wasser-, Gasanlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "c4153c67-87f9-4c1c-b0e9-0a19daacd97d",
+            "created_date": "2021-01-25T11:30:29.852070",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "420",
+        "name": "W\u00e4rmeversorgungsanlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "ab589910-a6f3-4b2c-b7f7-cf4dc26dc2ea",
+            "created_date": "2021-01-25T11:30:40.537696",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "430",
+        "name": "Raumlufttechnische Anlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "cf582182-fcf7-4792-8391-862f52346320",
+            "created_date": "2021-01-25T11:30:50.758515",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "440",
+        "name": "Elektrische Anlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "1f8ee064-0d1b-476a-8ae1-7ba22f59077a",
+            "created_date": "2021-01-25T11:31:04.299140",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "450",
+        "name": "Kommunikations-, sicherheits- und informationstechnische Anlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "fec96024-19ac-4821-b6be-bc4b651de0db",
+            "created_date": "2021-01-25T11:31:12.202283",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "460",
+        "name": "F\u00f6rderanlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "e1a70ffd-f802-410c-b56b-555ad03471a7",
+            "created_date": "2021-01-25T11:31:23.720059",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "470",
+        "name": "Nutzungsspezifische und verfahrenstechnische Anlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "7bae6e01-6312-4af2-8edb-21c091998c3b",
+            "created_date": "2021-01-25T11:31:35.791408",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "480",
+        "name": "Geb\u00e4ude- und Anlagenautomation",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "188a8d94-1c53-4aa4-b048-47313a37d1b7",
+            "created_date": "2021-01-25T11:31:46.996002",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "490",
+        "name": "Sonstige Ma\u00dfnahmen f\u00fcr technische Anlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d3a04856-f66f-41be-9085-d895aa85b0b1",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "400"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+            "created_date": "2021-01-25T11:25:15.143506",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "500",
+        "name": "Au\u00dfenanlagen",
+        "description": "",
+        "budget": 0,
+        "parent_ref": null
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "55c46648-858e-4363-933d-4783610d581c",
+            "created_date": "2021-01-25T11:32:02.993537",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "510",
+        "name": "Erdbau",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "3e3a11af-80fd-4f9e-b5fd-248b01afd68e",
+            "created_date": "2021-01-25T11:32:15.384400",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "520",
+        "name": "Gr\u00fcndung, Unterbau",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "30f3f554-ff94-4d42-931f-38d62e8f23bd",
+            "created_date": "2021-01-25T11:32:26.402533",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "530",
+        "name": "Oberbau, Deckschichten",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "aaf7131f-6312-4536-8980-0c919ddd512a",
+            "created_date": "2021-01-25T11:32:41.090513",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "540",
+        "name": "Baukonstruktionen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "f9baa2fb-7d42-4343-9e0a-5159a57010f1",
+            "created_date": "2021-01-25T11:32:48.913951",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "550",
+        "name": "Technische Anlagen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "37e14175-f236-43db-b9ea-72ef512f3e49",
+            "created_date": "2021-01-25T11:33:01.556529",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "560",
+        "name": "Einbauten in Au\u00dfenanlagen und Freifl\u00e4chen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "496b06ca-09da-4b1f-800b-0f144a0f9098",
+            "created_date": "2021-01-25T11:33:10.179524",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "570",
+        "name": "Vegetationsfl\u00e4chen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "d93f18f4-5f73-4062-9ee3-36c63996b29f",
+            "created_date": "2021-01-25T11:33:17.420530",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "580",
+        "name": "Wasserfl\u00e4chen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "ed0abf91-f833-4b6a-ba2d-dd4a2b2db2a0",
+            "created_date": "2021-01-25T11:33:26.983520",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "590",
+        "name": "Sonstige Ma\u00dfnahmen f\u00fcr Au\u00dfenanlagen und Freifl\u00e4chen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "421ef32f-8ee9-4f52-a728-966a7cc67a81",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "500"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "4ecbee0a-564c-458f-a60f-28dcbded2b49",
+            "created_date": "2021-01-25T11:25:15.143506",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "600",
+        "name": "Ausstattung und Kunstwerke",
+        "description": "",
+        "budget": 0,
+        "parent_ref": null
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "b17e36b1-be63-4915-9d44-7f84ce0cbd76",
+            "created_date": "2021-01-25T11:33:38.877483",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "610",
+        "name": "Allgemeine Ausstattung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "4ecbee0a-564c-458f-a60f-28dcbded2b49",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "600"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "9cfd239b-2686-44ae-9a31-214e7d24eb12",
+            "created_date": "2021-01-25T11:33:55.075524",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "620",
+        "name": "Besondere Ausstattung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "4ecbee0a-564c-458f-a60f-28dcbded2b49",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "600"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "c9af0d9b-eef9-4a4a-94ce-6fbc954c3373",
+            "created_date": "2021-01-25T11:34:06.622809",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "630",
+        "name": "Informationstechnische Ausstattung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "4ecbee0a-564c-458f-a60f-28dcbded2b49",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "600"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "a02753cc-6ddb-4aa5-8195-73521993b244",
+            "created_date": "2021-01-25T11:34:16.819534",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "640",
+        "name": "K\u00fcnstlerische Ausstattung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "4ecbee0a-564c-458f-a60f-28dcbded2b49",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "600"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "cd4b5baf-6cb9-470d-807f-3b721a036d7d",
+            "created_date": "2021-01-25T11:34:24.976516",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "690",
+        "name": "Sonstige Ausstattung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "4ecbee0a-564c-458f-a60f-28dcbded2b49",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "600"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+            "created_date": "2021-01-25T11:25:15.143506",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "700",
+        "name": "Baunebenkosten",
+        "description": "",
+        "budget": 0,
+        "parent_ref": null
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "74261dd4-e9e1-4a75-80d1-ed355cadbfa6",
+            "created_date": "2021-01-25T11:34:38.452878",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "710",
+        "name": "Bauherrenaufgaben",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "700"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "525e1202-b1cd-426a-ae10-929887db5672",
+            "created_date": "2021-01-25T11:34:50.091511",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "720",
+        "name": "Vorbereitung der Objektplanung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "700"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "e857ae0d-6980-4127-a2e7-a5a6502514b2",
+            "created_date": "2021-01-25T11:34:59.406518",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "730",
+        "name": "Objektplanung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "700"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "dad1e2e0-d203-47e8-ad5e-26829c030fca",
+            "created_date": "2021-01-25T11:35:09.819525",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "740",
+        "name": "Fachplanung",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "700"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "6564e47a-13da-4fb1-a78c-7d9ad156d88b",
+            "created_date": "2021-01-25T11:35:19.989356",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "750",
+        "name": "K\u00fcnstlerische Leistungen",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "700"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "5620f604-21fd-446b-9dec-88c075479f59",
+            "created_date": "2021-01-25T11:35:32.087049",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "760",
+        "name": "Allgemeine Baunebenkosten",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "700"
+        }
+    },
+    {
+        "CostGroup": true,
+        "uid": {
+            "UID": true,
+            "class_name": "CostGroup",
+            "uid": "cecb8e57-1a74-4f2d-b757-d863089189fe",
+            "created_date": "2021-01-25T11:35:47.156615",
+            "edited_date": null
+        },
+        "deleted": false,
+        "id": "790",
+        "name": "Sonstige Baunebenkosten",
+        "description": "",
+        "budget": 0.0,
+        "parent_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "93b2e259-0bb6-4b9b-9923-fd9f52d4a3c8",
+                "created_date": "2021-01-25T11:25:15.143506",
+                "edited_date": null
+            },
+            "id": "700"
+        }
+    }
+]

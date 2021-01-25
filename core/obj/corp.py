@@ -26,7 +26,7 @@ class Company(IdObject):
     If a contact person was set this object needs to restore the link after loading (see: core.obj.restore).
     """
 
-    def __init__(self, name, service, service_type, *, uid=None, deleted=False, budget=0, contact_person=None, contact_person_ref=None):
+    def __init__(self, name, service, service_type, *, uid=None, deleted=False, budget=0, contact_person=None):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
         self.service = service
@@ -34,13 +34,11 @@ class Company(IdObject):
         self.budget = budget
         self.contact_person = contact_person
 
-        """ for restoration only """
-        self._contact_person_ref = contact_person_ref
-
     @debug.log
     def add_contact_person(self, contact_person):
         self.contact_person = contact_person
         contact_person.company = self
+
     """
     #
     #   UPDATE
@@ -67,7 +65,7 @@ class Company(IdObject):
     """
     @debug.log
     def restore(self, project):
-        self.contact_person = restore.restore_by(self.contact_person, self._contact_person_ref, project.people)
+        pass
 
     """
     #
@@ -78,7 +76,7 @@ class Company(IdObject):
     """
     @debug.log
     def restore_after_import(self, project):
-        self.contact_person = restore.restore_by(self.contact_person, self._contact_person_ref, project.people, by=["first_name", "last_name"])
+        pass
 
     """
     #

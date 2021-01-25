@@ -17,8 +17,8 @@ class Project(IdObject):
 
     def __init__(self, identifier, *, config=None, uid=None, deleted=False,  construction_scheme="", address=None, client=None,
                         project_data=None, project_cost_calculations=None, companies=None, trades=None, cost_groups=None,
-                        invoices=None, jobs=None, people=None, commissioned_date=None, planning_finished_date = None,
-                        billed_date=None, planning_status=None, address_uid=None, client_ref=None
+                        invoices=None, jobs=None, commissioned_date=None, planning_finished_date = None,
+                        billed_date=None, planning_status=None, address_uid=None,
                         ):
         super().__init__(self, uid=uid, deleted=deleted)
 
@@ -62,23 +62,12 @@ class Project(IdObject):
         #       taken care of via the "setter" self.add_invoice(...).
         self.sort_invoices()
         self._jobs = jobs if jobs is not None else list()
-        self._people = people if people is not None else list()
-
-
-        #   Client
-        #       At initialization, the client is created before the project in the dialog and needs to be
-        #       added to the list of people of the project.
-        if client:
-            self._people.append(client)
 
         """ project status """
         self.commissioned_date = commissioned_date
         self.planning_finished_date = planning_finished_date
         self.billed_date = billed_date
         self.planning_status = planning_status
-
-        """ for restoration only """
-        self._client_ref = client_ref
 
     """
     #
@@ -255,16 +244,14 @@ class Project(IdObject):
     """
     @property
     def people(self):
-        return [person for person in self._people if person.is_not_deleted()]
-    @people.setter
-    def people(self, people):
-        if not(self._people):
-            self._people = people
-        else:
-            raise Exception("Existing list of people is non-empty.")
+        client = [self.client] if self.client else list()
+        people = client + [company.contact_person for company in self.companies if company.contact_person]
+        return [person for person in people if person.is_not_deleted()]
 
     def get_deleted_people(self):
-        return [person for person in self._people if person.is_deleted()]
+        client = [self.client] if self.client else list()
+        people = client + [company.contact_person for company in self.companies if company.contact_person]
+        return [person for person in people if person.is_deleted()]
 
     """ properties
     #
@@ -496,9 +483,6 @@ class Project(IdObject):
     def input_new_company(self, company_args):
         new_company = corp.Company(**company_args)
         self.add_company(new_company)
-        if new_company.contact_person:
-            new_company.contact_person.company = new_company
-            self.add_person(new_company.contact_person)
         return new_company
 
     @debug.log
@@ -575,17 +559,13 @@ class Project(IdObject):
     """
     @debug.log
     def input_new_person(self, person_args):
+        #   input_new_person, the function name is deceiving,
+        #   and originates from a different data structure, which was changed,
+        #   since only companies contain an attribute with people. We are now
+        #   generating the project.people list from the company list and
+        #   hence we dont need to append the person object to a people list.
         new_person = corp.Person(**person_args)
-        self.add_person(new_person)
         return new_person
-
-    @debug.log
-    def add_person(self, person):
-        if isinstance(person, corp.Person):
-            if person not in self._people:
-                self._people.append(person)
-        else:
-            raise TypeError("person is not an corp.Person type.")
 
     @debug.log
     def delete_person(self, person):
@@ -610,9 +590,6 @@ class Project(IdObject):
         self._client = client
         self.project_data = project_data
 
-        if client:
-            self.add_person(client)
-
         """ project status """
         self.commissioned_date = commissioned_date
         self.planning_finished_date = planning_finished_date
@@ -629,7 +606,6 @@ class Project(IdObject):
     """
     @debug.log
     def restore(self):
-        self.restore_client()
         self.restore_people()
         self.restore_cost_groups()
         self.restore_project_cost_calculations()
@@ -638,9 +614,6 @@ class Project(IdObject):
         self.restore_jobs()
         self.restore_invoices()
         self.update_all_prev_invoices()
-
-    def restore_client(self):
-        self._client = restore.restore_by(self.client, self._client_ref, self.people)
 
     def restore_project_cost_calculations(self):
         for pcc in self.project_cost_calculations:

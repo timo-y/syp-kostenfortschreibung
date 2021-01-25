@@ -62,12 +62,7 @@ class ProjectEncoder(JSONEncoder):
                 "construction_scheme": o.construction_scheme,
                 "identifier": o.identifier,
                 "address": AddressEncoder().default(o.address) if o.address else None,
-                "client_ref":
-                {
-                    "uid": o.client.uid_to_json(),
-                    "first_name": o.client.first_name,
-                    "last_name": o.client.last_name
-                } if o.client else None,
+                "client": PersonEncoder().default(o.client) if o.client else None,
                 "project_data": ProjectDataEncoder().default(o.project_data) if o.project_data else None,
                 "commissioned_date": o.commissioned_date.toString() if o.commissioned_date else None,
                 "planning_finished_date": o.planning_finished_date.toString() if o.planning_finished_date else None,
@@ -161,12 +156,8 @@ class CompanyEncoder(JSONEncoder):
                 "service": o.service,
                 "service_type": o.service_type,
                 "budget": o.budget,
-                "contact_person_ref":
-                {
-                "uid": o.contact_person.uid_to_json() if o.contact_person else None,  # needs to be encoded properly (or uid only)
-                "first_name": o.contact_person.first_name if o.contact_person else None,
-                "last_name": o.contact_person.last_name if o.contact_person else None,
-                }
+                "contact_person": PersonEncoder().default(o.contact_person) if o.contact_person else None,
+
             }
             return encoded_company
         return JSONEncoder.default(self, o)

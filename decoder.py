@@ -88,12 +88,7 @@ class ProjectDecoder(JSONDecoder):
                 "identifier": dct["identifier"],
                 "construction_scheme": dct["construction_scheme"],
                 "address": AddressDecoder().object_hook(dct["address"]) if dct["address"] else None,
-                "client_ref":
-                {
-                    "uid": UIDDecoder().object_hook(dct["client_ref"]["uid"]),
-                    "first_name": dct["client_ref"]["first_name"],
-                    "last_name": dct["client_ref"]["last_name"],
-                } if dct["client_ref"] else None,
+                "client": PersonDecoder().object_hook(dct["client"]) if dct["client"] else None,
                 "project_data": ProjectDataDecoder().object_hook(dct["project_data"]) if dct["project_data"] else None,
                 "commissioned_date": QDate.fromString(dct["commissioned_date"]) if dct["commissioned_date"] else None,
                 "planning_finished_date": QDate.fromString(dct["planning_finished_date"]) if dct["planning_finished_date"] else None,
@@ -184,12 +179,7 @@ class CompanyDecoder(JSONDecoder):
                 "service": dct["service"],
                 "service_type": dct["service_type"],
                 "budget": dct["budget"],
-                "contact_person_ref":
-                {
-                    "uid": UIDDecoder().object_hook(dct["contact_person_ref"]["uid"]) if dct["contact_person_ref"]["uid"] else None, # needs to be encoded properly (or uid only)
-                    "first_name": dct["contact_person_ref"]["first_name"],
-                    "last_name": dct["contact_person_ref"]["last_name"]
-                }
+                "contact_person": PersonDecoder().object_hook(dct["contact_person"]) if dct["contact_person"] else None,
             }
             return corp.Company(**args)
         return dct

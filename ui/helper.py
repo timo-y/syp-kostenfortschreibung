@@ -227,7 +227,7 @@ def input_person(app_data):
     if input_person_args:
         person = app_data.project.input_new_person(input_person_args)
         """ logging """
-        debug.log(f"New person added: {person.first_name}, {person.last_name}")
+        debug.log(f"New person returned: {person.first_name}, {person.last_name}")
         return person
 
 def edit_person(app_data, person):

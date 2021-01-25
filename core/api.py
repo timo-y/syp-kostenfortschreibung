@@ -69,9 +69,6 @@ class AppData:
         self.project.cost_groups = self.get_init_cost_groups()
         self.project.trades = self.get_init_trades()
 
-        if self.project.client:
-            self.project.add_person(self.project.client)
-
         return new_project
 
     """
@@ -125,7 +122,6 @@ class AppData:
         self.project.trades = loaded_args["trades"]
         self.project.invoices = loaded_args["invoices"]
         self.project.jobs = loaded_args["jobs"]
-        self.project.people = loaded_args["people"]
         self.project.cost_groups = loaded_args["cost_groups"]
 
         #   Restore the pointers.

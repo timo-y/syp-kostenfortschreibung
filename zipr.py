@@ -90,11 +90,6 @@ def save_project(path, app_data):
             data = app_data.project.jobs
             json.dump(data, file, cls=encoder.ArchJobEncoder, indent=4)
 
-        # people
-        with z.open("people.json", "w") as file:
-            data = app_data.project.people
-            json.dump(data, file, cls=encoder.PersonEncoder, indent=4)
-
         # cost groups
         with z.open("cost_groups.json", "w") as file:
             data = app_data.project.cost_groups
@@ -135,10 +130,6 @@ def open_project(path):
         # jobs
         with z.open(root+"/jobs.json", "r") as file:
             loaded_args["jobs"] = json.load(file, object_hook=decoder.ArchJobDecoder().object_hook)
-
-        # people
-        with z.open(root+"/people.json", "r") as file:
-            loaded_args["people"] = json.load(file, object_hook=decoder.PersonDecoder().object_hook)
 
         # cost groups
         with z.open(root+"/cost_groups.json", "r") as file:

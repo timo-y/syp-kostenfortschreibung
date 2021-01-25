@@ -15,14 +15,16 @@ import datetime
 import json, uuid
 
 from PyQt5 import QtWidgets, QtCore, QtGui, uic
-from PyQt5.QtWidgets import (QDialog, QInputDialog, QFileDialog, QGraphicsColorizeEffect)
+from PyQt5.QtWidgets import (QDialog, QInputDialog,
+                            QFileDialog, QGraphicsColorizeEffect)
 from PyQt5.QtCore import QEvent, QDate, QPropertyAnimation
 from PyQt5.QtCore import pyqtSlot, QObject
 from ui import customqt
 
 from core.obj import (proj, corp, arch)
 from ui import dlg, helper
-from ui.helper import rnd, amount_str, amount_w_currency_str, percent_str, percent_str_w_sign, qdate_to_str
+from ui.helper import (rnd, amount_str, amount_w_currency_str, percent_str,
+                       percent_str_w_sign, qdate_to_str)
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, app_data):
@@ -45,7 +47,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @property
     def currency(self):
-        return self.app_data.project.get_currency() if self.app_data.project_loaded() else self.app_data.get_currency()
+        if self.app_data.project_loaded():
+            return self.app_data.project.get_currency()
+        return self.app_data.get_currency()
 
     """
     #
@@ -173,23 +177,48 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
 
     def init_tree_header(self):
-        """ TODO: figure out where to put this """
-        company_tree_view_cols = ["job", "invoice", "verified_amount"] # maybe put on top of file
-        self.treeWidget_company_invoices_by_job.setHeaderLabels([self.app_data.titles[col] for col in company_tree_view_cols])
-        job_tree_view_cols = ["date", "id", "safety_deposit_amount", "amount_a_reductions_amount"] # maybe put on top of file
-        self.treeWidget_invoices_of_curr_job.setHeaderLabels([self.app_data.titles[col] for col in job_tree_view_cols])
+        """ TODO: figure out where to put this
+        #         maybe put on top of file
+        """
+        company_tree_view_cols = ["job", "invoice", "verified_amount"]
+        self.treeWidget_company_invoices_by_job.setHeaderLabels(
+            [self.app_data.titles[col] for col in company_tree_view_cols]
+            )
+
+        job_tree_view_cols = ["date", "id", "safety_deposit_amount",
+                              "amount_a_reductions_amount"]
+        self.treeWidget_invoices_of_curr_job.setHeaderLabels(
+            [self.app_data.titles[col] for col in job_tree_view_cols]
+            )
+
         paid_safety_deposits_cols = ["date", "amount", "comment"]
-        self.treeWidget_paid_safety_desposits.setHeaderLabels([self.app_data.titles[col] for col in paid_safety_deposits_cols])
+        self.treeWidget_paid_safety_desposits.setHeaderLabels(
+            [self.app_data.titles[col] for col in paid_safety_deposits_cols]
+            )
+
         job_additions_cols = ["date", "name", "amount", "comment"]
-        self.treeWidget_job_additions.setHeaderLabels([self.app_data.titles[col] for col in job_additions_cols])
+        self.treeWidget_job_additions.setHeaderLabels(
+            [self.app_data.titles[col] for col in job_additions_cols]
+            )
+
         cost_groups_costs_cols = ["id", "name", "description", "budget"]
-        self.treeWidget_cost_groups.setHeaderLabels([self.app_data.titles[col] for col in cost_groups_costs_cols])
-        # order CostGroup view by first column of the TreeWidget
+        self.treeWidget_cost_groups.setHeaderLabels(
+            [self.app_data.titles[col] for col in cost_groups_costs_cols]
+            )
+
+        # order CostGroup view by first column (id) of the TreeWidget
         self.treeWidget_cost_groups.sortItems(0, QtCore.Qt.AscendingOrder)
-        pcc_cost_group_costs_cols = ["cost_group", "inventory_items", "prognosed_costs", "prognosed_costs_main_cost_group"]
-        self.treeWidget_pcc_cost_group_details.setHeaderLabels([self.app_data.titles[col] for col in pcc_cost_group_costs_cols])
+        pcc_cost_group_costs_cols = ["cost_group", "inventory_items",
+                                     "prognosed_costs",
+                                     "prognosed_costs_main_cost_group"]
+        self.treeWidget_pcc_cost_group_details.setHeaderLabels(
+            [self.app_data.titles[col] for col in pcc_cost_group_costs_cols]
+            )
+
         pcc_trade_costs_cols = ["trade", "inventory_items", "prognosed_costs"]
-        self.treeWidget_pcc_trade_details.setHeaderLabels([self.app_data.titles[col] for col in pcc_trade_costs_cols])
+        self.treeWidget_pcc_trade_details.setHeaderLabels(
+            [self.app_data.titles[col] for col in pcc_trade_costs_cols]
+            )
 
 
     def enable_ui(self):
@@ -230,9 +259,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_labels(self):
         self.label_cur_proj.setText(self.app_data.project.identifier)
-        self.label_cur_proj_construction_scheme.setText(self.app_data.project.construction_scheme)
+        self.label_cur_proj_construction_scheme.setText(
+            self.app_data.project.construction_scheme
+            )
         """ currency """
-        currency_labels = [label for label in self.findChildren(QtWidgets.QLabel) if "label_currency_" in label.objectName()]
+        currency_labels = [label for label
+                           in self.findChildren(QtWidgets.QLabel)
+                           if "label_currency_" in label.objectName()]
         for label in currency_labels:
             label.setText(self.currency)
 
@@ -244,8 +277,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def closeEvent(self, event):
         if self.app_data.project_loaded():
-            reply = QtWidgets.QMessageBox.question(self, 'Sichern vor dem Schließen?', 'Möchten Sie das geöffnete Projekt vor dem Beenden speichern?',
-                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Cancel)
+            reply = QtWidgets.QMessageBox.question(
+                self, 'Sichern vor dem Schließen?',
+                'Möchten Sie das geöffnete Projekt vor dem Beenden speichern?',
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Cancel,
+                QtWidgets.QMessageBox.Cancel)
 
             if reply == QtWidgets.QMessageBox.Yes:
                 self.save_project()
@@ -601,7 +637,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if job_addition_items:
                 reply = helper.delete_prompt(self)
                 if reply:
-                    sel_job_addition = job_addition_items[0].data(1, QtCore.Qt.UserRole)
+                    sel_job_addition = job_addition_items[0].data(1,
+                                                            QtCore.Qt.UserRole)
                     sel_job.remove_job_addition(sel_job_addition)
                     self.render_job_info(sel_job)
                     self.update_ui()
@@ -695,7 +732,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot()
     def button_edit_cost_group(self):
         if len(self.treeWidget_cost_groups.selectedItems())>0:
-            cost_group = self.treeWidget_cost_groups.selectedItems()[0].data(1, QtCore.Qt.UserRole)
+            selection = self.treeWidget_cost_groups.selectedItems()
+            cost_group = selection[0].data(1, QtCore.Qt.UserRole)
             self.edit_cost_group(cost_group)
         else:
             raise Exception("No cost_group selected!")
@@ -727,9 +765,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #   RENDER VIEWS
     #   functions to render the objects to the respective widgets.
     #   Structure:
-    #       - the render_* function will always render the actual items to a table or treewidget
-    #       - the render_*_info function will render the info of a selected item (from above table/tree/list) to the right sidepanel
-    #       - the following functions of each section will be helper functions for the above two (like actually setting text to labels
+    #       - the render_* function will always render the actual items to a
+    #         table or treewidget
+    #       - the render_*_info function will render the info of a selected
+    #         item (from above table/tree/list) to the right sidepanel
+    #       - the following functions of each section will be helper functions
+    #         for the above two (like actually setting text to labels
     #         or activating buttons etc.).
     #
     """
@@ -740,23 +781,30 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_cost_stand(self, set_width=False):
-        # disable sorting when filling the table (to avoid bugs with data field)
+        # disable sorting when filling the table
+        # (to avoid bugs with data field)
         self.tableWidget_cost_stand.setSortingEnabled(False)
         """
         #   Number of rows is number of cost_groups plus one summary row
         """
-        self.tableWidget_cost_stand.setRowCount(len(self.app_data.project.main_cost_groups)+1)
+        self.tableWidget_cost_stand.setRowCount(
+            len(self.app_data.project.main_cost_groups)+1
+            )
         """
         #   Set columns of table to the list self.invoice_cols
         """
         self.tableWidget_cost_stand.setColumnCount(len(self.cost_stand_cols))
         if set_width:
             for i in range(len(self.cost_stand_cols)):
-                self.tableWidget_cost_stand.setColumnWidth(i, self.cost_stand_cols[i]["width"])
+                self.tableWidget_cost_stand.setColumnWidth(
+                    i, self.cost_stand_cols[i]["width"]
+                    )
         """
         #   Set column titles
         """
-        self.tableWidget_cost_stand.setHorizontalHeaderLabels([self.app_data.titles[col["title"]] for col in self.cost_stand_cols])
+        self.tableWidget_cost_stand.setHorizontalHeaderLabels(
+            [self.app_data.titles[col["title"]] for col in self.cost_stand_cols]
+            )
         """
         #   Set title height
         """

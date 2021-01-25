@@ -940,15 +940,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.activate_invoice_buttons()
 
     def set_invoice_info(self, *, _uid=None, id="-", VAT=None, cumulative=True,
-                    invoice_date=None, inbox_date=None,
-                    checked_date=None, company=None, job=None, amount=0,
-                    verified_amount=0, rebate=0, reduction_insurance_costs=0, reduction_usage_costs=0,
-                    safety_deposit=0, discount=0,
-                    amount_w_VAT=0, amount_VAT_amount=0, verified_amount_w_VAT=0, verified_amount_VAT_amount=0,
-                    prev_invoices_count="-", prev_invoices_amount=0, rebate_amount=0, reduction_insurance_costs_amount=0,
-                    reduction_usage_costs_amount=0, amount_a_reductions_amount=0, amount_a_reductions_amount_w_VAT=0,
-                    amount_a_reductions_amount_VAT_amount=0, safety_deposit_amount=0, approved_amount=0, discount_amount=0,
-                    approved_amount_a_discount_amount=0, **kwargs):
+                    invoice_date=None, inbox_date=None, checked_date=None,
+                    company=None, job=None, amount=0, verified_amount=0,
+                    rebate=0, reduction_insurance_costs=0,
+                    reduction_usage_costs=0, safety_deposit=0, discount=0,
+                    amount_w_VAT=0, amount_VAT_amount=0,
+                    verified_amount_w_VAT=0, verified_amount_VAT_amount=0,
+                    prev_invoices_count="-", prev_invoices_amount=0,
+                    rebate_amount=0, reduction_insurance_costs_amount=0,
+                    reduction_usage_costs_amount=0,
+                    amount_a_reductions_amount=0,
+                    amount_a_reductions_amount_w_VAT=0,
+                    amount_a_reductions_amount_VAT_amount=0,
+                    safety_deposit_amount=0, approved_amount=0,
+                    discount_amount=0, approved_amount_a_discount_amount=0,
+                    **kwargs):
         """ LABELS """
         """ uid """
         self.label_invoice_uid.setText(_uid.labelize() if _uid else "-")
@@ -1080,7 +1086,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_job_info(self):
         self.set_job_data()
-        self.set_verified_sum_info()
+        self.set_invoice_sum_info()
+        self.set_paid_safety_deposits_of_job()
+        self.set_job_additions_of_job()
+        self.set_invoices_of_job()
         self.treeWidget_invoices_of_curr_job.clear()
         self.activate_job_buttons()
 
@@ -1128,14 +1137,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_job_invoice_sum_w_VAT.setText(amount_str(inv_sum_w_VAT))
         self.label_job_invoice_sum_VAT_amount.setText(amount_str(inv_sum_VAT_amount))
 
-    def set_paid_safety_deposits_of_job(self, paid_safety_deposits):
+    def set_paid_safety_deposits_of_job(self, paid_safety_deposits=list()):
         self.treeWidget_paid_safety_desposits.clear()
         for psd in paid_safety_deposits:
             helper.add_item_to_tree(content_item=psd,
                                     parent=self.treeWidget_paid_safety_desposits,
                                     cols=[str(psd["date"].toPyDate()), amount_w_currency_str(psd["amount"], self.currency), psd["comment"]])
 
-    def set_job_additions_of_job(self, job_additions):
+    def set_job_additions_of_job(self, job_additions=list()):
         self.treeWidget_job_additions.clear()
         for job_addition in job_additions:
             helper.add_item_to_tree(content_item=job_addition,
@@ -1143,7 +1152,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                     cols=[str(job_addition["date"].toPyDate()), job_addition["name"], amount_w_currency_str(job_addition["amount"], self.currency), job_addition["comment"]])
 
     #   Fill the listwidget with the invoices
-    def set_invoices_of_job(self, invoices_of_job):
+    def set_invoices_of_job(self, invoices_of_job=list()):
         self.treeWidget_invoices_of_curr_job.clear()
         for invoice in invoices_of_job:
             helper.add_item_to_tree(content_item=invoice,

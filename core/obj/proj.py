@@ -511,7 +511,8 @@ class Project(IdObject):
     @debug.log
     def delete_company(self, company):
         company.delete()
-        #TODO: What happens with linked objects?
+        if company.contact_person:
+            company.contact_person.delete()
         return company
     """ func
     #
@@ -558,7 +559,9 @@ class Project(IdObject):
     @debug.log
     def delete_cost_group(self, cost_group):
         cost_group.delete()
-        #TODO: What happens with linked objects?
+        cost_group_children = [cg_child for cg_child in self.cost_groups if cg_child.is_sub_group_of(cost_group)]
+        for cg_child in cost_group_children:
+            cg_child.delete()
         return cost_group
 
     @debug.log
@@ -587,7 +590,8 @@ class Project(IdObject):
     @debug.log
     def delete_person(self, person):
         person.delete()
-        #TODO: What happens with linked objects?
+        if person.company and person.company.contact_person is person:
+            person.company.contact_person = None
         return person
 
     """

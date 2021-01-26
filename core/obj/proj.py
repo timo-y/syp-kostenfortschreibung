@@ -602,6 +602,9 @@ class Project(IdObject):
     #
     #   Restore
     #       Functions that help to reconstruct the data-structure after loading
+    #       or after import. When loading, we can restore pointers by UID.
+    #       When importing, we have other attributes, like name, id, etc.
+    #       to restore the links.
     #
     """
     @debug.log
@@ -615,6 +618,21 @@ class Project(IdObject):
         self.restore_invoices()
         self.update_all_prev_invoices()
 
+
+    @debug.log
+    def restore_after_import(self):
+        self.restore_after_import_people()
+        self.restore_after_import_cost_groups()
+        self.restore_after_import_project_cost_calculations()
+        self.restore_after_import_trades()
+        self.restore_after_import_companies()
+        self.restore_after_import_jobs()
+        self.restore_after_import_invoices()
+        self.update_all_prev_invoices()
+
+    """
+    #   AFTER LOADING
+    """
     def restore_project_cost_calculations(self):
         for pcc in self.project_cost_calculations:
             pcc.restore(self)
@@ -642,6 +660,37 @@ class Project(IdObject):
     def restore_cost_groups(self):
         for cost_group in self.cost_groups:
             cost_group.restore(self)
+
+    """
+    #   AFTER IMPORT
+    """
+    def restore_after_import_project_cost_calculations(self):
+        for pcc in self.project_cost_calculations:
+            pcc.restore_after_import(self)
+
+    def restore_after_import_people(self):
+        for person in self.people:
+            person.restore_after_import(self)
+
+    def restore_after_import_companies(self):
+        for company in self.companies:
+            company.restore_after_import(self)
+
+    def restore_after_import_jobs(self):
+        for job in self.jobs:
+            job.restore_after_import(self)
+
+    def restore_after_import_invoices(self):
+        for invoice in self.invoices:
+            invoice.restore_after_import(self)
+
+    def restore_after_import_trades(self):
+        for trade in self.trades:
+            trade.restore_after_import(self)
+
+    def restore_after_import_cost_groups(self):
+        for cost_group in self.cost_groups:
+            cost_group.restore_after_import(self)
     """
     #
     #   Utility

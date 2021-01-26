@@ -1,0 +1,698 @@
+[
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "984306ba-f2dc-46a7-b5d0-65a71bd55325",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Abbrucharbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "7e3d095b-569f-44b9-a8a6-e16720190f0a",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Architekten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "41ac15c6-6d41-4afa-9473-1a64a9e05acb",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "700"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "a5f44213-87e4-4983-9d49-a3c105e853e9",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Aufzug",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "aef0969f-5247-42c9-919a-2d5c18bb0892",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Bauhaupt",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "a998af90-19bf-4faf-aa27-ecb7a3fa3cbb",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Beh\u00f6rden",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "41ac15c6-6d41-4afa-9473-1a64a9e05acb",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "700"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "a17a5a05-e15e-4cb7-af02-85163f361d01",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Bodenbelagsarbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "fa335c83-86ce-4ac6-a1db-4a706af0a293",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Brandschutz",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "41ac15c6-6d41-4afa-9473-1a64a9e05acb",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "700"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "d24caf09-f32c-4833-a55f-7f963b694c46",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Dachdeckerarbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "39320839-65be-465a-87bc-6f609c004363",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Putzarbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": "Innenputz"
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "19eaae32-7eac-4e62-9031-bb77de59d203",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Elektro",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d0d96030-8807-4af1-8004-9c7e568ced2b",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "400"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "e27957cb-c7ce-4c14-a4cd-19df5e63ca45",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Fachplaner",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "41ac15c6-6d41-4afa-9473-1a64a9e05acb",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "700"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "9bc1cf63-8cd0-49af-b08a-6814aa2f89ef",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Fenster",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "b85f0b38-5ee9-4a6c-a0f7-e92fd02a4e55",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Fliesenleger",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "84b16c9f-6d30-4ff1-88f8-302d0cff28e8",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Gartenbau",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "19f7cc42-d843-4da1-ac05-a43180a492be",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "500"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "f0bca472-b3ce-45d0-8dc7-1fe91543c4e2",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Heizung Sanit\u00e4r",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "d0d96030-8807-4af1-8004-9c7e568ced2b",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "400"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "4360f312-b099-4770-b87c-a84716e67efa",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "K\u00fcchenbauer",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "36fda426-f008-4d8e-96b2-8818a1cd54ca",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Malerarbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "1e5a4a70-eb8f-4906-9189-f55852da17ab",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Sonstiges",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": "Brandw.Nachbar, Toreinfahrt, etc."
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "2c44736e-eaf0-4170-96dd-306bd314c0f1",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Schlosser",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "26742ef5-8b4c-459e-81b7-7d258a432cae",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Statik",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "41ac15c6-6d41-4afa-9473-1a64a9e05acb",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "700"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "082a7a1f-e506-44fb-86fb-3ec5b4d94cd8",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "TGA-Planer",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "41ac15c6-6d41-4afa-9473-1a64a9e05acb",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "700"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "42f37479-6dfb-48c6-bf86-b2ca5c0ae222",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Tiefbau",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "400b083b-b1d7-432e-9309-aee99aaa01e1",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Tischlerarbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "d2be327b-8506-49cb-9423-de29f4d7dfa8",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Trockenbau und D\u00e4mmarbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "7e96ae8a-3a64-48a8-b1af-725026ca8a93",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "T\u00fcren",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "79fdd8fb-d09d-46aa-b1f4-d118811acf1b",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Zimmererarbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "ee45a17c-f0e3-4237-b1b0-87e5bc15b21d",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Estricharbeiten",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "fd26b450-a8a5-494a-8e17-bd26f7eab084",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Metallbau",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    },
+    {
+        "Trade": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Trade",
+            "uid": "f0b5b44d-6423-4019-bc17-e9e5079cb0ee",
+            "created_date": "2021-01-26T09:40:39.989176",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Ger\u00fcstbau",
+        "cost_group_ref": {
+            "uid": {
+                "UID": true,
+                "class_name": "CostGroup",
+                "uid": "8725b05f-7a30-494a-b08b-2694782fb791",
+                "created_date": "2021-01-26T09:40:39.973185",
+                "edited_date": null
+            },
+            "id": "300"
+        },
+        "budget": 0,
+        "comment": ""
+    }
+]

@@ -304,9 +304,6 @@ class MainWindow(QtWidgets.QMainWindow):
     # this function is probably not needed
     def minimize_invoice_info(self):
         print("this should minimize the invoice info widget")
-        #self.horizontalLayout_invoice_info_top.setVisible(False)
-        #self.verticalLayout_12.addWidget(self.horizontalLayout_invoice_info_top)
-
 
     """
     #
@@ -316,7 +313,7 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def set_button_actions(self):
         """ DEBUG """
-        self.pushButton_TEST.clicked.connect(lambda:self.run_test())
+        self.pushButton_TEST.clicked.connect(self.button_run_test)
 
         """ quick links """
         self.pushButton_quick_new_invoice.clicked.connect(self.button_input_invoice_to_project)
@@ -368,37 +365,28 @@ class MainWindow(QtWidgets.QMainWindow):
     def load_widget_signals(self):
         """ project cost calculation signals """
         self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.table_double_click_pcc)
-        self.tableWidget_project_cost_calculations.itemClicked.connect(self.table_click_pcc)
         self.tableWidget_project_cost_calculations.currentItemChanged.connect(self.table_click_pcc)
         """ invoice signals """
         self.listWidget_invoices.itemDoubleClicked.connect(self.list_double_click_invoice)
         self.tableWidget_invoices.itemDoubleClicked.connect(self.table_double_click_invoice)
-        self.tableWidget_invoices.itemClicked.connect(self.table_click_invoice)
         self.tableWidget_invoices.currentItemChanged.connect(self.table_click_invoice)
         """ job signals """
         self.tableWidget_jobs.itemDoubleClicked.connect(self.table_double_click_job)
-        self.tableWidget_jobs.itemClicked.connect(self.table_click_job)
         self.tableWidget_jobs.currentItemChanged.connect(self.table_click_job)
         self.treeWidget_invoices_of_curr_job.itemDoubleClicked.connect(self.tree_double_click_invoice)
         self.treeWidget_paid_safety_desposits.itemClicked.connect(self.activate_job_buttons)
         self.treeWidget_job_additions.itemClicked.connect(self.activate_job_buttons)
         """ company signals """
         self.tableWidget_companies.itemDoubleClicked.connect(self.table_double_click_company)
-        self.tableWidget_companies.itemClicked.connect(self.table_click_company)
         self.tableWidget_companies.currentItemChanged.connect(self.table_click_company)
         """ trade signals """
         self.tableWidget_trades.itemDoubleClicked.connect(self.table_double_click_trade)
-        self.tableWidget_trades.itemClicked.connect(self.table_click_trade)
         self.tableWidget_trades.currentItemChanged.connect(self.table_click_trade)
         """ cost_group signals """
-        #self.tableWidget_cost_groups.itemDoubleClicked.connect(self.table_double_click_cost_group)
-        #self.tableWidget_cost_groups.itemClicked.connect(self.table_click_cost_group)
         self.treeWidget_cost_groups.itemDoubleClicked.connect(self.tree_double_click_cost_group)
-        self.treeWidget_cost_groups.itemClicked.connect(self.tree_click_cost_group)
         self.treeWidget_cost_groups.currentItemChanged.connect(self.tree_click_cost_group)
         """ people signals """
         self.tableWidget_people.itemDoubleClicked.connect(self.table_double_click_person)
-        self.tableWidget_people.itemClicked.connect(self.table_click_person)
         self.tableWidget_people.currentItemChanged.connect(self.table_click_person)
 
 
@@ -1889,8 +1877,9 @@ class MainWindow(QtWidgets.QMainWindow):
     #   DEBUG FUNCTIONS
     #
     """
+    @pyqtSlot()
     @debug.log_info
-    def run_test(self):
+    def button_run_test(self):
         print("This is a test!")
         self.add_random_jobs()
         self.add_random_invoices()
@@ -2006,7 +1995,6 @@ class MainWindow(QtWidgets.QMainWindow):
             if company.contact_person is None:
                 random_person = self.random_person()
                 company.add_contact_person(random_person)
-                self.app_data.project.add_person(random_person)
 
     def random_person(self, company=None):
         first_name_length = random.randint(1,10)

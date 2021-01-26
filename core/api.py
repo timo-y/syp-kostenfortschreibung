@@ -68,6 +68,8 @@ class AppData:
         self.project.companies = self.get_init_companies()
         self.project.cost_groups = self.get_init_cost_groups()
         self.project.trades = self.get_init_trades()
+        # init cost_groups and trades need to be restored
+        self.restore_pointers_after_import()
 
         return new_project
 
@@ -138,6 +140,9 @@ class AppData:
     def restore_pointers(self):
         self.project.restore()
 
+    @debug.log
+    def restore_pointers_after_import(self):
+        self.project.restore_after_import()
     """
     #   EXPORT
     """
@@ -213,6 +218,8 @@ class AppData:
         #   once the import is complete
         for cost_group in self.project.cost_groups:
             cost_group.restore_after_import(self.project)
+
+
 
     """
     #
@@ -476,7 +483,7 @@ class AppData:
     def get_autosave_path_datetime(self):
         autosave_datetime = helper.now_str()
         autosave_filename = f"{autosave_datetime}-{self.get_autosave_filename_suffix()}"
-        autosave_path = os.path.join(self.get_autosave_dir(), autosave_filename)
+        autosave_path = os.path.join(self.get_dir(), self.get_autosave_dir(), autosave_filename)
         return autosave_path, autosave_datetime
 
     def get_invoice_check_folder_name(self, invoice):
@@ -511,49 +518,20 @@ class AppData:
 
     @debug.log
     def get_init_companies(self):
-        companies = list()
-        with open("resources/companies.csv", encoding='utf8') as f:
-            line = f.readline().strip("\n")
-            line = f.readline().strip("\n")
-            args = line.split(";")
-            while line:
-                companies.append(corp.Company(*args))
-                line = f.readline().strip("\n")
-                args = line.split(";")
+        file_path = "resources/default_companies.json"
+        companies = self.from_json_file(file_path=file_path, decoder=decoder.CompanyDecoder)
         return companies
 
     @debug.log
     def get_init_trades(self):
-        trades = list()
-        with open("resources/trades.csv", encoding='utf8') as f:
-            line = f.readline().strip("\n")
-            line = f.readline().strip("\n")
-            args = line.split(";")
-            while line:
-                name = args[0]
-                candidates = [cost_group for cost_group in self.project.cost_groups if str(cost_group.id) == args[1]]
-                cost_group = candidates[0] if len(candidates)>0 else None
-                budget = args[2]
-                comment = args[3]
-                trades.append(arch.Trade(name=name, cost_group=cost_group, budget=budget, comment=comment))
-                line = f.readline().strip("\n")
-                args = line.split(";")
+        file_path = "resources/default_trades.json"
+        trades = self.from_json_file(file_path=file_path, decoder=decoder.TradeDecoder)
         return trades
 
     @debug.log
     def get_init_cost_groups(self):
-        cost_groups = list()
-        with open("resources/cost_groups.csv", encoding='utf8') as f:
-            line = f.readline().strip("\n")
-            line = f.readline().strip("\n")
-            args = line.split(";")
-            while line:
-                id = args[0]
-                name = args[1]
-                description = args[2]
-                cost_groups.append(arch.CostGroup(id=id, name=name, description=description))
-                line = f.readline().strip("\n")
-                args = line.split(";")
+        file_path = "resources/default_cost_groups.json"
+        cost_groups = self.from_json_file(file_path=file_path, decoder=decoder.CostGroupDecoder)
         return cost_groups
 
     @debug.log

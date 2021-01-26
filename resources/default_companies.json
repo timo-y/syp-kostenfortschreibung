@@ -1,0 +1,562 @@
+[
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "919c31b0-5520-4bad-9ecd-f091aa52f181",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Fa. Zech-Ruth",
+        "service": "Vermessung",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "8affd360-a02c-4531-abb9-b2ee8bb055ee",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "imKONTEXT.berlin GmbH",
+        "service": "Brandschutzsachverst\u00e4ndigung",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "26a983c2-b150-4bf2-af23-cb9c8aa1e78f",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Dr. Zauft Ingenieure",
+        "service": "Brandschutzpr\u00fcfung",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "26c29400-7596-4a11-817d-d2a83c316279",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "CRP Bauingenieure GmbH",
+        "service": "Beweissicherung",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "adb598d5-4561-4f35-b126-af5d72c08184",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Witt Geb\u00e4udetechnik",
+        "service": "TGA",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "44283a89-d994-4d2b-a059-11febfb34875",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Dipl.-Ing. H. Shahmirzadi",
+        "service": "Tragwerksplanung, Bauphysik",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "0663cc0f-91be-4839-9a2d-211dc65230a7",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Prof. Dipl.-Ing. P. G\u00f6ttlich",
+        "service": "Pr\u00fcfstatik",
+        "service_type": "Pr\u00fcfer",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "73fd50dc-8dd7-40f3-afc5-c30b26b057e7",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "GECO GmbH",
+        "service": "Bodengutachten",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "7abffa81-dc2d-4c33-8dec-4d09159fa31c",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Landschaftsarchitektur.Jobst",
+        "service": "Au\u00dfenanlagen",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "b91dceb6-8bc4-4354-9816-e0c2535dca75",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Keller Grundbau GmbH",
+        "service": "Spezial Tiefbau",
+        "service_type": "Tiefbau",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "2cc92d75-e3b3-422d-84ad-53c047aefe87",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Stadtbau Cakan GmbH",
+        "service": "Bauhaupt",
+        "service_type": "Bauhaupt",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "3179f2c4-22a6-4ceb-9c28-f65d6442ff21",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Witt Geb\u00e4udetechnik",
+        "service": "TGA",
+        "service_type": "Fachplanung",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "39f791c6-0e77-4e8f-b789-245597476c67",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Bezirksamt Mitte",
+        "service": "Bauaufsichtsamt, Stadtplanungsamt, Tiefbauamt (Stra\u00dfenbau), Verkehrslenkung, Wasserrechtlichegenehmigung",
+        "service_type": "Beh\u00f6rde",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "84337382-9759-42db-bdf9-787b73ba9ad7",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "BERLINMEDIAGROUP",
+        "service": "Print",
+        "service_type": "Sonstiges",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "418ee5d2-fe21-449d-bd45-163e20a7640e",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Schindler",
+        "service": "Aufzug",
+        "service_type": "Aufzugsbauer",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "b1e2833f-cb71-4fe6-86a2-d65c3afa5b3d",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Sonepar",
+        "service": "Elektro",
+        "service_type": "Elektro",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "16387834-5ef7-47a9-8bc3-eeeaefc0f1ff",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "HPT-Elektro",
+        "service": "Elektro",
+        "service_type": "Elektro",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "b064e599-0744-47e3-8abc-882b1c869a57",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Potts GmbH",
+        "service": "Dachstuhl",
+        "service_type": "Zimmererarbeiten",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "98930d31-9970-4a70-814d-37d624f2f394",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Winfred G\u00fcnther",
+        "service": "Fenster",
+        "service_type": "Fenster",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "90097815-6403-4ef0-a108-bf935770ee8e",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Scharmer-Yu",
+        "service": "Architekturplanung",
+        "service_type": "",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "63a57c5c-a452-4cb1-bc73-3a3f3fc88028",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Obergassel Dachbau GmbH",
+        "service": "Dachdecker",
+        "service_type": "",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "653aec50-acab-498b-8c14-280e3921bf60",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Shefket",
+        "service": "Innenausbau",
+        "service_type": "",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "8e5a020a-665a-4d89-8a83-53c0b45e6c2d",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "rotec",
+        "service": "Metallbau",
+        "service_type": "Metallbau",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "fa02e80d-0aa4-41e6-8b63-7e232ef7d7ee",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "SEK",
+        "service": "Ger\u00fcstbau",
+        "service_type": "Ger\u00fcstbau",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "c653f7e3-e3cb-4399-92f3-488f5e078de8",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Weigt",
+        "service": "Elektro",
+        "service_type": "Elektro",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "5abac19a-f5b4-4d3c-bd7a-02a24b8c5ac0",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Dobrinins & Manin GbR",
+        "service": "Heizung L\u00fcftung Sanit\u00e4r",
+        "service_type": "Heizung L\u00fcftung Sanit\u00e4r",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "0304eb7d-8fb9-4b80-bff9-10f5d96e5788",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Fliesenzentrum",
+        "service": "Fliesen",
+        "service_type": "Fliesenarbeiten",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "1910db55-6817-49fa-945b-d2cd6707df11",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Estrotech GmbH",
+        "service": "Estrich",
+        "service_type": "Estricharbeiten",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "c01e1236-6aad-47a5-8790-b834af8b56ea",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Galabau Sternsdorf",
+        "service": "Gartenbau",
+        "service_type": "Gartenbau",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "40969fa0-10c7-44f4-8d6e-fe54c6aa872d",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Mutz",
+        "service": "Blower Door Test",
+        "service_type": "Gutachten",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "723f6c51-868f-44ee-a0b7-e85c8b453d86",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "BFBR Berlin GmbH",
+        "service": "Bodenverlegearbeiten",
+        "service_type": "Bodenverlegearbeiten",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "7aaac9a4-f19b-457c-88dc-2efa99b8a862",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "MARIJA MARINKOVIC",
+        "service": "Abriss, Erdbau, Entr\u00fcmpelung",
+        "service_type": "",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "659fc63f-c6aa-431b-bc57-d40ae5742468",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Maas GmbH",
+        "service": "Natursteinmanufaktur",
+        "service_type": "Natursteinarbeiten",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "a437e8e0-81cc-42f2-be23-f6692e6b9d3c",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Die K\u00fcche Handels GmbH",
+        "service": "K\u00fcchenbauer",
+        "service_type": "K\u00fcchen",
+        "budget": 0,
+        "contact_person": null
+    },
+    {
+        "Company": true,
+        "uid": {
+            "UID": true,
+            "class_name": "Company",
+            "uid": "d2e1f8eb-46a9-4be5-9e18-c4a319d25e4a",
+            "created_date": "2021-01-26T10:43:46.285928",
+            "edited_date": null
+        },
+        "deleted": false,
+        "name": "Vattenfall",
+        "service": "Fernw\u00e4rme",
+        "service_type": "Versorger",
+        "budget": 0,
+        "contact_person": null
+    }
+]

@@ -122,6 +122,9 @@ def open_add_job_addition_dialog():
     if add_job_addition_args:
         return add_job_addition_args
 
+def open_about_dialog():
+    dlg.AboutDialog().exec_()
+
 def open_delete_prompt(dialog):
     reply = QtWidgets.QMessageBox.question(dialog, 'Löschen', 'Sicher löschen?',
     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.No)

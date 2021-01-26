@@ -358,6 +358,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """ cost_group buttons """
         self.pushButton_new_cost_group.clicked.connect(self.button_input_cost_group_to_project)
         self.pushButton_edit_cost_group.clicked.connect(self.button_edit_cost_group)
+        self.pushButton_set_cost_group_budget.clicked.connect(self.button_set_cost_group_budget)
 
         """ person buttons """
         self.pushButton_edit_person.clicked.connect(self.button_edit_person)
@@ -384,6 +385,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tableWidget_trades.currentItemChanged.connect(self.table_click_trade)
         """ cost_group signals """
         self.treeWidget_cost_groups.itemDoubleClicked.connect(self.tree_double_click_cost_group)
+        self.treeWidget_cost_groups.itemClicked.connect(self.tree_click_cost_group)
         self.treeWidget_cost_groups.currentItemChanged.connect(self.tree_click_cost_group)
         """ people signals """
         self.tableWidget_people.itemDoubleClicked.connect(self.table_double_click_person)
@@ -403,6 +405,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionOpenInvoiceCheckDir.triggered.connect(lambda:self.app_data.open_invoice_check_dir())
         self.actionOpenSYPDir.triggered.connect(lambda:self.app_data.open_syp_dir())
         self.actionOpenProjectDir.triggered.connect(lambda:self.app_data.open_project_dir())
+
+        self.actionAbout.triggered.connect(lambda:dlg.open_about_dialog())
         """ EXPORT """
         self.actionExportAllCompanies.triggered.connect(self.export_companies)
         self.actionExportAllTrades.triggered.connect(self.export_trades)
@@ -412,6 +416,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionImportCompanies.triggered.connect(self.import_companies)
         self.actionImportTrades.triggered.connect(self.import_trades)
         self.actionImportCostGroups.triggered.connect(self.import_cost_groups)
+
+        """ CLOSE """
+        self.actionClose.triggered.connect(lambda:self.close())
 
     def load_line_edit_signals(self):
         self.lineEdit_invoice_search.returnPressed.connect(lambda:self.render_invoice_view())
@@ -725,6 +732,21 @@ class MainWindow(QtWidgets.QMainWindow):
             self.edit_cost_group(cost_group)
         else:
             raise Exception("No cost_group selected!")
+
+    @pyqtSlot()
+    def button_set_cost_group_budget(self):
+        if len(self.treeWidget_cost_groups.selectedItems())>0:
+            reply = helper.u_sure_prompt(self)
+            if reply:
+                selection = self.treeWidget_cost_groups.selectedItems()
+                cost_group = selection[0].data(1, QtCore.Qt.UserRole)
+                self.app_data.project.set_cost_group_budget(cost_group)
+                self.reset_cost_group_info()
+                self.update_ui()
+                self.activate_cost_group_buttons()
+        else:
+            raise Exception("No cost_group selected!")
+
 
     """ signal
     #
@@ -1395,8 +1417,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_cost_group_buttons(self):
         if len(self.treeWidget_cost_groups.selectedItems())>0:
             self.pushButton_edit_cost_group.setEnabled(True)
+            self.pushButton_set_cost_group_budget.setEnabled(True)
         else:
             self.pushButton_edit_cost_group.setEnabled(False)
+            self.pushButton_set_cost_group_budget.setEnabled(False)
 
     def reset_cost_group_info(self):
         self.set_cost_group_data()
@@ -1889,7 +1913,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.add_contact_people()
 
         self.update_ui()
-
+    #       TODO: Move all the testfunctions to the API file
     def add_random_jobs(self, max_jobs=50):
         number_of_jobs = random.randint(1, max_jobs)
         for i in range(number_of_jobs):

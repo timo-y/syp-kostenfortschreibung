@@ -552,6 +552,27 @@ class Project(IdObject):
     def get_cost_groups_of_level(self, level):
         return [cost_group for cost_group in self.cost_groups if cost_group.get_tree_level() == level]
 
+    """
+    #
+    #   set_cost_group_budget
+    #       Set the budget of the sum of budgets of the subgroups
+    #
+    """
+    @debug.log
+    def set_cost_group_budget(self, cost_group):
+        cost_group.budget = self.get_cost_group_budget(cost_group)
+
+    @debug.log
+    def get_cost_group_budget(self, cost_group):
+        budget_sum = sum(cg.budget
+                        for cg in self.cost_groups
+                        if cg.is_sub_group_of(cost_group)
+                        )
+        return budget_sum
+
+
+
+
     """ func
     #
     #   People

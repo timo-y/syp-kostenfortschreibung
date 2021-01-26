@@ -170,17 +170,9 @@ class AppData:
         project = proj.Project(config=self.get_init_proj_config(), cost_groups=self.get_init_cost_groups(),
                                 identifier=kf_importer.identifier, companies=kf_importer.companies,
                                 trades=kf_importer.trades, jobs=kf_importer.jobs, invoices=kf_importer.invoices)
-        # TODO: Create restore functions for after import like this
-        for company in project.companies:
-            company.restore_after_import(project)
-        for trade in project.trades:
-            trade.restore_after_import(project)
-        for job in project.jobs:
-            job.restore_after_import(project)
-        for invoice in project.invoices:
-            invoice.restore_after_import(project)
-        project.update_all_prev_invoices()
+
         self.project = project
+        self.restore_pointers_after_import()
 
     @debug.log
     def import_companies(self, file_path):
@@ -554,7 +546,7 @@ class AppData:
             "datetime": None,
             "path": None
         },
-        "autosave_time": 80000,
+        "autosave_time": 240000,
         "max_autosaves": 5,
         "window_size": {
             "height": None,

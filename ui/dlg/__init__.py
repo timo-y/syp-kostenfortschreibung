@@ -12,6 +12,7 @@ from ui.dlg.cost_group_dlg import CostGroupDialog
 from ui.dlg.config_dlg import ConfigDialog
 from ui.dlg.pay_safety_deposit_dlg import PaySafetyDepositDialog
 from ui.dlg.add_job_addition_dlg import AddJobAdditionDialog
+from ui.dlg.about_dlg import AboutDialog
 
 from ui.dlg.open_dialogs import open_project_dialog
 from ui.dlg.open_dialogs import open_project_cost_calculation_dialog
@@ -26,6 +27,7 @@ from ui.dlg.open_dialogs import open_cost_group_dialog
 from ui.dlg.open_dialogs import open_config_dialog
 from ui.dlg.open_dialogs import open_pay_safety_deposit_dialog
 from ui.dlg.open_dialogs import open_add_job_addition_dialog
+from ui.dlg.open_dialogs import open_about_dialog
 from ui.dlg.open_dialogs import open_delete_prompt
 from ui.dlg.open_dialogs import open_u_sure_prompt
 from ui.dlg.open_dialogs import open_save_curr_project_prompt

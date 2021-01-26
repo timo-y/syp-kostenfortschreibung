@@ -45,6 +45,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.app_data.project is None:
             self.disable_ui()
 
+        """ DEBUG """
+        self.set_debug_ui()
+
     @property
     def currency(self):
         if self.app_data.project_loaded():
@@ -233,6 +236,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menuImport.setEnabled(False)
         self.menuExport.setEnabled(False)
 
+
+    def set_debug_ui(self):
+        if self.app_data.debug_on():
+            self.pushButton_TEST.setVisible(True)
+        else:
+            self.pushButton_TEST.setVisible(False)
+
     def center_window(self):
         qr = self.frameGeometry()
         cp = QtWidgets.QDesktopWidget().availableGeometry().center()
@@ -256,6 +266,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.render_trades()
             self.render_cost_groups()
             self.render_people()
+        """ DEBUG """
+        self.set_debug_ui()
 
     def update_labels(self):
         self.label_cur_proj.setText(self.app_data.project.identifier)
@@ -1901,18 +1913,19 @@ class MainWindow(QtWidgets.QMainWindow):
     #   DEBUG FUNCTIONS
     #
     """
-    @pyqtSlot()
     @debug.log_info
+    @pyqtSlot()
     def button_run_test(self):
-        print("This is a test!")
-        self.add_random_jobs()
-        self.add_random_invoices()
-        self.add_random_psds()
-        self.add_random_job_additions()
-        self.add_random_cost_calculations()
-        self.add_contact_people()
+        if self.app_data.debug_on():
+            print("This is a test!")
+            self.add_random_jobs()
+            self.add_random_invoices()
+            self.add_random_psds()
+            self.add_random_job_additions()
+            self.add_random_cost_calculations()
+            self.add_contact_people()
 
-        self.update_ui()
+            self.update_ui()
     #       TODO: Move all the testfunctions to the API file
     def add_random_jobs(self, max_jobs=50):
         number_of_jobs = random.randint(1, max_jobs)

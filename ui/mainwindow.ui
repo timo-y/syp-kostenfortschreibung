@@ -5227,7 +5227,7 @@
    </widget>
    <widget class="QMenu" name="menuProjekt">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="title">
      <string>Projekt</string>
@@ -5276,6 +5276,9 @@
    <property name="text">
     <string>Speichern...</string>
    </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um das Projekt zu sichern</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -5283,6 +5286,9 @@
   <action name="actionSaveAs">
    <property name="text">
     <string>Speichern unter...</string>
+   </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um das Projekt unter einem bestimmten Namen zu sichern</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -5302,6 +5308,9 @@
    <property name="text">
     <string>Beenden</string>
    </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um das Programm zu beenden</string>
+   </property>
   </action>
   <action name="actionRecentlyOpened">
    <property name="enabled">
@@ -5314,6 +5323,9 @@
   <action name="actionExportAllCompanies">
    <property name="text">
     <string>Firmenverzeichnis</string>
+   </property>
+   <property name="statusTip">
+    <string>Exportieren S</string>
    </property>
   </action>
   <action name="actionExportAllProjects">
@@ -5423,10 +5435,16 @@
    <property name="text">
     <string>Programmvoreinstellungen</string>
    </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um die Programmvoreinstellungen zu bearbeiten</string>
+   </property>
   </action>
   <action name="actionNewInvoice">
    <property name="text">
     <string>Neue Rechnung</string>
+   </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um eine neue Rechnung hinzuzufügen</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -5436,20 +5454,32 @@
    <property name="text">
     <string>Projektkonfiguration</string>
    </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um die Projektkonfiguration zu bearbeiten</string>
+   </property>
   </action>
   <action name="actionEditProj">
    <property name="text">
     <string>Projekt bearbeiten</string>
+   </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um das Projekt zu bearbeiten</string>
    </property>
   </action>
   <action name="actionOpenInvoiceCheckDir">
    <property name="text">
     <string>Rechnungsprüfungsverzeichniss</string>
    </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um das Rechnungsprüfungsverzeichniss zu öffnen</string>
+   </property>
   </action>
   <action name="actionNewJob">
    <property name="text">
     <string>Neuer Auftrag</string>
+   </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um eine neuen Auftraghinzuzufügen</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -5459,10 +5489,16 @@
    <property name="text">
     <string>SYP-Verzeichnis</string>
    </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um das SYP-Verzeichniss zu öffnen</string>
+   </property>
   </action>
   <action name="actionOpenProjectDir">
    <property name="text">
     <string>Projektverzeichnis</string>
+   </property>
+   <property name="statusTip">
+    <string>Klicken Sie hier um das Projekt-Verzeichniss zu öffnen</string>
    </property>
   </action>
   <action name="actionSYP_Kostenfortschreibung">
@@ -5486,6 +5522,9 @@
   <action name="actionImportProject">
    <property name="text">
     <string>Projekt importieren...</string>
+   </property>
+   <property name="statusTip">
+    <string>Importieren Sie ein Projekt aus einer SYP-Kostenfortschreibungs-Excel-Datei</string>
    </property>
   </action>
  </widget>

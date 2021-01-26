@@ -571,5 +571,15 @@ class AppData:
                 ("LP9", "Objektbetreuung")
         ],
         "log_filename": DEFAULT_LOG_FILENAME,
+        "debug": False
         }
         return default_config
+
+    """
+    #
+    #   DEBUG
+    #
+    #
+    """
+    def debug_on(self):
+        return self.config["debug"]

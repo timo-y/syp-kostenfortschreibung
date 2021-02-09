@@ -10,6 +10,7 @@ import debug
 import os
 import datetime
 import json
+import shutil
 
 from ui import dlg
 from ui import customqt
@@ -200,7 +201,7 @@ def edit_pcc(app_data, pcc):
 
 @debug.log
 def pcc_overviews(app_data, pcc):
-    app_data.run_pcc_overview(pcc)
+    run_pcc_overview(app_data, pcc)
     app_data.open_overviews_dir()
     debug.log(f"ProjectCostCalculation overview written for the pcc {pcc.name}")
 
@@ -285,7 +286,7 @@ def edit_invoice(app_data, invoice):
 
 @debug.log
 def invoice_check(app_data, invoice, curr_job_only=False):
-    app_data.run_invoice_check(invoice, curr_job_only=curr_job_only)
+    run_invoice_check(app_data, invoice, curr_job_only=curr_job_only)
     app_data.open_invoice_check_dir()
     app_data.open_client_correspondence_dir()
     debug.log(f"Invoice check file written for the Invoice {invoice}")
@@ -363,6 +364,12 @@ def edit_company(app_data, company):
             debug.log(f"Existing Company edited: {company_name}")
         return company
 
+@debug.log
+def company_ov(app_data, company):
+    run_company_ov(app_data, company)
+    app_data.open_overviews_dir()
+    debug.log(f"Company OV file written for the company {company.name}")
+
 """ i,a&e
 #
 #   TRADE
@@ -395,6 +402,12 @@ def edit_trade(app_data, trade):
             """ logging """
             debug.log(f"Existing Trade edited: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}")
         return trade
+
+@debug.log
+def trades_ov(app_data):
+    run_trades_ov(app_data)
+    app_data.open_overviews_dir()
+    debug.log(f"Trades OV file written")
 
 """ i,a&e
 #
@@ -453,6 +466,140 @@ def edit_proj_config(app_data):
         debug.log(f"project.config has been changed: {loaded_config_args}")
         return loaded_config_args["config"]
 
+"""
+#
+#   OUTPUT
+#       Output files
+#
+"""
+"""
+#   INVOICE CHECK
+"""
+@debug.log
+def run_invoice_check(app_data, invoice, curr_job_only):
+    folder_name = app_data.get_invoice_check_folder_name(invoice)
+    create_at_path = os.path.join(app_data.get_app_invoice_check_dir(), folder_name)
+    """
+    #
+    #   Create xlsx files
+    #
+    """
+    xlsx_files = [
+        app_data.output_invoice_check(invoice=invoice,
+                                create_at_path=create_at_path),
+        app_data.output_ov_of_company(company=invoice.company,
+                              create_at_path=create_at_path,
+                              selected_job=invoice.job if curr_job_only else None
+                              )
+    ]
+    """
+    #
+    #   Convert to PDF
+    #
+    """
+    pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
+    """
+    #
+    #   Copy to Folders
+    #
+    """
+    #   Invoice check path
+    inv_check_path = os.path.join(app_data.get_invoice_check_dir(), folder_name)
+
+    # create directory if non-existing
+    if not os.path.exists(inv_check_path):
+        os.makedirs(inv_check_path)
+    for file in pdf_files:
+        shutil.copy(file[0], os.path.join(inv_check_path, file[1]))
+
+    #   Correspondence path
+    correspondence_path = os.path.join(app_data.get_client_correspondence_dir(), folder_name)
+
+    # create directory if non-existing
+    if not os.path.exists(correspondence_path):
+        os.makedirs(correspondence_path)
+    for file in pdf_files:
+        shutil.copy(file[0], os.path.join(correspondence_path, file[1]))
+
+"""
+#   TRADES OVERVIEW
+"""
+@debug.log
+def run_trades_ov(app_data):
+    folder_name = app_data.get_trades_overview_folder_name()
+    create_at_path = os.path.join(app_data.get_app_overviews_dir(), folder_name)
+    """
+    #
+    #   Create xlsx files
+    #
+    """
+    xlsx_files = [
+        app_data.output_ov_by_trades(create_at_path=create_at_path)
+    ]
+    """
+    #
+    #   Convert to PDF
+    #
+    """
+    pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
+
+"""
+#   COMPANY OVERVIEW
+"""
+@debug.log
+def run_company_ov(app_data, company):
+    folder_name = app_data.get_company_overview_folder_name(company)
+    create_at_path = os.path.join(app_data.get_app_overviews_dir(), folder_name)
+    """
+    #
+    #   Create xlsx files
+    #
+    """
+    xlsx_files = [
+        app_data.output_ov_of_company(company=company,
+                              create_at_path=create_at_path
+                              )
+    ]
+    """
+    #
+    #   Convert to PDF
+    #
+    """
+    pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
+
+"""
+#   PCC OVERVIEW
+"""
+@debug.log
+def run_pcc_overview(app_data, pcc):
+    folder_name = app_data.get_pcc_overview_folder_name(pcc)
+    create_at_path = os.path.join(app_data.get_app_overviews_dir(), folder_name)
+    """
+    #
+    #   Create xlsx files
+    #
+    """
+    date = today_str()
+    filename_1 = f"{date}-costcalculation_overview-main-{app_data.project.identifier}"
+    filename_2 = f"{date}-costcalculation_overview-all-{app_data.project.identifier}"
+    xlsx_files = [
+        app_data.output_pcc_ov_cost_groups(pcc=pcc,
+                                        cost_groups=app_data.project.main_cost_groups,
+                                        create_at_path=create_at_path,
+                                        filename=filename_1),
+        app_data.output_pcc_ov_cost_groups(pcc=pcc,
+                                        cost_groups=app_data.project.cost_groups,
+                                        create_at_path=create_at_path,
+                                        filename=filename_2),
+        app_data.output_pcc_ov_trades(pcc=pcc,
+                                        create_at_path=create_at_path)
+    ]
+    """
+    #
+    #   Convert to PDF
+    #
+    """
+    pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
 
 """
 #
@@ -466,7 +613,7 @@ def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], 
 
     table.setSortingEnabled(False) # disable sorting when filling the table (to abvoid bugs with da data field)
     table.setRowCount(len(content))
-    # set columns of table to the list self.invoice_cols
+    # set columns of table to the list app_data.invoice_cols
     table.setColumnCount(len(cols)+1)
     # set column titles
     header_labels = ["UID"]+[titles[col["title"]] for col in cols]

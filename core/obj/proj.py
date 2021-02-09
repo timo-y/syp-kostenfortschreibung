@@ -234,6 +234,9 @@ class Project(IdObject):
     def get_jobs_of_company(self, company):
         return [job for job in self.jobs if job.company is company]
 
+    def get_jobs_of_trade(self, trade):
+        return [job for job in self.jobs if isinstance(job, arch.ArchJob) and job.trade is trade]
+
     def get_max_job_number(self, company):
         return max([job.id for job in self.jobs if job.company is company]+[0])
 

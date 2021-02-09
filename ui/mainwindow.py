@@ -348,13 +348,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_pcc_apply_budget_trade.clicked.connect(self.button_apply_pcc_budget_trade)
         self.pushButton_pcc_apply_budgets_cost_groups.clicked.connect(self.button_apply_pcc_budgets_cost_groups)
         self.pushButton_pcc_apply_budgets_trades.clicked.connect(self.button_apply_pcc_budgets_trades)
-        self.pushButton_export_pcc_overview_general.clicked.connect(self.button_pcc_overviews)
+        self.commandLinkButton_export_pcc_overviews.clicked.connect(self.button_pcc_overviews)
 
         """ invoice buttons """
         self.pushButton_new_invoice.clicked.connect(self.button_input_invoice_to_project)
         self.pushButton_edit_invoice.clicked.connect(self.button_edit_invoice)
-        self.pushButton_invoice_check_all_jobs.clicked.connect(self.button_invoice_check_all_jobs)
-        self.pushButton_invoice_check_curr_job.clicked.connect(self.button_invoice_check_curr_job)
+        self.commandLinkButton_invoice_check_all_jobs.clicked.connect(self.button_invoice_check_all_jobs)
+        self.commandLinkButton_invoice_check_curr_job.clicked.connect(self.button_invoice_check_curr_job)
         self.pushButton_go_to_job.clicked.connect(self.button_set_job_view_sel_invoice)
         self.pushButton_invoice_search.clicked.connect(lambda:self.render_invoice_view())
         self.pushButton_reset_invoice_search.clicked.connect(self.button_reset_invoice_search)
@@ -371,10 +371,12 @@ class MainWindow(QtWidgets.QMainWindow):
         """ company buttons """
         self.pushButton_new_company.clicked.connect(self.button_input_company_to_project)
         self.pushButton_edit_company.clicked.connect(self.button_edit_company)
-
+        self.commandLinkButton_company_ov.clicked.connect(self.button_company_ov)
         """ trade buttons """
         self.pushButton_new_trade.clicked.connect(self.button_input_trade_to_project)
         self.pushButton_edit_trade.clicked.connect(self.button_edit_trade)
+        self.commandLinkButton_trades_ov.clicked.connect(self.button_trades_ov)
+
 
         """ cost_group buttons """
         self.pushButton_new_cost_group.clicked.connect(self.button_input_cost_group_to_project)
@@ -557,7 +559,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def button_pcc_overviews(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
-            helper.pcc_overviews(self.app_data, pcc=item.data(1))
+            helper.pcc_overviews(app_data=self.app_data, pcc=item.data(1))
         else:
             debug.log_warning("Couldn't create pcc overviews, no pcc selected!")
     """ signal
@@ -740,6 +742,14 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             raise Exception("No company selected!")
 
+    @pyqtSlot()
+    def button_company_ov(self):
+        item = self.tableWidget_companies.currentItem()
+        if item:
+            helper.company_ov(self.app_data, company=item.data(1))
+        else:
+            debug.log_warning("Couldn't create company overview, no company selected!")
+
     """ signal
     #
     #   TRADE
@@ -765,6 +775,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.edit_trade(self.tableWidget_trades.currentItem().data(1))
         else:
             raise Exception("No trade selected!")
+
+    @pyqtSlot()
+    def button_trades_ov(self):
+        helper.trades_ov(self.app_data)
 
     """ signal
     #
@@ -1060,13 +1074,14 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_invoice_buttons(self):
         if self.tableWidget_invoices.currentItem() and self.tableWidget_invoices.currentItem().data(1).is_not_deleted():
             self.pushButton_go_to_job.setEnabled(True)
-            self.pushButton_invoice_check_all_jobs.setEnabled(True)
-            self.pushButton_invoice_check_curr_job.setEnabled(True)
+            self.commandLinkButton_invoice_check_all_jobs.setEnabled(True)
+            self.commandLinkButton_invoice_check_curr_job.setEnabled(True)
             self.pushButton_edit_invoice.setEnabled(True)
+
         else:
             self.pushButton_go_to_job.setEnabled(False)
-            self.pushButton_invoice_check_all_jobs.setEnabled(False)
-            self.pushButton_invoice_check_curr_job.setEnabled(False)
+            self.commandLinkButton_invoice_check_all_jobs.setEnabled(False)
+            self.commandLinkButton_invoice_check_curr_job.setEnabled(False)
             self.pushButton_edit_invoice.setEnabled(False)
 
     def reset_invoice_info(self):
@@ -1327,8 +1342,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_company_buttons(self):
         if self.tableWidget_companies.currentItem():
             self.pushButton_edit_company.setEnabled(True)
+            self.commandLinkButton_company_ov.setEnabled(True)
         else:
             self.pushButton_edit_company.setEnabled(False)
+            self.commandLinkButton_company_ov.setEnabled(False)
 
     def reset_company_info(self):
         self.set_company_data()
@@ -1555,6 +1572,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.pushButton_pcc_apply_budgets_trades.setEnabled(True)
             self.pushButton_edit_pcc.setEnabled(True)
             self.pushButton_copy_pcc.setEnabled(True)
+            self.commandLinkButton_export_pcc_overviews.setEnabled(True)
+            self.commandLinkButton_export_pcc_overviews_2.setEnabled(True)
+            self.commandLinkButton_export_pcc_overviews_3.setEnabled(True)
 
             if len(self.treeWidget_pcc_trade_details.selectedItems())>0:
                 self.pushButton_pcc_apply_budget_trade.setEnabled(True)
@@ -1573,6 +1593,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.pushButton_copy_pcc.setEnabled(False)
             self.pushButton_pcc_apply_budget_trade.setEnabled(False)
             self.pushButton_pcc_apply_budget_cost_group.setEnabled(False)
+            self.commandLinkButton_export_pcc_overviews.setEnabled(False)
+            self.commandLinkButton_export_pcc_overviews_2.setEnabled(False)
+            self.commandLinkButton_export_pcc_overviews_3.setEnabled(False)
 
     def reset_pcc_info(self):
         self.treeWidget_pcc_cost_group_details.clear()

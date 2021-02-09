@@ -25,7 +25,6 @@ del main
 import os
 import webbrowser
 import json
-import shutil
 
 import zipr, importr, templatr, pdfexportr, encoder, decoder
 from ui import helper
@@ -223,93 +222,6 @@ class AppData:
     #   Functions for exporting data into new formats (for printing or other purposes)
     #
     """
-    """
-    #   INVOICE CHECK
-    """
-    @debug.log
-    def run_invoice_check(self, invoice, curr_job_only):
-        folder_name = self.get_invoice_check_folder_name(invoice)
-        create_at_path = os.path.join(self.get_app_invoice_check_dir(), folder_name)
-        """
-        #
-        #   Create xlsx files
-        #
-        """
-        xlsx_files = [
-            self.output_invoice_check(invoice=invoice,
-                                    create_at_path=create_at_path),
-            self.output_ov_of_company(company=invoice.company,
-                                  create_at_path=create_at_path,
-                                  selected_job=invoice.job if curr_job_only else None
-                                  )
-        ]
-        """
-        #
-        #   Convert to PDF
-        #
-        """
-        pdf_files = [helper.xlsx2pdf(*file) for file in xlsx_files]
-        """
-        #
-        #   Copy to Folders
-        #
-        """
-        #   Invoice check path
-        inv_check_path = os.path.join(self.get_invoice_check_dir(), folder_name)
-
-        # create directory if non-existing
-        if not os.path.exists(inv_check_path):
-            os.makedirs(inv_check_path)
-        for file in pdf_files:
-            shutil.copy(file[0], os.path.join(inv_check_path, file[1]))
-
-        #   Correspondence path
-        correspondence_path = os.path.join(self.get_client_correspondence_dir(), folder_name)
-
-        # create directory if non-existing
-        if not os.path.exists(correspondence_path):
-            os.makedirs(correspondence_path)
-        for file in pdf_files:
-            shutil.copy(file[0], os.path.join(correspondence_path, file[1]))
-
-    """
-    #   PCC OVERVIEW
-    """
-    @debug.log
-    def run_pcc_overview(self, pcc):
-        folder_name = self.get_pcc_overview_folder_name(pcc)
-        create_at_path = os.path.join(self.get_app_overviews_dir(), folder_name)
-        """
-        #
-        #   Create xlsx files
-        #
-        """
-        date = helper.today_str()
-        filename_1 = f"{date}-costcalculation_overview-main-{self.project.identifier}"
-        filename_2 = f"{date}-costcalculation_overview-all-{self.project.identifier}"
-        xlsx_files = [
-            self.output_pcc_ov_cost_groups(pcc=pcc,
-                                            cost_groups=self.project.main_cost_groups,
-                                            create_at_path=create_at_path,
-                                            filename=filename_1),
-            self.output_pcc_ov_cost_groups(pcc=pcc,
-                                            cost_groups=self.project.cost_groups,
-                                            create_at_path=create_at_path,
-                                            filename=filename_2),
-            self.output_pcc_ov_trades(pcc=pcc,
-                                            create_at_path=create_at_path)
-        ]
-        """
-        #
-        #   Convert to PDF
-        #
-        """
-        pdf_files = [helper.xlsx2pdf(*file) for file in xlsx_files]
-
-
-    """
-    #   OUTPUT
-    """
     def output_invoice_check(self, invoice, create_at_path):
         # Create xlsx-File
         invoice_check_xlsx = templatr.InvoiceCheckExcelTemplate(app_data=self,
@@ -318,9 +230,13 @@ class AppData:
         invoice_check_xlsx.make_file()
         return (invoice_check_xlsx.save_path, invoice_check_xlsx.filename)
 
-    # TODO
-    def output_ov_by_trades(self):
-        pass
+
+    def output_ov_by_trades(self, create_at_path):
+         # Create xlsx-File
+        overview_xlsx = templatr.TradesOVExcelTemplate(app_data=self,
+                                                            save_dir=create_at_path)
+        overview_xlsx.make_file()
+        return (overview_xlsx.save_path, overview_xlsx.filename)
 
     # TODO
     def output_ov_by_job(self):
@@ -538,6 +454,18 @@ class AppData:
     def get_invoice_check_folder_name(self, invoice):
         if self.project_loaded():
             dir_name = f"{helper.now_str()}-{self.project.identifier}-{invoice.id}"
+            return dir_name
+
+    def get_company_overview_folder_name(self, company):
+        if self.project_loaded():
+            dir_name = f"{helper.now_str()}-{self.project.identifier}-{company.name.replace(' ', '_').replace('.', '')}"
+            return dir_name
+
+    def get_trades_overview_folder_name(self, trade=None):
+        if self.project_loaded():
+            dir_name = f"{helper.now_str()}-{self.project.identifier}-trades"
+            if trade:
+                dir_name += f"-{trade.name.replace(' ', '_')}"
             return dir_name
 
     def get_pcc_overview_folder_name(self, pcc):

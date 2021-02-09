@@ -374,7 +374,7 @@
          <enum>QTabWidget::South</enum>
         </property>
         <property name="currentIndex">
-         <number>7</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="tab_overview">
          <attribute name="title">
@@ -1883,7 +1883,7 @@
                      </item>
                     </layout>
                    </item>
-                   <item row="2" column="0" colspan="2">
+                   <item row="3" column="0" colspan="2">
                     <layout class="QHBoxLayout" name="horizontalLayout_invoice_info_bottom">
                      <item>
                       <widget class="QLabel" name="label_invoice_uid">
@@ -1904,39 +1904,6 @@
                       </widget>
                      </item>
                      <item>
-                      <layout class="QGridLayout" name="gridLayout_21">
-                       <property name="sizeConstraint">
-                        <enum>QLayout::SetMaximumSize</enum>
-                       </property>
-                       <item row="0" column="0">
-                        <widget class="QPushButton" name="pushButton_invoice_check_curr_job">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="text">
-                          <string>Rechnungsprüfung (aktueller Auftr.)</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="pushButton_invoice_check_all_jobs">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="text">
-                          <string>Rechnungsprüfung (alle Auftr.)</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                     <item>
                       <widget class="QPushButton" name="pushButton_edit_invoice">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -1948,6 +1915,37 @@
                         <string>bearbeiten</string>
                        </property>
                       </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="2" column="0" colspan="2">
+                    <layout class="QHBoxLayout" name="horizontalLayout_35">
+                     <item>
+                      <widget class="QCommandLinkButton" name="commandLinkButton_invoice_check_curr_job">
+                       <property name="text">
+                        <string>Rechnungsprüfung (aktueller Auftr.)</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QCommandLinkButton" name="commandLinkButton_invoice_check_all_jobs">
+                       <property name="text">
+                        <string>Rechnungsprüfung (alle Auftr.)</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_9">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
                      </item>
                     </layout>
                    </item>
@@ -3569,6 +3567,30 @@
                   </widget>
                  </item>
                  <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_31">
+                   <item>
+                    <widget class="QCommandLinkButton" name="commandLinkButton_company_ov">
+                     <property name="text">
+                      <string>Auftragsübersicht</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_6">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_16">
                    <item>
                     <widget class="QLabel" name="label_company_uid">
@@ -3906,6 +3928,30 @@
                     </item>
                    </layout>
                   </widget>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_33">
+                   <item>
+                    <widget class="QCommandLinkButton" name="commandLinkButton_trades_ov">
+                     <property name="text">
+                      <string>Gewerke Übersicht</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_10">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </item>
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_17">
@@ -4707,6 +4753,44 @@
                   </widget>
                  </item>
                  <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_36">
+                   <item>
+                    <widget class="QCommandLinkButton" name="commandLinkButton_export_pcc_overviews">
+                     <property name="text">
+                      <string>Übersichten</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCommandLinkButton" name="commandLinkButton_export_pcc_overviews_2">
+                     <property name="text">
+                      <string>Übersicht nach Kostengruppen</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCommandLinkButton" name="commandLinkButton_export_pcc_overviews_3">
+                     <property name="text">
+                      <string>Übersicht nach Gewerken</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_8">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_29">
                    <item>
                     <widget class="QLabel" name="label_pcc_uid">
@@ -4731,49 +4815,6 @@
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                      </property>
                     </widget>
-                   </item>
-                   <item>
-                    <layout class="QVBoxLayout" name="verticalLayout_13">
-                     <item>
-                      <widget class="QPushButton" name="pushButton_export_pcc_overview_general">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>Übersichten</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="pushButton_export_pcc_overview_cost_groups">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>Übersicht nach Kostengruppen</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="pushButton_export_pcc_overview_trades">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>Übersicht nach Gewerken</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
                    </item>
                    <item>
                     <widget class="QPushButton" name="pushButton_copy_pcc">

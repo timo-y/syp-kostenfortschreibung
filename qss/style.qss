@@ -45,6 +45,8 @@ QPushButton#pushButton_delete::hover
     color: #FFF;
     background-color: #C12C2C;
 }
+
+
 /*
 *   TABLE
 */
@@ -290,4 +292,26 @@ QPushButton:disabled, QLineEdit:disabled, QComboBox:disabled, QSpinBox:disabled,
 {
     color: #DDD;
     background-color: #CCC;
+}
+
+QCommandLinkButton {
+  background-color: transparent;
+  border:none;
+  padding: 0px;
+  margin: 0px;
+}
+QCommandLinkButton:hover {
+}
+QCommandLinkButton:disabled {
+  background-color: transparent;
+  color: #EEE;
+}
+
+QCommandLinkButton::hover {
+  background-color: transparent;
+  text-decoration: underline;
+  border : 1px solid #00CCCC;
+}
+QCommandLinkButton:hover:pressed {
+  border : 1px solid #BBB;
 }

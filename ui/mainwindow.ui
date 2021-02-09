@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1471</width>
-    <height>1185</height>
+    <width>1309</width>
+    <height>919</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,8 +47,8 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>240</width>
-            <height>240</height>
+            <width>140</width>
+            <height>140</height>
            </size>
           </property>
           <property name="text">
@@ -234,16 +234,38 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_TEST">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <widget class="QGroupBox" name="groupBox_debug">
+             <property name="title">
+              <string>DEBUG</string>
              </property>
-             <property name="text">
-              <string>RUN TEST</string>
-             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QPushButton" name="pushButton_debug_run">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>RUN TEST</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_debug_add_invoices">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>ADD INVOICES</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
@@ -333,6 +355,12 @@
         <property name="enabled">
          <bool>true</bool>
         </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>630</width>
@@ -346,7 +374,7 @@
          <enum>QTabWidget::South</enum>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>7</number>
         </property>
         <widget class="QWidget" name="tab_overview">
          <attribute name="title">
@@ -1876,17 +1904,37 @@
                       </widget>
                      </item>
                      <item>
-                      <widget class="QPushButton" name="pushButton_invoice_check">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
+                      <layout class="QGridLayout" name="gridLayout_21">
+                       <property name="sizeConstraint">
+                        <enum>QLayout::SetMaximumSize</enum>
                        </property>
-                       <property name="text">
-                        <string>Rechnungsprüfung erstellen</string>
-                       </property>
-                      </widget>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="pushButton_invoice_check_curr_job">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="text">
+                          <string>Rechnungsprüfung (aktueller Auftr.)</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pushButton_invoice_check_all_jobs">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="text">
+                          <string>Rechnungsprüfung (alle Auftr.)</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </item>
                      <item>
                       <widget class="QPushButton" name="pushButton_edit_invoice">
@@ -4355,7 +4403,7 @@
         </widget>
         <widget class="QWidget" name="tab_project_cost_calculation">
          <attribute name="title">
-          <string>Kostenkalkulation</string>
+          <string>Kostenermittlung</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
@@ -4411,7 +4459,7 @@
                  </size>
                 </property>
                 <property name="title">
-                 <string>Kostenkalkulation</string>
+                 <string>Kostenermittlung</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_29">
                  <item>
@@ -4481,45 +4529,7 @@
                         <string>Budgets übernehmen</string>
                        </property>
                        <layout class="QGridLayout" name="gridLayout_15">
-                        <item row="0" column="1">
-                         <widget class="QPushButton" name="pushButton_pcc_apply_budgets_cost_groups">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>120</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>für Kostengruppen</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="0">
-                         <widget class="QPushButton" name="pushButton_pcc_apply_budgets_trades">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>120</width>
-                            <height>0</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string>für Gewerke</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="0" colspan="2">
+                        <item row="4" column="0" colspan="2">
                          <widget class="QPushButton" name="pushButton_pcc_apply_budgets">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -4535,6 +4545,44 @@
                           </property>
                           <property name="text">
                            <string>Alle Budgets übernehmen</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QPushButton" name="pushButton_pcc_apply_budgets_cost_groups">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>120</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Für alle Kostengruppen</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QPushButton" name="pushButton_pcc_apply_budgets_trades">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>120</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Für alle Gewerke</string>
                           </property>
                          </widget>
                         </item>
@@ -4588,6 +4636,25 @@
                           </column>
                          </widget>
                         </item>
+                        <item>
+                         <widget class="QPushButton" name="pushButton_pcc_apply_budget_cost_group">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>120</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Budget übernehmen für ausgewählte Kostengruppe</string>
+                          </property>
+                         </widget>
+                        </item>
                        </layout>
                       </widget>
                       <widget class="QWidget" name="tab_3">
@@ -4611,6 +4678,25 @@
                             <string notr="true">1</string>
                            </property>
                           </column>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="pushButton_pcc_apply_budget_trade">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>120</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>Budget übernehmen für ausgewähltes Gewerk</string>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -4645,6 +4731,49 @@
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                      </property>
                     </widget>
+                   </item>
+                   <item>
+                    <layout class="QVBoxLayout" name="verticalLayout_13">
+                     <item>
+                      <widget class="QPushButton" name="pushButton_export_pcc_overview_general">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>Übersichten</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="pushButton_export_pcc_overview_cost_groups">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>Übersicht nach Kostengruppen</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="pushButton_export_pcc_overview_trades">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>Übersicht nach Gewerken</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                    <item>
                     <widget class="QPushButton" name="pushButton_copy_pcc">
@@ -5168,8 +5297,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1471</width>
-     <height>22</height>
+     <width>1309</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

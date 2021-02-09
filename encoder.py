@@ -86,6 +86,7 @@ class ProjectDataEncoder(JSONEncoder):
                 "property_size": o.property_size,
                 "usable_floor_space_nuf": o.usable_floor_space_nuf,
                 "usable_floor_space_bgf": o.usable_floor_space_bgf,
+                "rental_space": o.rental_space,
                 "building_class": o.building_class,
                 "construction_costs_kg300_400": o.construction_costs_kg300_400,
                 "production_costs": o.production_costs,

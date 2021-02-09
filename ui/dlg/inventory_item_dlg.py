@@ -4,7 +4,7 @@
 #   This module creates an dialog with the necessary input fields to input an inventory item for the project cost calculation.
 #
 """
-DEFAULT_UNIT_TYPES = ["m", "m²", "m³", "kg"]
+DEFAULT_UNIT_TYPES = ["m", "m²", "m³", "kg", "h", "Tag", "Wo.", "Stk.", "Psch."]
 
 from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import QDialogButtonBox

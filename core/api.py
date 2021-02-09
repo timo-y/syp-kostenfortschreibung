@@ -15,16 +15,17 @@ DEFAULT_LANG_DIR = "lang"
 DEFAULT_AUTOSAVE_SUBDIR = "autosaves"
 DEFAULT_TEMPLATE_SUBDIR = "templates"
 DEFAULT_INVOICE_CHECK_SUBDIR = "invoice_check"
+DEFAULT_OVERVIEWS_SUBDIR = "overviews"
 DEFAULT_LOG_FILENAME = 'log.log'
+
+import main # just for root directory
+MAIN_DIRECTORY = main.MAIN_DIRECTORY
+del main
 
 import os
 import webbrowser
 import json
 import shutil
-
-import main # just for root directory
-MAIN_DIRECTORY = main.MAIN_DIRECTORY
-del main
 
 import zipr, importr, templatr, pdfexportr, encoder, decoder
 from ui import helper
@@ -84,8 +85,8 @@ class AppData:
     """
     @debug.log
     def save_project(self, save_path):
-        self.set_usersave_path(save_path)
         zipr.save_project(save_path, self)
+        self.set_usersave_path(save_path)
         self.save_app_config()
 
     @debug.log
@@ -107,16 +108,19 @@ class AppData:
         debug.debug_msg(f"deleting old autosaves (max_autosaves={max_autosaves})...")
         autosave_dir_path = self.get_autosave_dir()
         file_suffix = self.get_autosave_filename_suffix()
-
-        autosaves = [f for f in os.listdir(autosave_dir_path) if f.endswith(file_suffix) and os.path.isfile(os.path.join(autosave_dir_path, f))]
-        autosaves.sort(reverse=True) # reversed, so the oldest save(s) gets deleted
-        for autosave in autosaves[max_autosaves:]:
-            os.remove(os.path.join(autosave_dir_path, autosave))
-        debug.debug_msg(f"...{len(autosaves[max_autosaves:])} file(s) deleted...")
+        if os.path.isdir(autosave_dir_path):
+            autosaves = [f for f in os.listdir(autosave_dir_path) if f.endswith(file_suffix) and os.path.isfile(os.path.join(autosave_dir_path, f))]
+            autosaves.sort(reverse=True) # reversed, so the oldest save(s) gets deleted
+            for autosave in autosaves[max_autosaves:]:
+                os.remove(os.path.join(autosave_dir_path, autosave))
+            debug.debug_msg(f"...{len(autosaves[max_autosaves:])} file(s) deleted...")
+        else:
+            debug.debug_msg("autosave dir does not exist. Nothing to delete...")
 
     @debug.log
-    def load_project(self, filename):
-        loaded_args = zipr.open_project(filename)
+    def load_project(self, file_path):
+        loaded_args = zipr.open_project(file_path)
+        self.config["loaded_save_path"] = file_path
         self.project = loaded_args["project"]
         self.project.config = loaded_args["project_config"]
         self.project.project_cost_calculations = loaded_args["project_cost_calculations"]
@@ -148,15 +152,15 @@ class AppData:
     """
     @debug.log
     def export_companies(self, save_path):
-        self.to_json_file(data=self.project.companies, save_path=save_path, encoder=encoder.CompanyEncoder)
+        helper.to_json_file(data=self.project.companies, save_path=save_path, encoder=encoder.CompanyEncoder)
 
     @debug.log
     def export_trades(self, save_path):
-        self.to_json_file(data=self.project.trades, save_path=save_path, encoder=encoder.TradeEncoder)
+        helper.to_json_file(data=self.project.trades, save_path=save_path, encoder=encoder.TradeEncoder)
 
     @debug.log
     def export_cost_groups(self, save_path):
-        self.to_json_file(data=self.project.cost_groups, save_path=save_path, encoder=encoder.CostGroupEncoder)
+        helper.to_json_file(data=self.project.cost_groups, save_path=save_path, encoder=encoder.CostGroupEncoder)
 
     """
     #   IMPORT
@@ -176,7 +180,7 @@ class AppData:
 
     @debug.log
     def import_companies(self, file_path):
-        imported_companies = self.from_json_file(file_path=file_path, decoder=decoder.CompanyDecoder)
+        imported_companies = helper.from_json_file(file_path=file_path, decoder=decoder.CompanyDecoder)
         for import_company in imported_companies:
             if import_company.name not in [company.name for company in self.project.companies]:
                 import_company.uid.reset_uid()
@@ -187,7 +191,7 @@ class AppData:
 
     @debug.log
     def import_trades(self, file_path):
-        imported_trades = self.from_json_file(file_path=file_path, decoder=decoder.TradeDecoder)
+        imported_trades = helper.from_json_file(file_path=file_path, decoder=decoder.TradeDecoder)
         for import_trade in imported_trades:
             if import_trade.name not in [trade.name for trade in self.project.trades]:
                 import_trade.uid.reset_uid()
@@ -198,7 +202,7 @@ class AppData:
 
     @debug.log
     def import_cost_groups(self, file_path):
-        imported_cost_groups = self.from_json_file(file_path=file_path, decoder=decoder.CostGroupDecoder)
+        imported_cost_groups = helper.from_json_file(file_path=file_path, decoder=decoder.CostGroupDecoder)
         for import_cost_group in imported_cost_groups:
             if import_cost_group.id not in [cost_group.id for cost_group in self.project.cost_groups]:
                 import_cost_group.uid.reset_uid()
@@ -223,98 +227,138 @@ class AppData:
     #   INVOICE CHECK
     """
     @debug.log
-    def output_check_invoice(self, invoice):
+    def run_invoice_check(self, invoice, curr_job_only):
         folder_name = self.get_invoice_check_folder_name(invoice)
         create_at_path = os.path.join(self.get_app_invoice_check_dir(), folder_name)
         """
         #
-        #   INVOICE CHECK
-        #   First we create the regular invoice check document
+        #   Create xlsx files
         #
         """
+        xlsx_files = [
+            self.output_invoice_check(invoice=invoice,
+                                    create_at_path=create_at_path),
+            self.output_ov_of_company(company=invoice.company,
+                                  create_at_path=create_at_path,
+                                  selected_job=invoice.job if curr_job_only else None
+                                  )
+        ]
+        """
+        #
+        #   Convert to PDF
+        #
+        """
+        pdf_files = [helper.xlsx2pdf(*file) for file in xlsx_files]
+        """
+        #
+        #   Copy to Folders
+        #
+        """
+        #   Invoice check path
+        inv_check_path = os.path.join(self.get_invoice_check_dir(), folder_name)
+
+        # create directory if non-existing
+        if not os.path.exists(inv_check_path):
+            os.makedirs(inv_check_path)
+        for file in pdf_files:
+            shutil.copy(file[0], os.path.join(inv_check_path, file[1]))
+
+        #   Correspondence path
+        correspondence_path = os.path.join(self.get_client_correspondence_dir(), folder_name)
+
+        # create directory if non-existing
+        if not os.path.exists(correspondence_path):
+            os.makedirs(correspondence_path)
+        for file in pdf_files:
+            shutil.copy(file[0], os.path.join(correspondence_path, file[1]))
+
+    """
+    #   PCC OVERVIEW
+    """
+    @debug.log
+    def run_pcc_overview(self, pcc):
+        folder_name = self.get_pcc_overview_folder_name(pcc)
+        create_at_path = os.path.join(self.get_app_overviews_dir(), folder_name)
+        """
+        #
+        #   Create xlsx files
+        #
+        """
+        date = helper.today_str()
+        filename_1 = f"{date}-costcalculation_overview-main-{self.project.identifier}"
+        filename_2 = f"{date}-costcalculation_overview-all-{self.project.identifier}"
+        xlsx_files = [
+            self.output_pcc_ov_cost_groups(pcc=pcc,
+                                            cost_groups=self.project.main_cost_groups,
+                                            create_at_path=create_at_path,
+                                            filename=filename_1),
+            self.output_pcc_ov_cost_groups(pcc=pcc,
+                                            cost_groups=self.project.cost_groups,
+                                            create_at_path=create_at_path,
+                                            filename=filename_2),
+            self.output_pcc_ov_trades(pcc=pcc,
+                                            create_at_path=create_at_path)
+        ]
+        """
+        #
+        #   Convert to PDF
+        #
+        """
+        pdf_files = [helper.xlsx2pdf(*file) for file in xlsx_files]
+
+
+    """
+    #   OUTPUT
+    """
+    def output_invoice_check(self, invoice, create_at_path):
         # Create xlsx-File
         invoice_check_xlsx = templatr.InvoiceCheckExcelTemplate(app_data=self,
                                                             invoice=invoice,
                                                             save_dir=create_at_path)
         invoice_check_xlsx.make_file()
-        # Export PDF
-        dir_path = os.path.dirname(invoice_check_xlsx.save_path)
-        pdf_filename = f"{invoice_check_xlsx.filename}.pdf"
-        pdf_save_path = os.path.join(dir_path, pdf_filename)
-        pdfexportr.PDFExportr().create_pdf(invoice_check_xlsx.save_path, pdf_save_path)
+        return (invoice_check_xlsx.save_path, invoice_check_xlsx.filename)
 
-        """
-        #
-        #   COMPANY OVERVIEW
-        #   Secondly, we create the overview of the company jobs and invoices
-        #
-        """
-        # Create xlsx-File
-        job_overview_xlsx = templatr.CompanyOverviewExcelTemplate(app_data=self,
-                                                            company=invoice.company,
-                                                            save_dir=create_at_path)
-        job_overview_xlsx.make_file()
-        # Export PDF
-        jo_dir_path = os.path.dirname(job_overview_xlsx.save_path)
-        jo_pdf_filename = f"{job_overview_xlsx.filename}.pdf"
-        jo_pdf_save_path = os.path.join(jo_dir_path, jo_pdf_filename)
-        pdfexportr.PDFExportr().create_pdf(job_overview_xlsx.save_path, jo_pdf_save_path)
-
-        """
-        #   First copy and move to the invoice check path
-        """
-        inv_check_path = os.path.join(self.get_invoice_check_dir(), folder_name)
-        # create directory if non-existing
-        if not os.path.exists(inv_check_path):
-            os.makedirs(inv_check_path)
-        shutil.copy(pdf_save_path, os.path.join(inv_check_path, pdf_filename))
-        shutil.copy(jo_pdf_save_path, os.path.join(inv_check_path, jo_pdf_filename))
-        """
-        #   Second to the correspondence path
-        """
-        correspondence_path = os.path.join(self.get_client_correspondence_dir(), folder_name)
-        # create directory if non-existing
-        if not os.path.exists(correspondence_path):
-            os.makedirs(correspondence_path)
-        shutil.copy(pdf_save_path, os.path.join(correspondence_path, pdf_filename))
-        shutil.copy(jo_pdf_save_path, os.path.join(correspondence_path, jo_pdf_filename))
-
-    """
-    #   OVERVIEWs
-    """
     # TODO
     def output_ov_by_trades(self):
         pass
+
     # TODO
     def output_ov_by_job(self):
         pass
-    # TODO
-    def output_ov_by_company(self):
-        pass
+
+    def output_ov_of_company(self, company, create_at_path, selected_job=None):
+        # Create xlsx-File
+        overview_xlsx = templatr.CompanyOVExcelTemplate(app_data=self,
+                                                            company=company,
+                                                            save_dir=create_at_path,
+                                                            selected_job=selected_job)
+        overview_xlsx.make_file()
+        return (overview_xlsx.save_path, overview_xlsx.filename)
+
+    def output_pcc_ov_cost_groups(self, pcc, cost_groups, create_at_path, filename=None):
+        # Create xlsx-File
+        overview_xlsx = templatr.PCCCostGroupsOVExcelTemplate(app_data=self,
+                                                            pcc=pcc,
+                                                            cost_groups=cost_groups,
+                                                            save_dir=create_at_path,
+                                                            filename=filename)
+        overview_xlsx.make_file()
+        return (overview_xlsx.save_path, overview_xlsx.filename)
+
+    def output_pcc_ov_trades(self, pcc, create_at_path, filename=None):
+        # Create xlsx-File
+        overview_xlsx = templatr.PCCTradesOVExcelTemplate(app_data=self,
+                                                            pcc=pcc,
+                                                            save_dir=create_at_path,
+                                                            filename=filename)
+        overview_xlsx.make_file()
+        return (overview_xlsx.save_path, overview_xlsx.filename)
 
     """
     #
     #   UTILITY FUNCTIONS
     #
     """
-
-    """ util
-    #
-    #   FILES
-    #   Functions to get files, the programm needs to load (apart from project files)
-    #
-    """
-    @debug.log
-    def from_json_file(self, file_path, *, decoder=json.JSONDecoder):
-        output = None
-        with open(file_path, "r") as file:
-            output = json.load(file, object_hook=decoder().object_hook)
-        return output
-
-    @debug.log
-    def to_json_file(self, data, save_path, *, encoder=json.JSONEncoder):
-        with open(save_path, "w") as file:
-            json.dump(data, file, cls=encoder, indent=4)
 
     """
     #   APP CONFIG
@@ -340,7 +384,7 @@ class AppData:
     @debug.log
     def get_titles(self):
         file_path = os.path.join(self.get_lang_dir(), self.get_lang()+".json")
-        return self.from_json_file(file_path)
+        return helper.from_json_file(file_path)
 
     @debug.log
     def save_app_config(self):
@@ -403,6 +447,14 @@ class AppData:
             self.open_dir()
 
     @debug.log
+    def open_overviews_dir(self):
+        path = self.get_app_overviews_dir()
+        if os.path.exists(path):
+            webbrowser.open(os.path.realpath(path))
+        else:
+            self.open_dir()
+
+    @debug.log
     def open_client_correspondence_dir(self):
         path = self.get_client_correspondence_dir()
         if os.path.exists(path):
@@ -444,6 +496,11 @@ class AppData:
             path = os.path.join(self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
             return path
 
+    def get_app_overviews_dir(self):
+        if self.project:
+            path = os.path.join(self.config["save_dir"], self.project.identifier, self.config["overviews_subdir"])
+            return path
+
     def get_autosave_dir(self):
         autosave_dir_path = os.path.join(self.config["save_dir"], self.config["autosave_subdir"])
         return autosave_dir_path
@@ -483,10 +540,17 @@ class AppData:
             dir_name = f"{helper.now_str()}-{self.project.identifier}-{invoice.id}"
             return dir_name
 
+    def get_pcc_overview_folder_name(self, pcc):
+        if self.project_loaded():
+            dir_name = f"{helper.now_str()}-{self.project.identifier}-{pcc.name}"
+            return dir_name
+
+    def get_loaded_save_path(self):
+        return self.config["loaded_save_path"]
+
     def set_usersave_path(self, save_path, datetime_str=helper.now_str()):
         self.project.set_save_path(save_path, datetime_str)
-        self.config["user_save"]["datetime"] = datetime_str
-        self.config["user_save"]["path"] = save_path
+        self.config["loaded_save_path"] = save_path
 
     def set_last_autosave_path_(self, save_path, datetime_str=helper.now_str()):
         self.project.set_autosave_path(save_path, datetime_str)
@@ -511,19 +575,19 @@ class AppData:
     @debug.log
     def get_init_companies(self):
         file_path = "resources/default_companies.json"
-        companies = self.from_json_file(file_path=file_path, decoder=decoder.CompanyDecoder)
+        companies = helper.from_json_file(file_path=file_path, decoder=decoder.CompanyDecoder)
         return companies
 
     @debug.log
     def get_init_trades(self):
         file_path = "resources/default_trades.json"
-        trades = self.from_json_file(file_path=file_path, decoder=decoder.TradeDecoder)
+        trades = helper.from_json_file(file_path=file_path, decoder=decoder.TradeDecoder)
         return trades
 
     @debug.log
     def get_init_cost_groups(self):
         file_path = "resources/default_cost_groups.json"
-        cost_groups = self.from_json_file(file_path=file_path, decoder=decoder.CostGroupDecoder)
+        cost_groups = helper.from_json_file(file_path=file_path, decoder=decoder.CostGroupDecoder)
         return cost_groups
 
     @debug.log
@@ -538,10 +602,8 @@ class AppData:
         "autosave_subdir": DEFAULT_AUTOSAVE_SUBDIR,
         "template_subdir": DEFAULT_TEMPLATE_SUBDIR,
         "invoice_check_subdir": DEFAULT_INVOICE_CHECK_SUBDIR,
-        "user_save": {
-            "datetime": None,
-            "path": None
-        },
+        "overviews_subdir": DEFAULT_OVERVIEWS_SUBDIR,
+        "loaded_save_path": None,
         "last_auto_save": {
             "datetime": None,
             "path": None

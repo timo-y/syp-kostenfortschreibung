@@ -11,7 +11,7 @@ import uuid
 #   ULTRA JSON
 #       More performance de- and encoding
 #
-#"""
+"""
 try:
     import ujson as json
 except ImportError:
@@ -111,6 +111,7 @@ class ProjectDataDecoder(JSONDecoder):
                 "property_size": dct["property_size"],
                 "usable_floor_space_nuf": dct["usable_floor_space_nuf"],
                 "usable_floor_space_bgf": dct["usable_floor_space_bgf"],
+                "rental_space": dct["rental_space"] if "rental_space" in dct.keys() else 0,
                 "building_class": dct["building_class"],
                 "construction_costs_kg300_400": dct["construction_costs_kg300_400"],
                 "production_costs": dct["production_costs"],

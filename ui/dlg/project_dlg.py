@@ -244,6 +244,9 @@ class ProjectDialog(QtWidgets.QDialog):
             self.doubleSpinBox_usable_floor_space_bgf.setValue(
                 project_data.usable_floor_space_bgf
                 )
+            self.doubleSpinBox_rental_space.setValue(
+                project_data.rental_space
+                )
             self.doubleSpinBox_construction_costs_kg300_400.setValue(
                 project_data.construction_costs_kg300_400
                 )
@@ -314,6 +317,8 @@ class ProjectDialog(QtWidgets.QDialog):
                     self.doubleSpinBox_usable_floor_space_nuf.value(),
                 "usable_floor_space_bgf":
                     self.doubleSpinBox_usable_floor_space_bgf.value(),
+                "rental_space":
+                    self.doubleSpinBox_rental_space.value(),
                 "building_class":
                     self.comboBox_building_class.currentData(),
                 "construction_costs_kg300_400":

@@ -9,12 +9,14 @@ import debug
 
 import os
 import datetime
+import json
 
 from ui import dlg
 from ui import customqt
 
 from PyQt5 import QtWidgets, QtCore
 
+import pdfexportr
 from core.obj import proj
 
 """
@@ -67,10 +69,13 @@ def load_project(mainwindow, app_data):
 def save_project(mainwindow, app_data):
     if app_data.project:
         if app_data.project.has_been_saved():
-            save_path = app_data.project.get_usersave_path()
-            app_data.save_project(save_path)
-            """ logging """
-            debug.log(f"Project saved: \"{app_data.project.identifier}\"")
+            save_path = app_data.get_loaded_save_path()
+            if save_path and os.path.isfile(save_path):
+                app_data.save_project(save_path)
+                """ logging """
+                debug.log(f"Project saved: \"{app_data.project.identifier}\"")
+            else:
+                save_project_as(mainwindow, app_data)
         else:
             save_project_as(mainwindow, app_data)
 
@@ -128,7 +133,7 @@ def export_cost_groups(mainwindow, app_data):
 #
 """
 def import_project(mainwindow, app_data):
-    filename = "*-Kostenfortschreibung.xlsm"
+    filename = "*-Kostenfortschreibung_import.xlsm"
     save_dir_path = os.path.join(app_data.get_save_dir(), filename)
     f_dialog = QtWidgets.QFileDialog()
     file_path, _ = f_dialog.getOpenFileName(mainwindow,"Projekt importieren...",  save_dir_path, "Kostenfortschreibung-Excelmappe (*.xlsm);;All Files (*)")
@@ -192,6 +197,12 @@ def edit_pcc(app_data, pcc):
             """ logging """
             debug.log(f"Existing ProjectCostCalculation edited: {pcc.name}, from the {pcc.date.toPyDate()}")
         return pcc
+
+@debug.log
+def pcc_overviews(app_data, pcc):
+    app_data.run_pcc_overview(pcc)
+    app_data.open_overviews_dir()
+    debug.log(f"ProjectCostCalculation overview written for the pcc {pcc.name}")
 
 """ i,a&e
 #
@@ -273,9 +284,10 @@ def edit_invoice(app_data, invoice):
         return invoice
 
 @debug.log
-def invoice_check(app_data, invoice, save_path=None):
-    app_data.output_check_invoice(invoice)
+def invoice_check(app_data, invoice, curr_job_only=False):
+    app_data.run_invoice_check(invoice, curr_job_only=curr_job_only)
     app_data.open_invoice_check_dir()
+    app_data.open_client_correspondence_dir()
     debug.log(f"Invoice check file written for the Invoice {invoice}")
 
 """ i,a&e
@@ -574,6 +586,32 @@ def delete_prompt(dialog):
 
 """
 #
+#   CONVERSION
+#       Convert data, files etc.
+#
+"""
+def from_json_file(file_path, *, decoder=json.JSONDecoder):
+    output = None
+    with open(file_path, "r") as file:
+        output = json.load(file, object_hook=decoder().object_hook)
+    return output
+
+def to_json_file(data, save_path, *, encoder=json.JSONEncoder):
+    with open(save_path, "w") as file:
+        json.dump(data, file, cls=encoder, indent=4)
+
+def xlsx2pdf(input_path, filename):
+    # Export PDF
+    dir_path = os.path.dirname(input_path)
+    pdf_filename = f"{filename}.pdf"
+    pdf_save_path = os.path.join(dir_path, pdf_filename)
+    pdfexportr.PDFExportr().create_pdf(input_path, pdf_save_path)
+    return pdf_save_path, pdf_filename
+
+
+
+"""
+#
 #   INPUT MANAGEMENT
 #   Functions for QDialog input-output management
 #
@@ -630,16 +668,15 @@ def rnd(amount):
 """
 #   QDate to String
 """
-def qdate_to_str(qdate):
-    format = '%d.%m.%Y'
+def qdate_to_str(qdate, format="%d.%m.%Y"):
     return qdate.toPyDate().strftime(format)
 
 
 """
 #   datetime.now() string
 """
-def now_str():
-    return datetime.datetime.now().strftime('%Y-%m-%d_%H%M%S')
+def now_str(format="%Y-%m-%d_%H%M%S"):
+    return datetime.datetime.now().strftime(format)
 
-def today_str():
-    return datetime.datetime.today().strftime("%Y-%m-%d")
+def today_str(format="%Y-%m-%d"):
+    return datetime.datetime.today().strftime(format)

@@ -297,64 +297,8 @@
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_usable_floor_space_nuf">
-        <property name="text">
-         <string>&amp;Nutzfläche (NUF)</string>
-        </property>
-        <property name="buddy">
-         <cstring>doubleSpinBox_usable_floor_space_nuf</cstring>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0" colspan="3">
        <widget class="QLineEdit" name="lineEdit_commissioned_services"/>
-      </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_usable_floor_space_nuf">
-        <property name="suffix">
-         <string>m²</string>
-        </property>
-        <property name="decimals">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <double>9999999999999999932209486743616279764617084419440640.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_property_size">
-        <property name="text">
-         <string>&amp;Grundstückgröße</string>
-        </property>
-        <property name="buddy">
-         <cstring>doubleSpinBox_property_size</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_building_class">
-        <property name="text">
-         <string>&amp;Gebäudeklasse</string>
-        </property>
-        <property name="buddy">
-         <cstring>comboBox_building_class</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="1" colspan="2">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_production_costs">
-        <property name="suffix">
-         <string>€</string>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="maximum">
-         <double>1000000000000000044885712678075916785549312.000000000000000</double>
-        </property>
-       </widget>
       </item>
       <item row="5" column="1" colspan="2">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_usable_floor_space_bgf">
@@ -369,18 +313,8 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="1">
+      <item row="8" column="1">
        <widget class="QComboBox" name="comboBox_building_class"/>
-      </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="label_contract_fee">
-        <property name="text">
-         <string>&amp;Honorar</string>
-        </property>
-        <property name="buddy">
-         <cstring>doubleSpinBox_contract_fee</cstring>
-        </property>
-       </widget>
       </item>
       <item row="5" column="0">
        <widget class="QLabel" name="label_usable_floor_space_bgf">
@@ -392,7 +326,63 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_usable_floor_space_nuf">
+        <property name="suffix">
+         <string>m²</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>9999999999999999932209486743616279764617084419440640.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_contract_fee">
+        <property name="suffix">
+         <string>€</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000000000044885712678075916785549312.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0">
+       <widget class="QLabel" name="label_contract_fee">
+        <property name="text">
+         <string>&amp;Honorar</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_contract_fee</cstring>
+        </property>
+       </widget>
+      </item>
       <item row="9" column="0">
+       <widget class="QLabel" name="label_construction_costs_kg300_400">
+        <property name="text">
+         <string>&amp;Baukosten KG300 und KG400</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_construction_costs_kg300_400</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_usable_floor_space_nuf">
+        <property name="text">
+         <string>&amp;Nutzfläche (NUF)</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_usable_floor_space_nuf</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
        <widget class="QLabel" name="label_production_costs">
         <property name="text">
          <string>&amp;Produktionskosten</string>
@@ -415,30 +405,7 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="label_construction_costs_kg300_400">
-        <property name="text">
-         <string>&amp;Baukosten KG300 und KG400</string>
-        </property>
-        <property name="buddy">
-         <cstring>doubleSpinBox_construction_costs_kg300_400</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="1" colspan="2">
-       <widget class="QDoubleSpinBox" name="doubleSpinBox_contract_fee">
-        <property name="suffix">
-         <string>€</string>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="maximum">
-         <double>1000000000000000044885712678075916785549312.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="1" colspan="2">
+      <item row="9" column="1" colspan="2">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_construction_costs_kg300_400">
         <property name="suffix">
          <string>€</string>
@@ -451,6 +418,52 @@
         </property>
        </widget>
       </item>
+      <item row="11" column="1" colspan="2">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_production_costs">
+        <property name="suffix">
+         <string>€</string>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>1000000000000000044885712678075916785549312.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_building_class">
+        <property name="text">
+         <string>&amp;Gebäudeklasse</string>
+        </property>
+        <property name="buddy">
+         <cstring>comboBox_building_class</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_property_size">
+        <property name="text">
+         <string>&amp;Grundstückgröße</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_property_size</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QDoubleSpinBox" name="doubleSpinBox_rental_space">
+        <property name="suffix">
+         <string>m²</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>9999999999999999455752309870428160.000000000000000</double>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0" colspan="3">
        <widget class="QLabel" name="label_commissioned_services">
         <property name="text">
@@ -458,6 +471,16 @@
         </property>
         <property name="buddy">
          <cstring>lineEdit_commissioned_services</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_rental_space">
+        <property name="text">
+         <string>Mietfläche</string>
+        </property>
+        <property name="buddy">
+         <cstring>doubleSpinBox_usable_floor_space_bgf</cstring>
         </property>
        </widget>
       </item>

@@ -80,7 +80,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget_content.addTab(self.tab_trades_table, "Gewerke")
         self.tabWidget_content.addTab(self.tab_cost_groups_table, "Kostengruppen")
         self.tabWidget_content.addTab(self.tab_people, "Beteiligten")
-        self.tabWidget_content.addTab(self.tab_project_cost_calculation, "Kostenberechnung")
+        self.tabWidget_content.addTab(self.tab_project_cost_calculation, "Kostenermittlung")
         #self.tabWidget_content.addTab(self.tab_invoice_check, "???")
 
     def init_table_header(self):
@@ -229,19 +229,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menuProjekt.setEnabled(True)
         self.menuImport.setEnabled(True)
         self.menuExport.setEnabled(True)
+        self.actionSave.setEnabled(True)
+        self.actionSaveAs.setEnabled(True)
 
     def disable_ui(self):
         self.centralwidget.setEnabled(False)
         self.menuProjekt.setEnabled(False)
         self.menuImport.setEnabled(False)
         self.menuExport.setEnabled(False)
+        self.actionSave.setEnabled(False)
+        self.actionSaveAs.setEnabled(False)
 
 
     def set_debug_ui(self):
         if self.app_data.debug_on():
-            self.pushButton_TEST.setVisible(True)
+            self.groupBox_debug.setVisible(True)
         else:
-            self.pushButton_TEST.setVisible(False)
+            self.groupBox_debug.setVisible(False)
 
     def center_window(self):
         qr = self.frameGeometry()
@@ -325,7 +329,8 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     def set_button_actions(self):
         """ DEBUG """
-        self.pushButton_TEST.clicked.connect(self.button_run_test)
+        self.pushButton_debug_run.clicked.connect(self.button_run_test)
+        self.pushButton_debug_add_invoices.clicked.connect(self.button_debug_add_invoices)
 
         """ quick links """
         self.pushButton_quick_new_invoice.clicked.connect(self.button_input_invoice_to_project)
@@ -339,13 +344,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_edit_pcc.clicked.connect(self.button_edit_pcc)
         self.pushButton_copy_pcc.clicked.connect(self.button_copy_pcc)
         self.pushButton_pcc_apply_budgets.clicked.connect(self.button_apply_pcc_budgets)
+        self.pushButton_pcc_apply_budget_cost_group.clicked.connect(self.button_apply_pcc_budget_cost_group)
+        self.pushButton_pcc_apply_budget_trade.clicked.connect(self.button_apply_pcc_budget_trade)
         self.pushButton_pcc_apply_budgets_cost_groups.clicked.connect(self.button_apply_pcc_budgets_cost_groups)
         self.pushButton_pcc_apply_budgets_trades.clicked.connect(self.button_apply_pcc_budgets_trades)
+        self.pushButton_export_pcc_overview_general.clicked.connect(self.button_pcc_overviews)
 
         """ invoice buttons """
         self.pushButton_new_invoice.clicked.connect(self.button_input_invoice_to_project)
         self.pushButton_edit_invoice.clicked.connect(self.button_edit_invoice)
-        self.pushButton_invoice_check.clicked.connect(self.button_invoice_check)
+        self.pushButton_invoice_check_all_jobs.clicked.connect(self.button_invoice_check_all_jobs)
+        self.pushButton_invoice_check_curr_job.clicked.connect(self.button_invoice_check_curr_job)
         self.pushButton_go_to_job.clicked.connect(self.button_set_job_view_sel_invoice)
         self.pushButton_invoice_search.clicked.connect(lambda:self.render_invoice_view())
         self.pushButton_reset_invoice_search.clicked.connect(self.button_reset_invoice_search)
@@ -379,6 +388,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """ project cost calculation signals """
         self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.table_double_click_pcc)
         self.tableWidget_project_cost_calculations.currentItemChanged.connect(self.table_click_pcc)
+        self.treeWidget_pcc_trade_details.clicked.connect(self.activate_pcc_buttons)
+        self.treeWidget_pcc_cost_group_details.clicked.connect(self.activate_pcc_buttons)
         """ invoice signals """
         self.listWidget_invoices.itemDoubleClicked.connect(self.list_double_click_invoice)
         self.tableWidget_invoices.itemDoubleClicked.connect(self.table_double_click_invoice)
@@ -464,7 +475,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def button_edit_pcc(self):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
-            self.edit_pcc(item.data(1))
+            pcc = item.data(1)
+            self.edit_pcc(pcc)
         else:
             debug.log_warning("Couldn't edit project_cost_calculation, no project_cost_calculation selected!")
 
@@ -482,10 +494,39 @@ class MainWindow(QtWidgets.QMainWindow):
         if item:
             reply = helper.u_sure_prompt(self)
             if reply:
-                self.app_data.project.apply_budgets(item.data(1))
+                pcc = item.data(1)
+                self.app_data.project.apply_budgets(pcc)
                 self.update_ui()
         else:
             debug.log_warning("Couldn't apply budgets, no project_cost_calculation selected!")
+
+    @pyqtSlot()
+    def button_apply_pcc_budget_cost_group(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        cost_group_items = self.treeWidget_pcc_cost_group_details.selectedItems()
+        if item and len(cost_group_items)>0:
+            reply = helper.u_sure_prompt(self)
+            if reply:
+                pcc = item.data(1)
+                sel_cost_group = cost_group_items[0].data(1, QtCore.Qt.UserRole)
+                self.app_data.project.apply_cost_group_budget(pcc, sel_cost_group)
+                self.update_ui()
+        else:
+            debug.log_warning("Couldn't apply CostGroup budget, no project_cost_calculation or cost_group selected!")
+
+    @pyqtSlot()
+    def button_apply_pcc_budget_trade(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        trade_items = self.treeWidget_pcc_trade_details.selectedItems()
+        if item and len(trade_items)>0:
+            reply = helper.u_sure_prompt(self)
+            if reply:
+                pcc = item.data(1)
+                sel_trade = trade_items[0].data(1, QtCore.Qt.UserRole)
+                self.app_data.project.apply_trade_budget(pcc, sel_trade)
+                self.update_ui()
+        else:
+            debug.log_warning("Couldn't apply Trade budget, no project_cost_calculation or trade selected!")
 
     @pyqtSlot()
     def button_apply_pcc_budgets_cost_groups(self):
@@ -493,7 +534,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if item:
             reply = helper.u_sure_prompt(self)
             if reply:
-                self.app_data.project.apply_cost_group_budgets(item.data(1))
+                pcc = item.data(1)
+                self.app_data.project.apply_cost_group_budgets(pcc)
                 self.update_ui()
         else:
             debug.log_warning("Couldn't apply CostGroup budgets, no project_cost_calculation selected!")
@@ -504,11 +546,20 @@ class MainWindow(QtWidgets.QMainWindow):
         if item:
             reply = helper.u_sure_prompt(self)
             if reply:
-                self.app_data.project.apply_trade_budgets(item.data(1))
+                pcc = item.data(1)
+                self.app_data.project.apply_trade_budgets(pcc)
                 self.update_ui()
         else:
             debug.log_warning("Couldn't apply Trade budgets, no project_cost_calculation selected!")
 
+
+    @pyqtSlot()
+    def button_pcc_overviews(self):
+        item = self.tableWidget_project_cost_calculations.currentItem()
+        if item:
+            helper.pcc_overviews(self.app_data, pcc=item.data(1))
+        else:
+            debug.log_warning("Couldn't create pcc overviews, no pcc selected!")
     """ signal
     #
     #   INVOICE
@@ -556,10 +607,18 @@ class MainWindow(QtWidgets.QMainWindow):
             debug.log_warning("Couldn't edit invoice, no invoice selected!")
 
     @pyqtSlot()
-    def button_invoice_check(self):
+    def button_invoice_check_curr_job(self):
         item = self.tableWidget_invoices.currentItem()
         if item:
-            self.invoice_check(item.data(1))
+            helper.invoice_check(self.app_data, invoice=item.data(1), curr_job_only=True)
+        else:
+            debug.log_warning("Couldn't create invoice check, no invoice selected!")
+
+    @pyqtSlot()
+    def button_invoice_check_all_jobs(self):
+        item = self.tableWidget_invoices.currentItem()
+        if item:
+            helper.invoice_check(self.app_data, invoice=item.data(1), curr_job_only=False)
         else:
             debug.log_warning("Couldn't create invoice check, no invoice selected!")
 
@@ -846,6 +905,8 @@ class MainWindow(QtWidgets.QMainWindow):
         trade_budget_total = sum(trade.budget for trade in self.app_data.project.trades)
         job_sums_total = sum(job.job_sum for job in self.app_data.project.jobs)
         approved_invoices_w_VAT_total = sum(invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices)
+        paid_safety_deposit_total = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs)
+
         cost_group_total = {
             "cost_group": self.app_data.titles["total"],
             "project_budget": amount_w_currency_str(cost_group_budget_total, self.currency),
@@ -855,7 +916,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "difference_proj_to_trades_budget": amount_w_currency_str(cost_group_budget_total - trade_budget_total, self.currency),
             "job_sums": amount_w_currency_str(job_sums_total, self.currency),
             "job_sums_w_VAT": amount_w_currency_str(job_sums_total * (1+vat), self.currency),
-            "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT_total, self.currency),
+            "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT_total+paid_safety_deposit_total, self.currency),
             "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT_total*100 / (trade_budget_total * (1+vat))) if trade_budget_total else "-"
         }
         sorting_keys = {
@@ -867,7 +928,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "difference_proj_to_trades_budget": cost_group_budget_total - trade_budget_total,
             "job_sums": job_sums_total,
             "job_sums_w_VAT": job_sums_total * (1+vat),
-            "approved_invoices_w_VAT": approved_invoices_w_VAT_total,
+            "approved_invoices_w_VAT": approved_invoices_w_VAT_total+paid_safety_deposit_total,
             "approved_invoices_w_VAT_by_tradebudgets": approved_invoices_w_VAT_total*100 / (trade_budget_total * (1+vat)) if trade_budget_total else 0
         }
         col = 0
@@ -890,6 +951,7 @@ class MainWindow(QtWidgets.QMainWindow):
         trade_budget = sum([trade.budget for trade in self.app_data.project.trades if (trade.cost_group is cost_group or trade.cost_group.is_sub_group_of(cost_group))])
         job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and (job.trade.cost_group is cost_group or job.trade.cost_group.is_sub_group_of(cost_group))])
         approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job and  invoice.job.trade and invoice.job.trade.cost_group and (invoice.job.trade.cost_group is cost_group or invoice.job.trade.cost_group.is_sub_group_of(cost_group))])
+        paid_safety_deposit = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and (job.trade.cost_group is cost_group or job.trade.cost_group.is_sub_group_of(cost_group)))
         """ Create output dictionary """
         cost_group_attr = {
             "cost_group":  cost_group.id,
@@ -900,7 +962,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "difference_proj_to_trades_budget": amount_w_currency_str(cost_group.budget - trade_budget, self.currency),
             "job_sums": amount_w_currency_str(job_sums, self.currency),
             "job_sums_w_VAT": amount_w_currency_str(job_sums * (1+vat), self.currency),
-            "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT, self.currency),
+            "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT+paid_safety_deposit, self.currency),
             "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT*100 / (trade_budget * (1+vat))) if trade_budget else "-"
         }
         sorting_keys = {
@@ -912,7 +974,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "difference_proj_to_trades_budget": cost_group.budget - trade_budget,
             "job_sums": job_sums,
             "job_sums_w_VAT": job_sums * (1+vat),
-            "approved_invoices_w_VAT": approved_invoices_w_VAT,
+            "approved_invoices_w_VAT": approved_invoices_w_VAT+paid_safety_deposit,
             "approved_invoices_w_VAT_by_tradebudgets": approved_invoices_w_VAT*100 / (trade_budget * (1+vat)) if trade_budget else 0
         }
         col = 0
@@ -998,11 +1060,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_invoice_buttons(self):
         if self.tableWidget_invoices.currentItem() and self.tableWidget_invoices.currentItem().data(1).is_not_deleted():
             self.pushButton_go_to_job.setEnabled(True)
-            self.pushButton_invoice_check.setEnabled(True)
+            self.pushButton_invoice_check_all_jobs.setEnabled(True)
+            self.pushButton_invoice_check_curr_job.setEnabled(True)
             self.pushButton_edit_invoice.setEnabled(True)
         else:
             self.pushButton_go_to_job.setEnabled(False)
-            self.pushButton_invoice_check.setEnabled(False)
+            self.pushButton_invoice_check_all_jobs.setEnabled(False)
+            self.pushButton_invoice_check_curr_job.setEnabled(False)
             self.pushButton_edit_invoice.setEnabled(False)
 
     def reset_invoice_info(self):
@@ -1491,12 +1555,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self.pushButton_pcc_apply_budgets_trades.setEnabled(True)
             self.pushButton_edit_pcc.setEnabled(True)
             self.pushButton_copy_pcc.setEnabled(True)
+
+            if len(self.treeWidget_pcc_trade_details.selectedItems())>0:
+                self.pushButton_pcc_apply_budget_trade.setEnabled(True)
+            else:
+                self.pushButton_pcc_apply_budget_trade.setEnabled(False)
+
+            if len(self.treeWidget_pcc_cost_group_details.selectedItems())>0:
+                self.pushButton_pcc_apply_budget_cost_group.setEnabled(True)
+            else:
+                self.pushButton_pcc_apply_budget_cost_group.setEnabled(False)
         else:
             self.pushButton_pcc_apply_budgets.setEnabled(False)
             self.pushButton_pcc_apply_budgets_cost_groups.setEnabled(False)
             self.pushButton_pcc_apply_budgets_trades.setEnabled(False)
             self.pushButton_edit_pcc.setEnabled(False)
             self.pushButton_copy_pcc.setEnabled(False)
+            self.pushButton_pcc_apply_budget_trade.setEnabled(False)
+            self.pushButton_pcc_apply_budget_cost_group.setEnabled(False)
 
     def reset_pcc_info(self):
         self.treeWidget_pcc_cost_group_details.clear()
@@ -1781,13 +1857,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.update_ui()
             self.activate_invoice_buttons()
 
-    @debug.log_info
-    def invoice_check(self, invoice, save_path=None):
-        self.app_data.output_check_invoice(invoice)
-        self.app_data.open_invoice_check_dir()
-        self.app_data.open_client_correspondence_dir()
-        debug.log(f"Invoice check file written for the invoice {invoice}")
-
     """ func
     #
     #   JOB
@@ -1926,6 +1995,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.add_contact_people()
 
             self.update_ui()
+
+    @debug.log_info
+    @pyqtSlot()
+    def button_debug_add_invoices(self):
+        if self.app_data.debug_on():
+            print("This is a test!")
+            self.add_random_invoices()
+            self.add_random_psds()
+            self.update_ui()
+
     #       TODO: Move all the testfunctions to the API file
     def add_random_jobs(self, max_jobs=50):
         number_of_jobs = random.randint(1, max_jobs)

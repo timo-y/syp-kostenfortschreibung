@@ -364,14 +364,21 @@ class Project(IdObject):
     @debug.log
     def apply_cost_group_budgets(self, pcc):
         for cost_group in self.cost_groups:
-            cost_group_children = self.get_children_of_cost_group(cost_group)
-            cost_group.budget = sum(pcc.get_cost_group_prognosis(child) for child in cost_group_children) + pcc.get_cost_group_prognosis(cost_group)
+            self.apply_cost_group_budget(pcc, cost_group)
 
     @debug.log
     def apply_trade_budgets(self, pcc):
         for trade in self.trades:
-            trade.budget = pcc.get_trade_prognosis(trade)
+            self.apply_trade_budget(pcc, trade)
 
+    @debug.log
+    def apply_cost_group_budget(self, pcc, cost_group):
+        cost_group_children = self.get_children_of_cost_group(cost_group)
+        cost_group.budget = sum(pcc.get_cost_group_prognosis(child) for child in cost_group_children) + pcc.get_cost_group_prognosis(cost_group)
+
+    @debug.log
+    def apply_trade_budget(self, pcc, trade):
+        trade.budget = pcc.get_trade_prognosis(trade)
     """ func
     #
     #   Jobs
@@ -731,10 +738,11 @@ class Project(IdObject):
 class ProjectData(IdObject):
     """ docstring for ProjectData """
 
-    def __init__(self, commissioned_services=None, property_size=None,
-                    usable_floor_space_nuf=None, usable_floor_space_bgf=None,
-                    building_class=None, construction_costs_kg300_400=None,
-                    production_costs=None, contract_fee=None, execution_period=None,
+    def __init__(self, commissioned_services=None, property_size=0,
+                    usable_floor_space_nuf=0, usable_floor_space_bgf=0,
+                    rental_space=0, building_class=None,
+                    construction_costs_kg300_400=0, production_costs=0,
+                    contract_fee=0, execution_period=None,
                     *, uid=None, deleted=False
                     ):
         super().__init__(self, uid=uid, deleted=deleted)
@@ -742,6 +750,7 @@ class ProjectData(IdObject):
         self.property_size = property_size
         self.usable_floor_space_nuf = usable_floor_space_nuf
         self.usable_floor_space_bgf = usable_floor_space_bgf
+        self.rental_space = rental_space
         self.building_class = building_class
         self.construction_costs_kg300_400 = construction_costs_kg300_400
         self.production_costs = production_costs
@@ -751,10 +760,14 @@ class ProjectData(IdObject):
 """
 #
 #   ProjectCostCalculation
-#       A project costcalculation is mainly a list of objects (dicts), which represent
-#       some item or service and they belong to a CostGroup and/or Trade, with cost per unit and units.
-#       Then we can make a pre-calculation of the project costs.
-#       During a project, these calculation can be updated and the Trade/CostGroup budgets updated w.r.t. this.
+#       A project costcalculation is mainly a list
+#       of objects (dicts), which represent some
+#       item or service and they belong to a CostGroup
+#       and/or Trade, with cost per unit and units.
+#       Then we can make a pre-calculation of the project
+#       costs. During a project, these calculation can
+#       be updated and the Trade/CostGroup budgets
+#       updated w.r.t. this.
 #
 """
 class ProjectCostCalculation(IdObject):
@@ -804,9 +817,10 @@ class ProjectCostCalculation(IdObject):
     """
     #
     #   get_main_cost_group_prognosis
-    #       Since the 100,200,... CostGroups also have their own budgets, the actual budget for the X00 CostGroup
-    #       is the sum of the X00 CostGroup plus the sum of all CostGroups that are below in the CostGroup-tree
-    #       i.e., X00 is their parent or their parents parent
+    #       Since the 100,200,... CostGroups also have their own budgets,
+    #       the actual budget for the X00 CostGroup is the sum of the X00
+    #       CostGroup plus the sum of all CostGroups that are below in the
+    #       CostGroup-tree i.e., X00 is their parent or their parents parent
     #
     """
     def get_main_cost_group_prognosis(self, main_cost_group, cost_groups):

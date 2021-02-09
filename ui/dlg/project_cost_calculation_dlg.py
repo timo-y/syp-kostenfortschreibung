@@ -58,7 +58,7 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
     def initialize_ui(self):
         uic.loadUi('ui/dlg/project_cost_calculation_dialog.ui', self)
         """ TODO: figure out where to put this """
-        tree_widget_cols = ["name", "is_active", "cost_group", "trade", "units", "unit_type", "price_per_unit", "total_price"] # maybe put on top of file
+        tree_widget_cols = ["is_active", "name", "cost_group", "trade", "units", "unit_type", "price_per_unit", "total_price"] # maybe put on top of file
         self.treeWidget_inventory.setHeaderLabels([self.app_data.titles[col] for col in tree_widget_cols])
 
     def set_date_today(self):
@@ -208,8 +208,8 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
         for inventory_item in inventory:
             helper.add_item_to_tree(content_item=inventory_item,
                                     parent=self.treeWidget_inventory,
-                                    cols=[inventory_item.name,
-                                        f"{inventory_item.is_active}",
+                                    cols=[f"{inventory_item.is_active}",
+                                        inventory_item.name,
                                         f"{inventory_item.cost_group.id} / {inventory_item.cost_group.name}",
                                         str(inventory_item.trade.name),
                                         f"{inventory_item.units}",

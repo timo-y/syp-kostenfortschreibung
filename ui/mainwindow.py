@@ -114,6 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ]
 
         self.project_cost_calculation_cols = [
+            {"title": "type", "width": 180},
             {"title": "name", "width": 180},
             {"title": "date", "width": 100},
             {"title": "total_cost", "width": 150}
@@ -367,6 +368,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_remove_safety_deposit.clicked.connect(self.button_remove_psd)
         self.pushButton_add_job_addition.clicked.connect(self.button_add_job_addition)
         self.pushButton_remove_job_addition.clicked.connect(self.button_remove_job_addition)
+        self.commandLinkButton_job_ov.clicked.connect(self.button_job_ov)
 
         """ company buttons """
         self.pushButton_new_company.clicked.connect(self.button_input_company_to_project)
@@ -560,6 +562,7 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
             helper.pcc_overviews(app_data=self.app_data, pcc=item.data(1))
+            self.app_data.open_overviews_dir()
         else:
             debug.log_warning("Couldn't create pcc overviews, no pcc selected!")
     """ signal
@@ -613,6 +616,8 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self.tableWidget_invoices.currentItem()
         if item:
             helper.invoice_check(self.app_data, invoice=item.data(1), curr_job_only=True)
+            self.app_data.open_invoice_check_dir()
+            self.app_data.open_client_correspondence_dir()
         else:
             debug.log_warning("Couldn't create invoice check, no invoice selected!")
 
@@ -621,6 +626,8 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self.tableWidget_invoices.currentItem()
         if item:
             helper.invoice_check(self.app_data, invoice=item.data(1), curr_job_only=False)
+            self.app_data.open_invoice_check_dir()
+            self.app_data.open_client_correspondence_dir()
         else:
             debug.log_warning("Couldn't create invoice check, no invoice selected!")
 
@@ -716,6 +723,15 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             raise Exception("No job selected!")
 
+    @pyqtSlot()
+    def button_job_ov(self):
+        item = self.tableWidget_jobs.currentItem()
+        if item:
+            helper.company_ov(self.app_data, company=item.data(1).company, selected_job=item.data(1))
+            self.app_data.open_overviews_dir()
+        else:
+            debug.log_warning("Couldn't create job overview, no job selected!")
+
     """ signal
     #
     #   COMPANY
@@ -747,6 +763,7 @@ class MainWindow(QtWidgets.QMainWindow):
         item = self.tableWidget_companies.currentItem()
         if item:
             helper.company_ov(self.app_data, company=item.data(1))
+            self.app_data.open_overviews_dir()
         else:
             debug.log_warning("Couldn't create company overview, no company selected!")
 
@@ -779,6 +796,7 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot()
     def button_trades_ov(self):
         helper.trades_ov(self.app_data)
+        self.app_data.open_overviews_dir()
 
     """ signal
     #
@@ -1213,6 +1231,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.tableWidget_jobs.currentItem():
             self.pushButton_edit_job.setEnabled(True)
             self.pushButton_add_invoice_for_curr_job.setEnabled(True)
+            self.commandLinkButton_job_ov.setEnabled(True)
             """ paid safety deposits """
             self.pushButton_pay_safety_deposit.setEnabled(True)
             if self.treeWidget_paid_safety_desposits.selectedItems():
@@ -1228,6 +1247,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.pushButton_edit_job.setEnabled(False)
             self.pushButton_add_invoice_for_curr_job.setEnabled(False)
+            self.commandLinkButton_job_ov.setEnabled(False)
             self.pushButton_pay_safety_deposit.setEnabled(False)
             self.pushButton_remove_safety_deposit.setEnabled(False)
             self.pushButton_add_job_addition.setEnabled(False)
@@ -1603,11 +1623,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_pcc_data()
         self.activate_pcc_buttons()
 
-    def set_pcc_data(self, *, _uid=None, name="", date="", total_cost=0, **kwargs):
+    def set_pcc_data(self, *, _uid=None, name="", type=None, date=None, total_cost=0, **kwargs):
         """ meta data """
         self.label_pcc_uid.setText(_uid.labelize() if _uid else "-")
 
         self.label_pcc_name.setText(str(name))
+        self.label_pcc_type.setText(type if type else "-")
         self.label_pcc_date.setText(qdate_to_str(date) if date else "-")
 
         """ total cost """

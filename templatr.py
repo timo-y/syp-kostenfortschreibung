@@ -166,7 +166,8 @@ class CompanyOVExcelTemplate(Template):
         self.template_dir = app_data.config["template_subdir"]
         self.template_filename = "company_ov.xlsx"
 
-        self.filename = filename if filename else f"{date}-company_ov-{company.name.replace(' ', '_')}"
+        job_str = f"-{selected_job.id}" if selected_job is not None else ""
+        self.filename = filename if filename else f"{date}-company_ov-{company.name.replace(' ', '_')}{job_str}"
         self.save_dir = save_dir
         self.save_path = os.path.join(app_data.get_dir(), self.save_dir, f"{self.filename}.xlsx")
 
@@ -227,9 +228,9 @@ class CompanyOVExcelTemplate(Template):
                 {"cell": f"E{12+j}",                             "border": self.border_bottom_thin},
 
                 {"cell": f"B{13+j}", "data": titles["id"],                      "font": self.bold_font_table_header},
-                {"cell": f"C{13+j}", "data": titles["verified_amount_short"],   "font": self.bold_font_table_header},
-                {"cell": f"D{13+j}", "data": titles["safety_deposit_amount"],   "font": self.bold_font_table_header},
-                {"cell": f"E{13+j}", "data": titles["approved_amount"],         "font": self.bold_font_table_header},
+                {"cell": f"C{13+j}", "data": titles["verified_amount_short"],   "font": self.bold_font_table_header, "alignment": self.align_right},
+                {"cell": f"D{13+j}", "data": titles["safety_deposit_amount"],   "font": self.bold_font_table_header, "alignment": self.align_right},
+                {"cell": f"E{13+j}", "data": titles["approved_amount"],         "font": self.bold_font_table_header, "alignment": self.align_right},
             ]
             self.excel_data.extend(invoice_header_lines)
             j += 5
@@ -253,7 +254,7 @@ class CompanyOVExcelTemplate(Template):
                 j += 1
             """ write job summary line """
             sum_line = [
-                    {"cell": f"B{9+j}", "data": titles["total"], "font": self.bold_font_table_header, "border": self.border_top_double},
+                    {"cell": f"B{9+j}", "data": titles["total"], "font": self.normal_font, "border": self.border_top_double},
                     {"cell": f"C{9+j}", "data": verified_amount_sum, "number_format": self.amount_format, "alignment": self.align_right, "font": self.bold_font_table_header, "border": self.border_top_double},
                     {"cell": f"D{9+j}", "data": safety_deposit_sum,  "number_format": self.amount_format, "alignment": self.align_right, "font": self.bold_font_table_header, "border": self.border_top_double},
                     {"cell": f"E{9+j}", "data": approved_amount_sum, "number_format": self.amount_format, "alignment": self.align_right, "font": self.bold_font_table_header, "border": self.border_top_double},
@@ -321,12 +322,12 @@ class TradesOVExcelTemplate(Template):
                 {"cell": f"B{10+j}", "data": titles["cost_group"],     "font": self.bold_font_table_header},
                 {"cell": f"C{10+j}", "data": titles["budget"],         "font": self.bold_font_table_header, "alignment": self.align_right},
                 {"cell": f"D{10+j}", "data": titles["budget_w_VAT"],   "font": self.bold_font_table_header, "alignment": self.align_right},
-                {"cell": f"F{10+j}", "data": titles["comment"],        "font": self.bold_font_table_header},
+                {"cell": f"E{10+j}", "data": titles["comment"],        "font": self.bold_font_table_header},
 
                 {"cell": f"B{11+j}", "data": trade.cost_group.id,           "font": self.normal_font},
                 {"cell": f"C{11+j}", "data": trade.budget,               "font": self.normal_font,                   "number_format": self.amount_format, "alignment": self.align_right},
                 {"cell": f"D{11+j}", "data": trade.budget*(1+app_data.project.get_vat()), "font": self.normal_font,  "number_format": self.amount_format, "alignment": self.align_right},
-                {"cell": f"F{11+j}", "data": trade.comment,              "font": self.normal_font},
+                {"cell": f"E{11+j}", "data": trade.comment,              "font": self.normal_font},
 
             ]
             self.excel_data.extend(trade_lines)
@@ -346,7 +347,8 @@ class TradesOVExcelTemplate(Template):
                 {"cell": f"E{13+j}", "data": titles["approved_invoices_w_VAT"],                 "font": self.bold_font_table_header, "alignment": self.align_right},
                 {"cell": f"F{13+j}", "data": titles["safety_deposit"],                          "font": self.bold_font_table_header, "alignment": self.align_right},
                 {"cell": f"G{13+j}", "data": titles["paid_safety_deposits"],                    "font": self.bold_font_table_header, "alignment": self.align_right},
-                {"cell": f"H{13+j}", "data": titles["budget_w_VAT_by_approved_invoices_w_VAT"], "font": self.bold_font_table_header, "alignment": self.align_right},
+                # TODO: Change title of below
+                {"cell": f"H{13+j}", "data": titles["approved_invoices_and_psds_by_budget"], "font": self.bold_font_table_header, "alignment": self.align_right},
             ]
             self.excel_data.extend(jobs_header_lines)
             j += 5
@@ -369,7 +371,7 @@ class TradesOVExcelTemplate(Template):
                 """ write data """
                 job_line = [
                     {"cell": f"B{9+j}", "data": job.company.name},
-                    {"cell": f"C{9+j}", "data": job.id},
+                    {"cell": f"C{9+j}", "data": job.id, "alignment": self.align_left},
                     {"cell": f"D{9+j}", "data": job_sum_w_VAT,    "number_format": self.amount_format, "alignment": self.align_right},
                     {"cell": f"E{9+j}", "data": approved_inv_amount ,"number_format": self.amount_format, "alignment": self.align_right},
                     {"cell": f"F{9+j}", "data": safety_deposit ,"number_format": self.amount_format, "alignment": self.align_right},
@@ -381,7 +383,7 @@ class TradesOVExcelTemplate(Template):
                 j += 1
             """ write trade summary line """
             sum_line = [
-                    {"cell": f"B{9+j}", "data": titles["total"], "font": self.bold_font_table_header, "border": self.border_top_double},
+                    {"cell": f"B{9+j}", "data": titles["total"], "font": self.normal_font, "border": self.border_top_double},
                     {"cell": f"C{9+j}", "border": self.border_top_double},
                     {"cell": f"D{9+j}", "data": job_sum_w_VAT_sum, "number_format": self.amount_format, "alignment": self.align_right, "font": self.bold_font_table_header, "border": self.border_top_double},
                     {"cell": f"E{9+j}", "data": approved_inv_sum,  "number_format": self.amount_format, "alignment": self.align_right, "font": self.bold_font_table_header, "border": self.border_top_double},
@@ -400,14 +402,98 @@ class TradesOVExcelTemplate(Template):
         self.ws.print_area = f"A1:G{self.last_row_index}"
         self.save_file()
 
+# TODO: finish this
+class CostGroupsOVExcelTemplate(Template):
+    """docstring for CostGroupsOVExcelTemplate"""
+    def __init__(self, app_data, cost_groups, save_dir, filename=None):
+        date = helper.today_str("%d.%m.%Y")
+        self.template_dir = app_data.config["template_subdir"]
+        self.template_filename = "cost_groups_ov.xlsx"
+
+        self.filename = filename if filename else f"{date}-pcc_cost_groups_ov-{app_data.project.identifier}"
+        self.save_dir = save_dir
+        self.save_path = os.path.join(app_data.get_dir(), self.save_dir, f"{self.filename}.xlsx")
+
+        self.last_row_index = 31 + len(cost_groups) # last row used to define the printed area
+
+        super(CostGroupsOVExcelTemplate, self).__init__(template_dir=self.template_dir,
+                                                        template_filename=self.template_filename,
+                                                        save_path=self.save_path)
+
+        """
+        #   new_rows
+        #   For each cost_group (except the first) add a new line
+        #
+        """
+        self.new_rows = 0
+        if len(cost_groups)>1:
+            self.new_rows = len(cost_groups)-1
+            self.add_rows(12, self.new_rows)
+
+        """
+        #
+        #   EXCEL DATA
+        #   Gather the data for the invoice check and connect
+        #   it to the cells.
+        #
+        """
+        cg_300 = [cg for cg in app_data.project.cost_groups if cg.id == "300"][0]
+        cg_400 = [cg for cg in app_data.project.cost_groups if cg.id == "400"][0]
+        cg_500 = [cg for cg in app_data.project.cost_groups if cg.id == "500"][0]
+
+        costs_300_400_500 = 0 # ????
+
+        nuf = app_data.project.project_data.usable_floor_space_nuf
+        bgf = app_data.project.project_data.usable_floor_space_bgf
+        self.excel_data = [
+            {"cell": "B6", "data": app_data.project.identifier},
+            {"cell": "B7", "data": helper.qdate_to_str(pcc.date)},
+            {"cell": f"G{14+self.new_rows}", "data": "job_sums_sum", "number_format": self.amount_format},
+            {"cell": f"H{14+self.new_rows}", "data": "approved_amount_sum", "number_format": self.amount_format},
+            {"cell": f"C{17+self.new_rows}", "data": bgf},
+            # TODO: was ist NRF?
+            {"cell": f"C{18+self.new_rows}", "data": "TODO: was ist NRF?"},
+            {"cell": f"C{19+self.new_rows}", "data": nuf},
+            {"cell": f"D{22+self.new_rows}", "data": costs_300_400_500/bgf if bgf != 0 else 0, "number_format": self.number_format},
+            {"cell": f"G{22+self.new_rows}", "data": costs_300_400_500/bgf if bgf != 0 else 0, "number_format": self.number_format},
+            {"cell": f"D{23+self.new_rows}", "data": costs_300_400_500/nuf if nuf != 0 else 0, "number_format": self.number_format},
+            {"cell": f"G{23+self.new_rows}", "data": costs_300_400_500/nuf if nuf != 0 else 0, "number_format": self.number_format},
+        ]
+
+        i = 0
+        for cost_group in cost_groups:
+            job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and (job.trade.cost_group is cost_group or job.trade.cost_group.is_sub_group_of(cost_group))])
+            approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job and  invoice.job.trade and invoice.job.trade.cost_group and (invoice.job.trade.cost_group is cost_group or invoice.job.trade.cost_group.is_sub_group_of(cost_group))])
+            paid_safety_deposit = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and (job.trade.cost_group is cost_group or job.trade.cost_group.is_sub_group_of(cost_group)))
+
+            cost_group_data = [
+                {"cell": f"A{12+i}", "data": f"{cost_group.id} {cost_group.name}", "border": Border(left=Side(style='medium'),top=Side(style='thin'))},
+                {"cell": f"G{12+i}", "data": pcc.get_cost_group_prognosis(cost_group), "number_format": self.amount_format, "border": Border(left=Side(style='thin'),right=Side(style='thin'))},
+                {"cell": f"B{12+i}", "border": self.border_top_thin},
+                {"cell": f"C{12+i}", "border": self.border_top_thin},
+                {"cell": f"D{12+i}", "border": self.border_top_thin},
+                {"cell": f"E{12+i}", "border": self.border_top_thin},
+                {"cell": f"F{12+i}", "border": self.border_top_thin},
+                {"cell": f"G{12+i}", "border": self.border_top_thin},
+                {"cell": f"H{12+i}", "border": Border(left=Side(style='thin'),right=Side(style='medium'))},
+            ]
+            self.excel_data.extend(cost_group_data)
+            i += 1
+
+    @debug.log
+    def make_file(self):
+        self.make_cells(self.excel_data)
+        self.ws.print_area = f"A1:I{self.last_row_index}"
+        self.save_file()
+
 class PCCCostGroupsOVExcelTemplate(Template):
-    """docstring for CostCalculationOverviewExcelTemplate"""
+    """docstring for PCCCostGroupsOVExcelTemplate"""
     def __init__(self, app_data, pcc, cost_groups, save_dir, filename=None):
         date = helper.today_str("%d.%m.%Y")
         self.template_dir = app_data.config["template_subdir"]
         self.template_filename = "pcc_cost_groups_ov.xlsx"
 
-        self.filename = filename if filename else f"{date}-costcalculation_cost_groups_overview-{app_data.project.identifier}"
+        self.filename = filename if filename else f"{date}-pcc_cost_groups_ov-{app_data.project.identifier}-{pcc.name}"
         self.save_dir = save_dir
         self.save_path = os.path.join(app_data.get_dir(), self.save_dir, f"{self.filename}.xlsx")
 
@@ -444,9 +530,10 @@ class PCCCostGroupsOVExcelTemplate(Template):
         bgf = app_data.project.project_data.usable_floor_space_bgf
         nuf =app_data.project.project_data.usable_floor_space_nuf
         self.excel_data = [
+            {"cell": "A4", "data": pcc.type.split()[0]},
             {"cell": "A5", "data": pcc.name},
             {"cell": "B6", "data": app_data.project.identifier},
-            {"cell": "B7", "data": helper.today_str(format="%d.%m.%Y")},
+            {"cell": "B7", "data": helper.qdate_to_str(pcc.date)},
             {"cell": f"C{15+self.new_rows}", "data": app_data.project.get_vat(), "number_format": self.percent_format},
             {"cell": f"H{14+self.new_rows}", "data": pcc.total_cost, "number_format": self.amount_format},
             {"cell": f"H{15+self.new_rows}", "data": pcc.total_cost*app_data.project.get_vat(), "number_format": self.amount_format},
@@ -464,15 +551,15 @@ class PCCCostGroupsOVExcelTemplate(Template):
         i = 0
         for cost_group in cost_groups:
             cost_group_data = [
-            {"cell": f"A{12+i}", "data": f"{cost_group.id} {cost_group.name}", "border": Border(left=Side(style='medium'),top=Side(style='thin'))},
-            {"cell": f"G{12+i}", "data": pcc.get_cost_group_prognosis(cost_group), "number_format": self.amount_format, "border": Border(left=Side(style='thin'),right=Side(style='thin'))},
-            {"cell": f"B{12+i}", "border": self.border_top_thin},
-            {"cell": f"C{12+i}", "border": self.border_top_thin},
-            {"cell": f"D{12+i}", "border": self.border_top_thin},
-            {"cell": f"E{12+i}", "border": self.border_top_thin},
-            {"cell": f"F{12+i}", "border": self.border_top_thin},
-            {"cell": f"G{12+i}", "border": self.border_top_thin},
-            {"cell": f"H{12+i}", "border": Border(left=Side(style='thin'),right=Side(style='medium'))},
+                {"cell": f"A{12+i}", "data": f"{cost_group.id} {cost_group.name}", "border": Border(left=Side(style='medium'),top=Side(style='thin'))},
+                {"cell": f"G{12+i}", "data": pcc.get_cost_group_prognosis(cost_group), "number_format": self.amount_format, "border": Border(left=Side(style='thin'),right=Side(style='thin'))},
+                {"cell": f"B{12+i}", "border": self.border_top_thin},
+                {"cell": f"C{12+i}", "border": self.border_top_thin},
+                {"cell": f"D{12+i}", "border": self.border_top_thin},
+                {"cell": f"E{12+i}", "border": self.border_top_thin},
+                {"cell": f"F{12+i}", "border": self.border_top_thin},
+                {"cell": f"G{12+i}", "border": self.border_top_thin},
+                {"cell": f"H{12+i}", "border": Border(left=Side(style='thin'),right=Side(style='medium'))},
             ]
             self.excel_data.extend(cost_group_data)
             i += 1
@@ -484,13 +571,13 @@ class PCCCostGroupsOVExcelTemplate(Template):
         self.save_file()
 
 class PCCTradesOVExcelTemplate(Template):
-    """docstring for CostCalculationOverviewExcelTemplate"""
+    """docstring for PCCTradesOVExcelTemplate"""
     def __init__(self, app_data, pcc, save_dir, filename=None):
         date = helper.today_str()
         self.template_dir = app_data.config["template_subdir"]
         self.template_filename = "pcc_trades_ov.xlsx"
 
-        self.filename = filename if filename else f"{date}-costcalculation_trades_overview-{app_data.project.identifier}"
+        self.filename = filename if filename else f"{date}-pcc_trades_ov-{app_data.project.identifier}-{pcc.name}"
         self.save_dir = save_dir
         self.save_path = os.path.join(app_data.get_dir(), self.save_dir, f"{self.filename}.xlsx")
 
@@ -523,9 +610,10 @@ class PCCTradesOVExcelTemplate(Template):
         """
         lightcolor = "EEEEEE"
         self.excel_data = [
+            {"cell": "A4", "data": pcc.type.split()[0]},
             {"cell": "A5", "data": pcc.name},
             {"cell": "B6", "data": app_data.project.identifier},
-            {"cell": "B7", "data": helper.today_str(format="%d.%m.%Y")},
+            {"cell": "B7", "data": helper.qdate_to_str(pcc.date)},
             {"cell": f"C{15+self.new_rows}", "data": app_data.project.get_vat(), "number_format": self.percent_format},
             {"cell": f"H{14+self.new_rows}", "data": pcc.total_cost, "number_format": self.amount_format},
             {"cell": f"H{15+self.new_rows}", "data": pcc.total_cost*app_data.project.get_vat(), "number_format": self.amount_format},
@@ -535,29 +623,29 @@ class PCCTradesOVExcelTemplate(Template):
         i = 0
         for cost_group in cost_groups:
             cost_group_data = [
-            {"cell": f"A{12+i}", "data": f"{cost_group.id} {cost_group.name}", "border": Border(left=Side(style='medium'),top=Side(style='thin'),bottom=Side(style='thin')), "font": self.bold_font_table_header},
-            {"cell": f"G{12+i}", "data": pcc.get_cost_group_prognosis(cost_group), "number_format": self.amount_format, "border": Border(left=Side(style='thin'),right=Side(style='thin'))},
-            {"cell": f"B{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
-            {"cell": f"C{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
-            {"cell": f"D{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
-            {"cell": f"E{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
-            {"cell": f"F{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
-            {"cell": f"G{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
-            {"cell": f"H{12+i}", "border": Border(left=Side(style='thin'),right=Side(style='medium'))},
+                {"cell": f"A{12+i}", "data": f"{cost_group.id} {cost_group.name}", "border": Border(left=Side(style='medium'),top=Side(style='thin'),bottom=Side(style='thin')), "font": self.bold_font_table_header},
+                {"cell": f"G{12+i}", "data": pcc.get_cost_group_prognosis(cost_group), "number_format": self.amount_format, "border": Border(left=Side(style='thin'),right=Side(style='thin'))},
+                {"cell": f"B{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
+                {"cell": f"C{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
+                {"cell": f"D{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
+                {"cell": f"E{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
+                {"cell": f"F{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
+                {"cell": f"G{12+i}", "border": Border(top=Side(style='thin'),bottom=Side(style='thin'))},
+                {"cell": f"H{12+i}", "border": Border(left=Side(style='thin'),right=Side(style='medium'))},
             ]
             self.excel_data.extend(cost_group_data)
             i += 1
             for trade in trades:
                 if trade.cost_group is cost_group:
                     trade_data = [
-                    {"cell": f"A{12+i}", "data": f"{trade.name}", "border": Border(left=Side(style='medium'),bottom=Side(style='thin', color=lightcolor))},
-                    {"cell": f"B{12+i}", "border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
-                    {"cell": f"C{12+i}", "border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
-                    {"cell": f"D{12+i}","border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
-                    {"cell": f"E{12+i}","border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
-                    {"cell": f"F{12+i}","border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
-                    {"cell": f"G{12+i}", "data": pcc.get_trade_prognosis(trade), "number_format": self.amount_format, "border": Border(top=None,bottom=Side(style='thin', color=lightcolor),right=Side(style='thin'))},
-                    {"cell": f"H{12+i}", "border": Border(left=Side(style='thin'),right=Side(style='medium'),top=None)},
+                        {"cell": f"A{12+i}", "data": f"{trade.name}", "border": Border(left=Side(style='medium'),bottom=Side(style='thin', color=lightcolor))},
+                        {"cell": f"B{12+i}", "border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
+                        {"cell": f"C{12+i}", "border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
+                        {"cell": f"D{12+i}","border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
+                        {"cell": f"E{12+i}","border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
+                        {"cell": f"F{12+i}","border": Border(top=None,bottom=Side(style='thin', color=lightcolor))},
+                        {"cell": f"G{12+i}", "data": pcc.get_trade_prognosis(trade), "number_format": self.amount_format, "border": Border(top=None,bottom=Side(style='thin', color=lightcolor),right=Side(style='thin'))},
+                        {"cell": f"H{12+i}", "border": Border(left=Side(style='thin'),right=Side(style='medium'),top=None)},
                     ]
                     self.excel_data.extend(trade_data)
                     i += 1

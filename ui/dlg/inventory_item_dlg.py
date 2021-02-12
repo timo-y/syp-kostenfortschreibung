@@ -71,16 +71,18 @@ class InventoryItemDialog(QtWidgets.QDialog):
 
     def setup_combo_box_trades(self):
         sel_cost_group = self.comboBox_cost_group.currentData()
+        sel_trade = self.comboBox_trade.currentData()
         self.comboBox_trade.clear()
         self.comboBox_trade.addItem("Gewerk auswählen...", None)
         if sel_cost_group:
             """ activate combobox only if there exists at least one trade """
             got_a_trade = False
             for trade in self.app_data.project.trades:
-                if trade.cost_group is sel_cost_group:
+                if trade.cost_group is sel_cost_group.get_main_cost_group():
                     got_a_trade = True
                     self.comboBox_trade.addItem(str(trade.name), trade)
             if got_a_trade:
+                self.set_trade_to(sel_trade)
                 self.comboBox_trade.setEnabled(True)
             else:
                 self.comboBox_trade.setEnabled(False)
@@ -208,6 +210,8 @@ class InventoryItemDialog(QtWidgets.QDialog):
 
     def set_trade_to(self, trade):
         index = self.comboBox_trade.findData(trade)
+        if index<0:
+            index = 0
         self.comboBox_trade.setCurrentIndex(index)
 
     def set_unit_type_to(self, unit_type):

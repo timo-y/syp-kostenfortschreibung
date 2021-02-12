@@ -99,7 +99,7 @@ class JobDialog(QtWidgets.QDialog):
     def enable_set_max_job_nr_button(self):
         self.pushButton_determine_job_nr.setEnabled(False)
         args = self.get_input()
-        if self.loaded_job is None and args["company"] and args["id"] != self.get_max_job_number():
+        if self.loaded_job is None and args["company"] and args["id"] != self.get_max_job_number()+1:
             self.pushButton_determine_job_nr.setEnabled(True)
 
     def set_validators(self):

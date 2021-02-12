@@ -199,12 +199,6 @@ def edit_pcc(app_data, pcc):
             debug.log(f"Existing ProjectCostCalculation edited: {pcc.name}, from the {pcc.date.toPyDate()}")
         return pcc
 
-@debug.log
-def pcc_overviews(app_data, pcc):
-    run_pcc_overview(app_data, pcc)
-    app_data.open_overviews_dir()
-    debug.log(f"ProjectCostCalculation overview written for the pcc {pcc.name}")
-
 """ i,a&e
 #
 #   INVENTORY ITEM
@@ -284,13 +278,6 @@ def edit_invoice(app_data, invoice):
             debug.log(f"Existing Invoice edited: {invoice.id}, {invoice.uid}")
         return invoice
 
-@debug.log
-def invoice_check(app_data, invoice, curr_job_only=False):
-    run_invoice_check(app_data, invoice, curr_job_only=curr_job_only)
-    app_data.open_invoice_check_dir()
-    app_data.open_client_correspondence_dir()
-    debug.log(f"Invoice check file written for the Invoice {invoice}")
-
 """ i,a&e
 #
 #   JOB
@@ -364,12 +351,6 @@ def edit_company(app_data, company):
             debug.log(f"Existing Company edited: {company_name}")
         return company
 
-@debug.log
-def company_ov(app_data, company):
-    run_company_ov(app_data, company)
-    app_data.open_overviews_dir()
-    debug.log(f"Company OV file written for the company {company.name}")
-
 """ i,a&e
 #
 #   TRADE
@@ -402,12 +383,6 @@ def edit_trade(app_data, trade):
             """ logging """
             debug.log(f"Existing Trade edited: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}")
         return trade
-
-@debug.log
-def trades_ov(app_data):
-    run_trades_ov(app_data)
-    app_data.open_overviews_dir()
-    debug.log(f"Trades OV file written")
 
 """ i,a&e
 #
@@ -476,7 +451,7 @@ def edit_proj_config(app_data):
 #   INVOICE CHECK
 """
 @debug.log
-def run_invoice_check(app_data, invoice, curr_job_only):
+def invoice_check(app_data, invoice, curr_job_only):
     folder_name = app_data.get_invoice_check_folder_name(invoice)
     create_at_path = os.path.join(app_data.get_app_invoice_check_dir(), folder_name)
     """
@@ -520,12 +495,16 @@ def run_invoice_check(app_data, invoice, curr_job_only):
         os.makedirs(correspondence_path)
     for file in pdf_files:
         shutil.copy(file[0], os.path.join(correspondence_path, file[1]))
+    """
+    #    log
+    """
+    debug.log(f"Invoice check file written for the Invoice {invoice}")
 
 """
 #   TRADES OVERVIEW
 """
 @debug.log
-def run_trades_ov(app_data):
+def trades_ov(app_data):
     folder_name = app_data.get_trades_overview_folder_name()
     create_at_path = os.path.join(app_data.get_app_overviews_dir(), folder_name)
     """
@@ -542,12 +521,16 @@ def run_trades_ov(app_data):
     #
     """
     pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
+    """
+    #    log
+    """
+    debug.log(f"Trades OV file written")
 
 """
 #   COMPANY OVERVIEW
 """
 @debug.log
-def run_company_ov(app_data, company):
+def company_ov(app_data, company, selected_job=None):
     folder_name = app_data.get_company_overview_folder_name(company)
     create_at_path = os.path.join(app_data.get_app_overviews_dir(), folder_name)
     """
@@ -557,7 +540,8 @@ def run_company_ov(app_data, company):
     """
     xlsx_files = [
         app_data.output_ov_of_company(company=company,
-                              create_at_path=create_at_path
+                              create_at_path=create_at_path,
+                              selected_job=selected_job
                               )
     ]
     """
@@ -566,12 +550,16 @@ def run_company_ov(app_data, company):
     #
     """
     pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
+    """
+    #    log
+    """
+    debug.log(f"Company OV file written for the company {company.name}")
 
 """
 #   PCC OVERVIEW
 """
 @debug.log
-def run_pcc_overview(app_data, pcc):
+def pcc_overviews(app_data, pcc):
     folder_name = app_data.get_pcc_overview_folder_name(pcc)
     create_at_path = os.path.join(app_data.get_app_overviews_dir(), folder_name)
     """
@@ -600,6 +588,11 @@ def run_pcc_overview(app_data, pcc):
     #
     """
     pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
+
+    """
+    #    log
+    """
+    debug.log(f"ProjectCostCalculation overview written for the pcc {pcc.name}")
 
 """
 #

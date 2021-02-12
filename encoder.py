@@ -107,6 +107,7 @@ class ProjectCostCalculationEncoder(JSONEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "name": o.name,
+                "type": o.type,
                 "date": o.date.toString(),
                 "inventory": [InventoryItemEncoder().default(item) for item in o.inventory]
             }

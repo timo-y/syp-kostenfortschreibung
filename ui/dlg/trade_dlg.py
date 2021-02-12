@@ -19,7 +19,7 @@ class TradeDialog(QtWidgets.QDialog):
         self.default_vat = app_data.project.config["default_vat"]
         self.currency = app_data.project.config["currency"]
         self.trades = app_data.project.trades
-        self.cost_groups = app_data.project.cost_groups
+        self.cost_groups = app_data.project.main_cost_groups
         self.loaded_trade = loaded_trade
 
         self.initialize_ui()
@@ -43,7 +43,7 @@ class TradeDialog(QtWidgets.QDialog):
             loaded_args = self.loaded_trade.__dict__.copy()
             self.set_input(**loaded_args)
         elif sel_cost_group:
-            self.set_cost_group_to(sel_cost_group)
+            self.set_cost_group_to(sel_cost_group.get_main_cost_group())
 
         self.update_ui()
 

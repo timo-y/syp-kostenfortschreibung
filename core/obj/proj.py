@@ -774,10 +774,18 @@ class ProjectData(IdObject):
 #
 """
 class ProjectCostCalculation(IdObject):
+    PCC_TYPES = [
+        "Kostenrahmen (LP1)",
+        "Kostenschätzung (LP2)",
+        "Kostenberechnung (LP3)",
+        "Kostenvoranschlag (LP4->LP5)",
+        "Kostenanschlag (LP6, LP7, LP8)",
+    ]
     """docstring for CostCalculation"""
-    def __init__(self, name, uid=None, deleted=False, date=None, inventory=None):
+    def __init__(self, name, type, uid=None, deleted=False, date=None, inventory=None):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
+        self.type = type
         self.date = date
         self._inventory = inventory if inventory else list()
 
@@ -863,8 +871,9 @@ class ProjectCostCalculation(IdObject):
     #
     """
     @debug.log
-    def update(self, name, date, inventory):
+    def update(self, name, type, date, inventory):
         self.name = name
+        self.type = type
         self.date = date
         self._inventory = inventory
         """ set edited date """

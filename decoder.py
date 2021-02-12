@@ -131,6 +131,7 @@ class ProjectCostCalculationDecoder(JSONDecoder):
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "name": dct["name"],
+                "type": dct["type"] if "type" in dct else None,
                 "date": QDate.fromString(dct["date"]),
                 "inventory": [InventoryItemDecoder().object_hook(item) for item in dct["inventory"]]
             }

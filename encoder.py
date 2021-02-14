@@ -175,11 +175,6 @@ class TradeEncoder(JSONEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "name": o.name,
-                "cost_group_ref":
-                {
-                    "uid": o.cost_group.uid_to_json(),
-                    "id": o.cost_group.id
-                } if o.cost_group else None,
                 "budget": o.budget,
                 "comment": o.comment
             }
@@ -292,6 +287,11 @@ class ArchJobEncoder(JobEncoder):
                     "uid": o.company.uid_to_json(),
                     "name": o.company.name
                 } if o.company else None,
+                "cost_group_ref":
+                {
+                    "uid": o.cost_group.uid_to_json(),
+                    "id": o.cost_group.id
+                } if o.cost_group else None,
                 "job_sum": o.job_sum,
                 "trade_ref":
                 {

@@ -4,13 +4,13 @@
 #   This module creates an dialog with the necessary input fields to input an inventory item for the project cost calculation.
 #
 """
-DEFAULT_UNIT_TYPES = ["m", "m²", "m³", "kg", "h", "Tag", "Wo.", "Stk.", "Psch."]
 
 from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import QDialogButtonBox
 
 from ui import dlg, helper
 from ui.helper import amount_str, amount_w_currency_str
+from core.obj import proj
 
 class InventoryItemDialog(QtWidgets.QDialog):
     def __init__(self, *, app_data, loaded_inventory_item=None):
@@ -70,29 +70,15 @@ class InventoryItemDialog(QtWidgets.QDialog):
             self.comboBox_cost_group.addItem(str(cost_group.id), cost_group)
 
     def setup_combo_box_trades(self):
-        sel_cost_group = self.comboBox_cost_group.currentData()
-        sel_trade = self.comboBox_trade.currentData()
         self.comboBox_trade.clear()
         self.comboBox_trade.addItem("Gewerk auswählen...", None)
-        if sel_cost_group:
-            """ activate combobox only if there exists at least one trade """
-            got_a_trade = False
-            for trade in self.app_data.project.trades:
-                if trade.cost_group is sel_cost_group.get_main_cost_group():
-                    got_a_trade = True
-                    self.comboBox_trade.addItem(str(trade.name), trade)
-            if got_a_trade:
-                self.set_trade_to(sel_trade)
-                self.comboBox_trade.setEnabled(True)
-            else:
-                self.comboBox_trade.setEnabled(False)
-        else:
-            self.comboBox_trade.setEnabled(False)
+        for trade in self.app_data.project.trades:
+            self.comboBox_trade.addItem(str(trade.name), trade)
 
     def setup_combo_box_unit_type(self):
         self.comboBox_unit_type.clear()
         self.comboBox_unit_type.addItem("Einheit", "E")
-        for unit_type in DEFAULT_UNIT_TYPES:
+        for unit_type in proj.InventoryItem.DEFAULT_UNIT_TYPES:
             self.comboBox_unit_type.addItem(unit_type, unit_type)
 
     def activate_ok_button(self):
@@ -126,10 +112,6 @@ class InventoryItemDialog(QtWidgets.QDialog):
         self.doubleSpinBox_price_per_unit.valueChanged.connect(self.update_ui)
 
     def set_combo_box_actions(self):
-        """ combo box update """
-        self.comboBox_cost_group.currentIndexChanged.connect(self.setup_combo_box_trades)
-        self.comboBox_trade.currentIndexChanged.connect(self.update_ui)
-
         """ ok button """
         self.comboBox_cost_group.currentIndexChanged.connect(self.activate_ok_button)
         self.comboBox_trade.currentIndexChanged.connect(self.activate_ok_button)
@@ -152,13 +134,10 @@ class InventoryItemDialog(QtWidgets.QDialog):
         if cost_group:
             self.setup_combo_box_cost_groups()
             self.set_cost_group_to(cost_group)
-            self.setup_combo_box_trades()
 
     def button_add_trade(self):
-        trade = helper.input_trade(self.app_data, sel_cost_group=self.comboBox_cost_group.currentData())
+        trade = helper.input_trade(self.app_data)
         if trade:
-            self.setup_combo_box_cost_groups()
-            self.set_cost_group_to(trade.cost_group)
             self.setup_combo_box_trades()
             self.set_trade_to(trade)
 

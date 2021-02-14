@@ -5,4 +5,3 @@ from ui import mainwindow
 app = Application(sys.argv)
 app.window.show()
 sys.exit(app.exec_())
-

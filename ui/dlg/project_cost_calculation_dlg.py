@@ -27,9 +27,9 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
 
         self.initialize_ui()
         """ set title """
-        dialog_title = "Neue Kostenberechnung"
+        dialog_title = "Neue Kostenermittlung"
         if loaded_pcc:
-            dialog_title = f"Kostenberechnung ({loaded_pcc.name}, vom {loaded_pcc.date.toPyDate()}) bearbeiten..."
+            dialog_title = f"Kostenermittlung ({loaded_pcc.name}, vom {loaded_pcc.date.toPyDate()}) bearbeiten..."
         self.setWindowTitle(dialog_title)
         """ fixed window size """
         # self.setFixedSize(self.size())
@@ -83,22 +83,11 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
             self.comboBox_filter_cost_group.addItem(str(cost_group.id), cost_group)
 
     def setup_combo_box_filter_by_trade(self):
-        sel_cost_group = self.comboBox_filter_cost_group.currentData()
         self.comboBox_filter_trade.clear()
         self.comboBox_filter_trade.addItem("Nach Gewerk filtern", None)
-        if sel_cost_group:
-            """ activate combobox only if there exists at least one trade """
-            got_a_trade = False
-            for trade in self.app_data.project.trades:
-                if trade.cost_group is sel_cost_group.get_main_cost_group():
-                    got_a_trade = True
-                    self.comboBox_filter_trade.addItem(str(trade.name), trade)
-            if got_a_trade:
-                self.comboBox_filter_trade.setEnabled(True)
-            else:
-                self.comboBox_filter_trade.setEnabled(False)
-        else:
-            self.comboBox_filter_trade.setEnabled(False)
+        for trade in self.app_data.project.trades:
+            self.comboBox_filter_trade.addItem(str(trade.name), trade)
+
 
     def activate_reset_filter_button(self):
         if self.comboBox_filter_cost_group.currentData():
@@ -116,7 +105,7 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
 
     def activate_ok_button(self):
         args = self.get_input()
-        if len(args["name"])>0:
+        if len(args["name"])>0 and args["type"]:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
         else:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)

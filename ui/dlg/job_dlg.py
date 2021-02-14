@@ -82,6 +82,7 @@ class JobDialog(QtWidgets.QDialog):
             self.set_company_to(self.sel_company)
             self.sel_company = None
         self.setup_trade_combo_box()
+        self.setup_combo_box_cost_groups()
 
     def setup_company_combo_box(self):
         self.comboBox_company.addItem("Firma auswählen...", None)
@@ -92,6 +93,12 @@ class JobDialog(QtWidgets.QDialog):
         self.comboBox_trade.addItem("Gewerk auswählen...", None)
         for trade in self.app_data.project.trades:
             self.comboBox_trade.addItem(trade.name, trade)
+
+    def setup_combo_box_cost_groups(self):
+        self.comboBox_cost_group.clear()
+        self.comboBox_cost_group.addItem("Keine", None)
+        for cost_group in self.app_data.project.cost_groups:
+            self.comboBox_cost_group.addItem(str(cost_group.id), cost_group)
 
     def set_default_labels(self):
         pass
@@ -120,7 +127,7 @@ class JobDialog(QtWidgets.QDialog):
 
     def activate_ok_button(self):
         args = self.get_input()
-        if self.loaded_job is not None or (args["trade"] and args["company"] and not(self.app_data.project.job_exists(id=args["id"], company=args["company"]))):
+        if self.loaded_job is not None or (args["trade"] and args["company"] and args["cost_group"] and not(self.app_data.project.job_exists(id=args["id"], company=args["company"]))):
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
         else:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
@@ -139,8 +146,7 @@ class JobDialog(QtWidgets.QDialog):
 
         tmp_job = arch.ArchJob(**args)
         self.set_labels(job_sum_w_VAT=tmp_job.job_sum*(1+self.default_vat),
-            job_sum_VAT_amount=tmp_job.job_sum*self.default_vat,
-            cost_group=tmp_job.trade.cost_group if tmp_job.trade else None
+            job_sum_VAT_amount=tmp_job.job_sum*self.default_vat
             )
         self.set_paid_safety_deposits(self.paid_safety_deposits)
         invoices = self.app_data.project.get_invoices_of_job(self.loaded_job)
@@ -162,6 +168,7 @@ class JobDialog(QtWidgets.QDialog):
         self.pushButton_determine_job_nr.clicked.connect(self.set_to_max_job_number)
         self.pushButton_add_company.clicked.connect(self.add_new_company)
         self.pushButton_add_trade.clicked.connect(self.add_new_trade)
+        self.pushButton_add_cost_group.clicked.connect(self.add_new_cost_group)
         self.pushButton_add_paid_safety_deposit.clicked.connect(self.pay_safety_deposit)
         self.pushButton_remove_paid_safety_deposit.clicked.connect(self.button_remove_psd)
         """ delete button """
@@ -216,12 +223,18 @@ class JobDialog(QtWidgets.QDialog):
             print(f"New company added: {input_company.name}, {input_company.uid}")
 
     def add_new_trade(self):
-        input_trade_args = dlg.open_trade_dialog(self.app_data)
-        if input_trade_args:
-            input_trade = self.app_data.project.input_new_trade(input_trade_args)
+        input_trade = helper.input_trade(self.app_data)
+        if input_trade:
             self.setup_combo_boxes()
             self.set_trade_to(input_trade)
             print(f"New trade added: {input_trade.name}, {input_trade.uid}")
+
+    def add_new_cost_group(self):
+        input_cost_group = helper.input_cost_group(self.app_data)
+        if input_cost_group:
+            self.setup_combo_boxes()
+            self.set_cost_group_to(input_cost_group)
+            print(f"New cost_group added: {input_cost_group.id}, {input_cost_group.uid}")
 
     def pay_safety_deposit(self):
         paid_safety_deposit_args = dlg.open_pay_safety_deposit_dialog()
@@ -286,23 +299,30 @@ class JobDialog(QtWidgets.QDialog):
 
     def set_trade_to(self, trade):
         index = self.comboBox_trade.findData(trade)
+        if index<0:
+            index = 0
         self.comboBox_trade.setCurrentIndex(index)
 
-    def set_labels(self, *, job_sum_w_VAT, job_sum_VAT_amount, cost_group):
+    def set_cost_group_to(self, cost_group):
+        index = self.comboBox_cost_group.findData(cost_group)
+        if index<0:
+            index = 0
+        self.comboBox_cost_group.setCurrentIndex(index)
+
+    def set_labels(self, *, job_sum_w_VAT, job_sum_VAT_amount):
         """ amounts """
         self.label_job_sum_w_VAT.setText(amount_str(job_sum_w_VAT))
         self.label_job_sum_VAT_amount.setText(amount_str(job_sum_VAT_amount))
-        """ KG """
-        cost_group = str(cost_group.id) if cost_group else "-"
-        self.label_cost_group_2.setText(cost_group)
 
     """ set input fields """
-    def set_input(self, *, _uid="-", company=None, id=0, trade=None, job_sum=0, **kwargs):
+    def set_input(self, *, _uid="-", company=None, id=0, trade=None, cost_group=None, job_sum=0, **kwargs):
         """ combo boxes first, since they might trigger updates """
         if company:
             self.set_company_to(company)
         if trade:
             self.set_trade_to(trade)
+        if cost_group:
+            self.set_cost_group_to(cost_group)
         """ data """
         self.set_job_id_to(id)
         self.label_uid.setText(_uid.labelize())
@@ -315,6 +335,7 @@ class JobDialog(QtWidgets.QDialog):
                 "id": self.spinBox_id.value(),
                 "company": self.comboBox_company.currentData(),
                 "trade": self.comboBox_trade.currentData(),
+                "cost_group": self.comboBox_cost_group.currentData(),
                 "job_sum": two_inputs_to_float(self.lineEdit_job_sum_1, self.lineEdit_job_sum_2),
                 "paid_safety_deposits": self.paid_safety_deposits
             }

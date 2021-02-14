@@ -62,7 +62,6 @@ class UIDDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "UID" in dct:
             args = {
@@ -77,7 +76,6 @@ class UIDDecoder(JSONDecoder):
 class ProjectDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
-
 
     def dict_to_object(self, dct):
         if "Project" in dct:
@@ -171,7 +169,6 @@ class CompanyDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "Company" in dct:
             args = {
@@ -190,18 +187,12 @@ class TradeDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
-
     def dict_to_object(self, dct):
         if "Trade" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "name": dct["name"],
-                "cost_group_ref":
-                {
-                    "uid": UIDDecoder().object_hook(dct["cost_group_ref"]["uid"]),
-                    "id": dct["cost_group_ref"]["id"]
-                }  if dct["cost_group_ref"] else None,
                 "budget": dct["budget"],
                 "comment": dct["comment"]
             }
@@ -211,7 +202,6 @@ class TradeDecoder(JSONDecoder):
 class CostGroupDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
-
 
     def dict_to_object(self, dct):
         if "CostGroup" in dct:
@@ -234,7 +224,6 @@ class CostGroupDecoder(JSONDecoder):
 class PersonDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
-
 
     def dict_to_object(self, dct):
         if "Person" in dct:
@@ -260,7 +249,6 @@ class PersonDecoder(JSONDecoder):
 class AddressDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
-
 
     def dict_to_object(self, dct):
         if "Address" in dct:
@@ -318,6 +306,11 @@ class ArchJobDecoder(JSONDecoder):
                     "uid": UIDDecoder().object_hook(dct["trade_ref"]["uid"]),
                     "name": dct["trade_ref"]["name"]
                 } if dct["trade_ref"] else None,
+                "cost_group_ref":
+                {
+                    "uid": UIDDecoder().object_hook(dct["cost_group_ref"]["uid"]),
+                    "id": dct["cost_group_ref"]["id"]
+                } if "cost_group_ref" in dct.keys() and dct["cost_group_ref"] else None,
                 "job_additions": [{
                     "date": QDate.fromString(job_addition["date"]),
                     "name": job_addition["name"],

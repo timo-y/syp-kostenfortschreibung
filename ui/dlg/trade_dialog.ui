@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>565</height>
+    <width>377</width>
+    <height>357</height>
    </rect>
   </property>
   <property name="font">
@@ -42,26 +42,6 @@
       <font>
        <pointsize>14</pointsize>
       </font>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_cost_group">
-     <property name="text">
-      <string>&amp;Kostengruppe</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBox_cost_group</cstring>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QComboBox" name="comboBox_cost_group">
-     <property name="minimumSize">
-      <size>
-       <width>150</width>
-       <height>0</height>
-      </size>
      </property>
     </widget>
    </item>

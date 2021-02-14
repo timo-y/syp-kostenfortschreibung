@@ -210,6 +210,12 @@ class Project(IdObject):
     def get_invoices_of_company(self, company):
         return [invoice for invoice in self.invoices if invoice.company is company]
 
+    def get_invoices_of_trade(self, trade):
+        return [invoice for invoice in self.invoices if invoice.job.trade is trade]
+
+    def get_invoices_of_cost_group(self, cost_group):
+        return [invoice for invoice in self.invoices if invoice.job.cost_group.is_sub_group_of(cost_group)]
+
     """ properties
     #
     #   Jobs
@@ -849,6 +855,10 @@ class ProjectCostCalculation(IdObject):
         trade_sum = sum(self.get_trade_items(trade))
         return trade_sum
 
+    def get_cost_group_trade_prognosis(self, cost_group, trade):
+        trade_sum = sum(self.get_cost_group_trade_items(cost_group, trade))
+        return trade_sum
+
     """
     #
     #   Items
@@ -861,6 +871,10 @@ class ProjectCostCalculation(IdObject):
 
     def get_trade_items(self, trade):
         trade_items = [item.total_price for item in self.inventory if item.is_active and item.trade is trade]
+        return trade_items
+
+    def get_cost_group_trade_items(self, cost_group, trade):
+        trade_items = [item.total_price for item in self.inventory if item.is_active and item.cost_group is cost_group and item.trade is trade]
         return trade_items
 
 
@@ -912,8 +926,13 @@ class ProjectCostCalculation(IdObject):
 
 
 class InventoryItem(IdObject):
+
+    DEFAULT_UNIT_TYPES = [
+        "m", "m²", "m³", "kg", "h", "Tag", "Wo.", "Stk.", "Psch."
+    ]
+
     """docstring for InventoryItem"""
-    def __init__(self, name, *, description="", price_per_unit=0, units=0,
+    def __init__(self, name="", *, description="", price_per_unit=0, units=0,
                         unit_type="", is_active=True,
                         cost_group=None, cost_group_ref=None,
                         trade=None, trade_ref=None,

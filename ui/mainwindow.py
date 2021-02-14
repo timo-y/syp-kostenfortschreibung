@@ -104,18 +104,15 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "cost_group", "width": 130},
             {"title": "project_budget", "width": 130},
             {"title": "project_budget_w_VAT", "width": 130},
-            {"title": "trade_budget", "width": 130},
-            {"title": "trade_budget_w_VAT", "width": 130},
-            {"title": "difference_proj_to_trades_budget", "width": 230},
             {"title": "job_sums", "width": 130},
             {"title": "job_sums_w_VAT", "width": 130},
             {"title": "approved_invoices_w_VAT", "width": 150},
-            {"title": "approved_invoices_w_VAT_by_tradebudgets", "width": 150},
+            {"title": "approved_invoices_w_VAT_by_job_sums", "width": 150},
             ]
 
         self.project_cost_calculation_cols = [
-            {"title": "type", "width": 180},
             {"title": "name", "width": 180},
+            {"title": "type", "width": 180},
             {"title": "date", "width": 100},
             {"title": "total_cost", "width": 150}
             ]
@@ -159,7 +156,6 @@ class MainWindow(QtWidgets.QMainWindow):
         ]
         self.trade_cols = [
             {"title": "name", "width": 150},
-            {"title": "cost_group", "width": 90},
             {"title": "budget", "width": 120},
             {"title": "comment", "width": 100},
         ]
@@ -184,9 +180,19 @@ class MainWindow(QtWidgets.QMainWindow):
         """ TODO: figure out where to put this
         #         maybe put on top of file
         """
-        company_tree_view_cols = ["job", "invoice", "verified_amount"]
+        company_tree_view_cols = ["job", "job_sum", "invoice", "verified_amount"]
         self.treeWidget_company_invoices_by_job.setHeaderLabels(
             [self.app_data.titles[col] for col in company_tree_view_cols]
+            )
+
+        trade_tree_view_cols = ["job", "company", "job_sum", "cost_group", "invoice", "verified_amount"]
+        self.treeWidget_trade_invoices_by_job.setHeaderLabels(
+            [self.app_data.titles[col] for col in trade_tree_view_cols]
+            )
+
+        cost_group_tree_view_cols = ["job", "company", "job_sum", "trade", "invoice", "verified_amount"]
+        self.treeWidget_cost_group_invoices_by_job.setHeaderLabels(
+            [self.app_data.titles[col] for col in cost_group_tree_view_cols]
             )
 
         job_tree_view_cols = ["date", "id", "safety_deposit_amount",
@@ -934,7 +940,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         vat = self.app_data.project.get_vat()
         cost_group_budget_total = sum(cost_group.budget for cost_group in self.app_data.project.main_cost_groups)
-        trade_budget_total = sum(trade.budget for trade in self.app_data.project.trades)
         job_sums_total = sum(job.job_sum for job in self.app_data.project.jobs)
         approved_invoices_w_VAT_total = sum(invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices)
         paid_safety_deposit_total = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs)
@@ -943,25 +948,19 @@ class MainWindow(QtWidgets.QMainWindow):
             "cost_group": self.app_data.titles["total"],
             "project_budget": amount_w_currency_str(cost_group_budget_total, self.currency),
             "project_budget_w_VAT":  amount_w_currency_str(cost_group_budget_total * (1+vat), self.currency),
-            "trade_budget": amount_w_currency_str(trade_budget_total, self.currency),
-            "trade_budget_w_VAT": amount_w_currency_str(trade_budget_total * (1+vat), self.currency),
-            "difference_proj_to_trades_budget": amount_w_currency_str(cost_group_budget_total - trade_budget_total, self.currency),
             "job_sums": amount_w_currency_str(job_sums_total, self.currency),
             "job_sums_w_VAT": amount_w_currency_str(job_sums_total * (1+vat), self.currency),
             "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT_total+paid_safety_deposit_total, self.currency),
-            "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT_total*100 / (trade_budget_total * (1+vat))) if trade_budget_total else "-"
+            "approved_invoices_w_VAT_by_job_sums": percent_str_w_sign(approved_invoices_w_VAT_total*100 / (job_sums_total * (1+vat))) if job_sums_total else "-"
         }
         sorting_keys = {
             "cost_group": float("inf"),
             "project_budget": cost_group_budget_total,
             "project_budget_w_VAT":  cost_group_budget_total * (1+vat),
-            "trade_budget": trade_budget_total,
-            "trade_budget_w_VAT": trade_budget_total * (1+vat),
-            "difference_proj_to_trades_budget": cost_group_budget_total - trade_budget_total,
             "job_sums": job_sums_total,
             "job_sums_w_VAT": job_sums_total * (1+vat),
             "approved_invoices_w_VAT": approved_invoices_w_VAT_total+paid_safety_deposit_total,
-            "approved_invoices_w_VAT_by_tradebudgets": approved_invoices_w_VAT_total*100 / (trade_budget_total * (1+vat)) if trade_budget_total else 0
+            "approved_invoices_w_VAT_by_job_sums": approved_invoices_w_VAT_total*100 / (job_sums_total * (1+vat)) if job_sums_total else 0
         }
         col = 0
         font = QtGui.QFont()
@@ -980,34 +979,27 @@ class MainWindow(QtWidgets.QMainWindow):
     def add_cost_group_to_table(self, cost_group, row):
         """ Calculate values """
         vat = self.app_data.project.get_vat()
-        trade_budget = sum([trade.budget for trade in self.app_data.project.trades if (trade.cost_group is cost_group or trade.cost_group.is_sub_group_of(cost_group))])
-        job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and (job.trade.cost_group is cost_group or job.trade.cost_group.is_sub_group_of(cost_group))])
-        approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job and  invoice.job.trade and invoice.job.trade.cost_group and (invoice.job.trade.cost_group is cost_group or invoice.job.trade.cost_group.is_sub_group_of(cost_group))])
-        paid_safety_deposit = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs if job.trade and job.trade.cost_group and (job.trade.cost_group is cost_group or job.trade.cost_group.is_sub_group_of(cost_group)))
+        job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.cost_group.is_sub_group_of(cost_group)])
+        approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job.cost_group.is_sub_group_of(cost_group)])
+        paid_safety_deposit = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs if job.cost_group.is_sub_group_of(cost_group))
         """ Create output dictionary """
         cost_group_attr = {
             "cost_group":  cost_group.id,
             "project_budget": amount_w_currency_str(cost_group.budget, self.currency),
             "project_budget_w_VAT":  amount_w_currency_str(cost_group.budget * (1+vat), self.currency),
-            "trade_budget": amount_w_currency_str(trade_budget, self.currency),
-            "trade_budget_w_VAT": amount_w_currency_str(trade_budget * (1+vat), self.currency),
-            "difference_proj_to_trades_budget": amount_w_currency_str(cost_group.budget - trade_budget, self.currency),
             "job_sums": amount_w_currency_str(job_sums, self.currency),
             "job_sums_w_VAT": amount_w_currency_str(job_sums * (1+vat), self.currency),
             "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT+paid_safety_deposit, self.currency),
-            "approved_invoices_w_VAT_by_tradebudgets": percent_str_w_sign(approved_invoices_w_VAT*100 / (trade_budget * (1+vat))) if trade_budget else "-"
+            "approved_invoices_w_VAT_by_job_sums": percent_str_w_sign(approved_invoices_w_VAT*100 / (job_sums * (1+vat))) if job_sums else "-"
         }
         sorting_keys = {
             "cost_group":  int(cost_group.id),
             "project_budget": cost_group.budget,
             "project_budget_w_VAT":  cost_group.budget * (1+vat),
-            "trade_budget": trade_budget,
-            "trade_budget_w_VAT": trade_budget * (1+vat),
-            "difference_proj_to_trades_budget": cost_group.budget - trade_budget,
             "job_sums": job_sums,
             "job_sums_w_VAT": job_sums * (1+vat),
             "approved_invoices_w_VAT": approved_invoices_w_VAT+paid_safety_deposit,
-            "approved_invoices_w_VAT_by_tradebudgets": approved_invoices_w_VAT*100 / (trade_budget * (1+vat)) if trade_budget else 0
+            "approved_invoices_w_VAT_by_job_sums": approved_invoices_w_VAT*100 / (job_sums * (1+vat)) if job_sums else 0
         }
         col = 0
         for attr in self.cost_stand_cols:
@@ -1262,7 +1254,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.treeWidget_invoices_of_curr_job.clear()
         self.activate_job_buttons()
 
-    def set_job_data(self, *, _uid=None, company=None, id="-", trade=None, job_sum=0, job_sum_w_additions=0,
+    def set_job_data(self, *, _uid=None, company=None, id="-", trade=None, cost_group=None, job_sum=0, job_sum_w_additions=0,
                         inv_sum_w_VAT=0, safety_deposits_sum=0, paid_safety_deposits_sum=0,
                         **kwargs):
         company_name = company.name if company else "-"
@@ -1285,8 +1277,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_job_sum_w_job_additions_w_VAT.setText(amount_str(job_sum_w_additions_w_VAT))
         self.label_job_sum_w_job_additions_VAT_amount.setText(amount_str(job_sum_w_additions_VAT_amount))
         """ KG """
-        trade_cost_group = trade.cost_group.id if trade else "-"
-        self.label_job_cost_group_2.setText(str(trade_cost_group))
+        cost_group_id = cost_group.id if cost_group else "-"
+        self.label_job_cost_group_2.setText(str(cost_group_id))
 
         """ safety deposits """
         self.label_job_safety_deposits_sum.setText(amount_str(safety_deposits_sum))
@@ -1406,11 +1398,13 @@ class MainWindow(QtWidgets.QMainWindow):
             for invoice in invoices_of_company_and_job:
                 helper.add_item_to_tree(content_item=invoice,
                                             parent=job_node,
-                                            cols=["", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
+                                            cols=["","", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
                 job_sum += invoice.amount_wout_prev_payments
-            job_node.setText(0, f"{job.id} ({self.app_data.titles['job_sum']}: {amount_w_currency_str(job.job_sum, currency)})")
-            job_node.setText(1, f"{len(invoices_of_company_and_job)}")
-            job_node.setText(2, amount_w_currency_str(job_sum, currency))
+            job_node.setText(0, f"{job.id}")
+            job_node.setText(1, f"{amount_w_currency_str(job.job_sum, currency)}")
+            job_node.setText(2, f"{len(invoices_of_company_and_job)}")
+            job_node.setText(3, amount_w_currency_str(job_sum, currency))
+        helper.resize_tree_columns(self.treeWidget_company_invoices_by_job)
 
     """ render
     #
@@ -1437,6 +1431,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if trade.is_not_deleted():
             args = vars(trade).copy()
             self.set_trade_data(**args)
+            self.set_invoices_of_trade_by_job(trade)
             self.activate_trade_buttons()
         else:
             self.reset_trade_info()
@@ -1449,17 +1444,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_trade_info(self):
         self.set_trade_data()
+        self.treeWidget_trade_invoices_by_job.clear()
         self.activate_trade_buttons()
 
-    def set_trade_data(self, *, _uid=None, name="", cost_group=None, comment="", budget=0, **kwargs):
+    def set_trade_data(self, *, _uid=None, name="", comment="", budget=0, **kwargs):
         """ meta data """
         self.label_trade_uid.setText(_uid.labelize() if _uid else "-")
 
         self.label_trade_name.setText(str(name))
         self.textEdit_trade_comment.setText(str(comment))
-
-        """ cost_group """
-        self.label_trade_cost_group.setText(str(cost_group) if cost_group else "-")
 
         """ budget """
         self.label_trade_budget.setText(amount_str(budget))
@@ -1467,6 +1460,29 @@ class MainWindow(QtWidgets.QMainWindow):
         budget_w_VAT = budget + budget_VAT_amount
         self.label_trade_budget_w_VAT.setText(amount_str(budget_w_VAT))
         self.label_trade_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
+
+    def set_invoices_of_trade_by_job(self, trade):
+        self.treeWidget_trade_invoices_by_job.clear()
+        invoices_of_trade = self.app_data.project.get_invoices_of_trade(trade)
+        jobs = {invoice.job for invoice in invoices_of_trade}
+        currency = self.app_data.project.get_currency()
+        for job in jobs:
+            job_node = QtWidgets.QTreeWidgetItem(self.treeWidget_trade_invoices_by_job)
+            job_node.setData(1, QtCore.Qt.UserRole, job)
+            invoices_of_trade_and_job = [invoice for invoice in invoices_of_trade if invoice.job is job]
+            job_sum = 0
+            for invoice in invoices_of_trade_and_job:
+                helper.add_item_to_tree(content_item=invoice,
+                                            parent=job_node,
+                                            cols=["","","","", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
+                job_sum += invoice.amount_wout_prev_payments
+            job_node.setText(0, f"{job.id}")
+            job_node.setText(1, f"{job.company.name}")
+            job_node.setText(2, f"{amount_w_currency_str(job.job_sum, currency)}")
+            job_node.setText(3, f"{job.cost_group.id}")
+            job_node.setText(4, f"{len(invoices_of_trade_and_job)}")
+            job_node.setText(5, amount_w_currency_str(job_sum, currency))
+        helper.resize_tree_columns(self.treeWidget_trade_invoices_by_job)
 
     """ render
     #
@@ -1523,6 +1539,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if cost_group.is_not_deleted():
             args = vars(cost_group).copy()
             self.set_cost_group_data(**args)
+            self.set_invoices_of_cost_group_by_job(cost_group)
             self.activate_cost_group_buttons()
         else:
             self.reset_cost_group_info()
@@ -1537,6 +1554,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def reset_cost_group_info(self):
         self.set_cost_group_data()
+        self.treeWidget_cost_group_invoices_by_job.clear()
         self.activate_cost_group_buttons()
 
     def set_cost_group_data(self, *, _uid=None, id="", name="", description="", budget=0, parent=None, **kwargs):
@@ -1554,6 +1572,29 @@ class MainWindow(QtWidgets.QMainWindow):
         budget_w_VAT = budget + budget_VAT_amount
         self.label_cost_group_budget_w_VAT.setText(amount_str(budget_w_VAT))
         self.label_cost_group_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
+
+    def set_invoices_of_cost_group_by_job(self, cost_group):
+        self.treeWidget_cost_group_invoices_by_job.clear()
+        invoices_of_cost_group = self.app_data.project.get_invoices_of_cost_group(cost_group)
+        jobs = {invoice.job for invoice in invoices_of_cost_group}
+        currency = self.app_data.project.get_currency()
+        for job in jobs:
+            job_node = QtWidgets.QTreeWidgetItem(self.treeWidget_cost_group_invoices_by_job)
+            job_node.setData(1, QtCore.Qt.UserRole, job)
+            invoices_of_cost_group_and_job = [invoice for invoice in invoices_of_cost_group if invoice.job is job]
+            job_sum = 0
+            for invoice in invoices_of_cost_group_and_job:
+                helper.add_item_to_tree(content_item=invoice,
+                                            parent=job_node,
+                                            cols=["","","","", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
+                job_sum += invoice.amount_wout_prev_payments
+            job_node.setText(0, f"{job.id}")
+            job_node.setText(1, f"{job.company.name}")
+            job_node.setText(2, f"{amount_w_currency_str(job.job_sum, currency)}")
+            job_node.setText(3, f"{job.trade.name}")
+            job_node.setText(4, f"{len(invoices_of_cost_group_and_job)}")
+            job_node.setText(5, amount_w_currency_str(job_sum, currency))
+        helper.resize_tree_columns(self.treeWidget_cost_group_invoices_by_job)
 
     """ render
     #
@@ -2056,12 +2097,14 @@ class MainWindow(QtWidgets.QMainWindow):
             company = random.choice(self.app_data.project.companies)
             id = self.app_data.project.get_max_job_number(company)+1
             trade = random.choice(self.app_data.project.trades)
+            cost_group = random.choice(self.app_data.project.cost_groups)
             job_sum = rnd(random.random()*150000)
 
             input_job_args = {
                 "company": company,
                 "id": id,
                 "trade": trade,
+                "cost_group": cost_group,
                 "job_sum": job_sum
             }
             self.app_data.project.input_new_job(input_job_args)
@@ -2127,7 +2170,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
             name_length = random.randint(0,12)
             name = id_generator(name_length)
-            pcc = proj.ProjectCostCalculation(name=name, date=QDate.currentDate())
+            type = random.choice(proj.ProjectCostCalculation().PCC_TYPES)
+            pcc = proj.ProjectCostCalculation(name=name, date=QDate.currentDate(), type=type)
             self.app_data.project.add_pcc(pcc)
             number_of_inventory_items = random.randint(1, 150)
             for j in range(number_of_inventory_items):
@@ -2138,6 +2182,7 @@ class MainWindow(QtWidgets.QMainWindow):
         name_length = random.randint(1,10)
         description_length = random.randint(0,350)
         trade = random.choice(self.app_data.project.trades)
+        cost_group = random.choice(self.app_data.project.cost_groups)
         inventory_item_args = {
             "name": id_generator(name_length),
             "description": id_generator(description_length),
@@ -2146,7 +2191,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "unit_type": random.choice(["m", "m²", "m³", "kg"]),
             "is_active": bool(random.getrandbits(1)),
             "trade": trade,
-            "cost_group": trade.cost_group
+            "cost_group": cost_group
         }
         return proj.InventoryItem(**inventory_item_args)
 

@@ -13,11 +13,13 @@ from core.obj import restore
 class ArchJob(corp.Job):
     """docstring for ArchJob"""
 
-    def __init__(self,  id, *, uid=None, deleted=False,  company=None, job_sum=None, comment="",
-                    company_ref=None, trade=None, trade_ref=None, job_additions=None,
+    def __init__(self,  id, *, uid=None, deleted=False,  company=None, trade=None, cost_group=None, job_sum=None, comment="",
+                    company_ref=None, trade_ref=None, cost_group_ref=None, job_additions=None,
                     paid_safety_deposits=None):
         super(ArchJob, self).__init__(id, uid=uid, deleted=deleted, company=company, job_sum=job_sum, comment=comment, company_ref=company_ref)
         self.trade = trade
+        self.cost_group = cost_group
+
         """
         #   job_additions
         #       List containing dicts d with d.keys() = ["date", "amount", "comment"], where d["date"]  = "date of addition" and  d["amount"] = "amount added".
@@ -37,6 +39,7 @@ class ArchJob(corp.Job):
 
         """ for restoration only """
         self._trade_ref = trade_ref
+        self._cost_group_ref = cost_group_ref
 
     """
     #
@@ -87,9 +90,10 @@ class ArchJob(corp.Job):
     #
     """
     @debug.log
-    def update(self, *,id, company, job_sum, trade, paid_safety_deposits):
+    def update(self, *,id, company, job_sum, trade, cost_group, paid_safety_deposits):
         super(ArchJob, self).update(id=id, company=company, job_sum=job_sum)
         self.trade = trade
+        self.cost_group = cost_group
         self._paid_safety_deposits = paid_safety_deposits
 
     """
@@ -102,11 +106,14 @@ class ArchJob(corp.Job):
     def restore(self, project):
         super(ArchJob, self).restore(project)
         self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades)
+        self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups)
 
     @debug.log
     def restore_after_import(self, project):
         super(ArchJob, self).restore_after_import(project)
         self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades, by=["name"])
+        self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups, by=["id"])
+
 
 
 class Trade(IdObject):
@@ -201,7 +208,9 @@ class CostGroup(IdObject):
         return not(self.is_main_group())
 
     def is_sub_group_of(self, cost_group):
-        if self.parent is None:
+        if self is cost_group:
+            return True
+        elif self.parent is None:
             return False
         else:
             if self.parent is cost_group:

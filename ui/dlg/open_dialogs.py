@@ -84,8 +84,8 @@ def open_company_dialog(app_data, loaded_company=None):
         elif exit_state==-1:
             return "delete"
 
-def open_trade_dialog(app_data, loaded_trade=None, sel_cost_group=None):
-    trade_dlg = dlg.TradeDialog(app_data=app_data, loaded_trade=loaded_trade, sel_cost_group=sel_cost_group)
+def open_trade_dialog(app_data, loaded_trade=None):
+    trade_dlg = dlg.TradeDialog(app_data=app_data, loaded_trade=loaded_trade)
     dialog_output = trade_dlg.exec_()
     if dialog_output:
         exit_state, input_trade_args = dialog_output

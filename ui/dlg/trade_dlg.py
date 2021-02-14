@@ -12,14 +12,13 @@ from ui import dlg, helper
 from ui.helper import str_to_float, two_inputs_to_float, amount_str, rnd
 
 class TradeDialog(QtWidgets.QDialog):
-    def __init__(self, *, app_data, loaded_trade=None, sel_cost_group=None):
+    def __init__(self, *, app_data, loaded_trade=None):
         super().__init__()
         """ create local variables """
         self.app_data = app_data
         self.default_vat = app_data.project.config["default_vat"]
         self.currency = app_data.project.config["currency"]
         self.trades = app_data.project.trades
-        self.cost_groups = app_data.project.main_cost_groups
         self.loaded_trade = loaded_trade
 
         self.initialize_ui()
@@ -42,8 +41,6 @@ class TradeDialog(QtWidgets.QDialog):
             """ load trade data to input """
             loaded_args = self.loaded_trade.__dict__.copy()
             self.set_input(**loaded_args)
-        elif sel_cost_group:
-            self.set_cost_group_to(sel_cost_group.get_main_cost_group())
 
         self.update_ui()
 
@@ -57,13 +54,7 @@ class TradeDialog(QtWidgets.QDialog):
         uic.loadUi('ui/dlg/trade_dialog.ui', self) # Load the .ui file
 
     def setup_combo_boxes(self):
-        self.setup_combo_box_cost_group()
-
-    def setup_combo_box_cost_group(self):
-        self.comboBox_cost_group.clear()
-        self.comboBox_cost_group.addItem("Kostengruppe auswählen...", None)
-        for cost_group in self.cost_groups:
-            self.comboBox_cost_group.addItem(str(cost_group.id), cost_group)
+        pass
 
     def set_default_labels(self):
         pass
@@ -76,7 +67,7 @@ class TradeDialog(QtWidgets.QDialog):
 
     def activate_ok_button(self):
         args = self.get_input()
-        if len(args["name"])>0 and args["cost_group"]:
+        if len(args["name"])>0:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
         else:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
@@ -101,7 +92,7 @@ class TradeDialog(QtWidgets.QDialog):
         self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_trade))
 
     def set_combo_box_actions(self):
-        self.comboBox_cost_group.currentIndexChanged.connect(self.activate_ok_button)
+        pass
 
     def set_event_handler(self):
         self.keyReleaseEvent = self.eventHandler
@@ -112,29 +103,33 @@ class TradeDialog(QtWidgets.QDialog):
 
     """
     #
+    #   SIGNAL FUNCTIONS
+    #   functions to that get connected to the widget signals (some might also be directly used and not in this section)
+    #
+    """
+    def button_add_cost_group(self):
+        cost_group = helper.input_cost_group(self.app_data)
+        if cost_group:
+            self.setup_combo_box_cost_groups()
+            self.set_cost_group_to(cost_group)
+            self.setup_combo_box_trades()
+    """
+    #
     #   UTILITY FUNCTIONS
     #
     #
     """
-    def set_cost_group_to(self, cost_group):
-        index = self.comboBox_cost_group.findData(cost_group)
-        self.comboBox_cost_group.setCurrentIndex(index)
-
     def set_labels(self, *, budget_w_VAT, budget_VAT_amount):
         """ budget """
         self.label_budget_w_VAT.setText(amount_str(budget_w_VAT))
         self.label_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
 
-    def set_input(self, *, _uid=None, name="", cost_group=None, comment="", budget=0, **kwargs):
+    def set_input(self, *, _uid=None, name="", comment="", budget=0, **kwargs):
         """ meta data """
         self.label_uid.setText(_uid.labelize() if _uid else "-")
 
         self.lineEdit_name.setText(str(name))
         self.textEdit_comment.setText(str(comment))
-
-        """ cost_group """
-        if cost_group:
-            self.set_cost_group_to(cost_group)
 
         """ budget """
         self.lineEdit_budget_1.setText(str(int(budget)) if int(budget)>0 else "")
@@ -143,7 +138,6 @@ class TradeDialog(QtWidgets.QDialog):
     def get_input(self):
         args = {
                 "name": self.lineEdit_name.text(),
-                "cost_group": self.comboBox_cost_group.currentData(),
                 "comment": self.textEdit_comment.toPlainText(),
                 "budget": two_inputs_to_float(self.lineEdit_budget_1, self.lineEdit_budget_2)
             }

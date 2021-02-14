@@ -357,9 +357,9 @@ def edit_company(app_data, company):
 #
 """
 @debug.log
-def input_trade(app_data, sel_cost_group=None):
+def input_trade(app_data):
     # open dialog and add job to project
-    input_trade_args = dlg.open_trade_dialog(app_data=app_data, sel_cost_group=sel_cost_group)
+    input_trade_args = dlg.open_trade_dialog(app_data=app_data)
     if input_trade_args:
         trade = app_data.project.input_new_trade(input_trade_args)
         """ logging """

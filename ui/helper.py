@@ -8,6 +8,7 @@
 import debug
 
 import os
+from pathlib import Path
 import datetime
 import json
 import shutil
@@ -60,7 +61,7 @@ def edit_project(app_data):
 
 def load_project(mainwindow, app_data):
     save_dir_path = app_data.get_save_dir()
-    f_dialog = QtWidgets.QFileDialog(directory=save_dir_path)
+    f_dialog = QtWidgets.QFileDialog(directory=str(save_dir_path))
     file_path, _ = f_dialog.getOpenFileName(mainwindow,"Projekt öffnen...",  "", "Project saves (*.project);;All Files (*)")
     if file_path:
         app_data.load_project(file_path)
@@ -98,9 +99,9 @@ def save_project_as(mainwindow, app_data):
 def export_companies(mainwindow, app_data):
     if app_data.project:
         filename = f"{today_str()}-{app_data.project.identifier}-companies.json"
-        save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+        save_dir_path = app_data.get_save_dir() / filename
         f_dialog = QtWidgets.QFileDialog()
-        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Firmenverzeichniss exportieren...", save_dir_path, "Company-JSON (*.json)")
+        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Firmenverzeichniss exportieren...", str(save_dir_path), "Company-JSON (*.json)")
         if save_path:
             app_data.export_companies(save_path)
             """ logging """
@@ -109,9 +110,9 @@ def export_companies(mainwindow, app_data):
 def export_trades(mainwindow, app_data):
     if app_data.project:
         filename = f"{today_str()}-{app_data.project.identifier}-trades.json"
-        save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+        save_dir_path = app_data.get_save_dir() / filename
         f_dialog = QtWidgets.QFileDialog()
-        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Gewerkeverzeichniss exportieren...", save_dir_path, "Trade-JSON (*.json)")
+        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Gewerkeverzeichniss exportieren...", str(save_dir_path), "Trade-JSON (*.json)")
         if save_path:
             app_data.export_trades(save_path)
             """ logging """
@@ -120,9 +121,9 @@ def export_trades(mainwindow, app_data):
 def export_cost_groups(mainwindow, app_data):
     if app_data.project:
         filename = f"{today_str()}-{app_data.project.identifier}-cost_groups.json"
-        save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+        save_dir_path = app_data.get_save_dir() / filename
         f_dialog = QtWidgets.QFileDialog()
-        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Kostengruppen exportieren...", save_dir_path, "Kostengruppen-JSON (*.json)")
+        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Kostengruppen exportieren...", str(save_dir_path), "Kostengruppen-JSON (*.json)")
         if save_path:
             app_data.export_cost_groups(save_path)
             """ logging """
@@ -135,9 +136,9 @@ def export_cost_groups(mainwindow, app_data):
 """
 def import_project(mainwindow, app_data):
     filename = "*-Kostenfortschreibung_import.xlsm"
-    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Projekt importieren...",  save_dir_path, "Kostenfortschreibung-Excelmappe (*.xlsm);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Projekt importieren...",  str(save_dir_path), "Kostenfortschreibung-Excelmappe (*.xlsm);;All Files (*)")
     if file_path:
         app_data.import_project(file_path)
         """ logging """
@@ -145,9 +146,9 @@ def import_project(mainwindow, app_data):
 
 def import_companies(mainwindow, app_data):
     filename = "companies.json"
-    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Firmenverzeichniss importieren...",  save_dir_path, "Company-JSONs (*.json);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Firmenverzeichniss importieren...",  str(save_dir_path), "Company-JSONs (*.json);;All Files (*)")
     if file_path:
         app_data.import_companies(file_path)
         """ logging """
@@ -155,9 +156,9 @@ def import_companies(mainwindow, app_data):
 
 def import_trades(mainwindow, app_data):
     filename = "trades.json"
-    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Gewerkeverzeichniss importieren...",  save_dir_path, "Trade-JSONs (*.json);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Gewerkeverzeichniss importieren...",  str(save_dir_path), "Trade-JSONs (*.json);;All Files (*)")
     if file_path:
         app_data.import_trades(file_path)
         """ logging """
@@ -165,9 +166,9 @@ def import_trades(mainwindow, app_data):
 
 def import_cost_groups(mainwindow, app_data):
     filename = "cost_groups.json"
-    save_dir_path = os.path.join(app_data.get_save_dir(), filename)
+    save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Kostengruppen importieren...",  save_dir_path, "Kostengruppen-JSONs (*.json);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Kostengruppen importieren...",  str(save_dir_path), "Kostengruppen-JSONs (*.json);;All Files (*)")
     if file_path:
         app_data.import_cost_groups(file_path)
         """ logging """
@@ -527,6 +528,32 @@ def trades_ov(app_data):
     debug.log(f"Trades OV file written")
 
 """
+#   COST GROUPS OVERVIEW
+"""
+@debug.log
+def cost_groups_ov(app_data):
+    folder_name = app_data.get_cost_groups_overview_folder_name()
+    create_at_path = os.path.join(app_data.get_app_overviews_dir(), folder_name)
+    """
+    #
+    #   Create xlsx files
+    #
+    """
+    xlsx_files = [
+        app_data.output_ov_by_cost_groups(create_at_path=create_at_path)
+    ]
+    """
+    #
+    #   Convert to PDF
+    #
+    """
+    pdf_files = [xlsx2pdf(*file) for file in xlsx_files]
+    """
+    #    log
+    """
+    debug.log(f"Trades OV file written")
+
+"""
 #   COMPANY OVERVIEW
 """
 @debug.log
@@ -648,7 +675,7 @@ def add_item_to_table(content_item, table, cols, row, date_cols=[], amount_cols=
             sorting_key = date.toJulianDay() if date else float("inf")
             table_item = customqt.DateTableWidgetItem(cell_content, sorting_key=sorting_key)
         elif attr in amount_cols:
-            table_item = customqt.AmountTableWidgetItem(amount_w_currency_str(getattr(content_item, attr), currency), sorting_key=getattr(content_item, attr))
+            table_item = customqt.AmountTableWidgetItem(amount_str(getattr(content_item, attr), currency), sorting_key=getattr(content_item, attr))
         else:
             table_item = QtWidgets.QTableWidgetItem(str(getattr(content_item, attr)))
         table_item.setData(1, content_item)
@@ -778,14 +805,15 @@ def str_to_float(string):
 """
 #   output amounts
 """
-def amount_str(float):
-    if rnd(float)!=0:
-        return "{:,.2f}".format(rnd(float)).replace(".","X").replace(",",".").replace("X",",")
-    else:
-        return "-"
+def amount_str(float, currency=""):
+    if len(currency)>0:
+        currency = f" {currency}"
 
-def amount_w_currency_str(float, currency):
-    return " ".join([amount_str(float),currency])
+    if rnd(float)!=0:
+        amount = "{:,.2f}".format(rnd(float)).replace(".","X").replace(",",".").replace("X",",")
+        return f"{amount}{currency}"
+    else:
+        return f"-{currency}"
 
 """
 #   output percent string

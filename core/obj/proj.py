@@ -162,6 +162,14 @@ class Project(IdObject):
     def get_deleted_trades(self):
         return [trade for trade in self._trades if trade.is_deleted()]
 
+    def get_trade_budgets_total(self):
+        return sum(trade.budget for trade in self.trades)
+
+    """ properties
+    #
+    #   Cost Groups
+    #
+    """
     @property
     def cost_groups(self):
         cost_groups = [cost_group for cost_group in self._cost_groups if cost_group.is_not_deleted()]
@@ -181,8 +189,14 @@ class Project(IdObject):
     def main_cost_groups(self):
         return [cost_group for cost_group in self._cost_groups if cost_group.is_main_group() and cost_group.is_not_deleted()]
 
-    def get_children_of_cost_group(self, cost_group):
+    def get_sub_cost_groups(self, cost_group):
         return [child for child in self.cost_groups if child.is_sub_group_of(cost_group)]
+
+    def get_budget_sub_cost_groups(self, cost_group):
+        return sum(cost_group.budget for cost_group in self.get_sub_cost_groups(cost_group))
+
+    def get_cost_group_budget_total(self):
+        return sum(cost_group.budget for cost_group in self.cost_groups)
 
 
     """ properties
@@ -211,10 +225,19 @@ class Project(IdObject):
         return [invoice for invoice in self.invoices if invoice.company is company]
 
     def get_invoices_of_trade(self, trade):
-        return [invoice for invoice in self.invoices if invoice.job.trade is trade]
+        return [invoice for invoice in self.invoices if invoice.trade is trade]
 
     def get_invoices_of_cost_group(self, cost_group):
-        return [invoice for invoice in self.invoices if invoice.job.cost_group.is_sub_group_of(cost_group)]
+        return [invoice for invoice in self.invoices if invoice.cost_group and invoice.cost_group.is_sub_group_of(cost_group)]
+
+    def get_approved_amounts_of_trade(self, trade):
+        return sum(invoice.approved_amount for invoice in self.invoices if invoice.trade is trade)
+
+    def get_approved_amounts_of_sub_cost_groups(self, cost_group):
+        return sum(invoice.approved_amount for invoice in self.invoices if invoice.cost_group and invoice.cost_group.is_sub_group_of(cost_group))
+
+    def get_approved_amounts_total(self):
+        return sum(invoice.approved_amount for invoice in self.invoices)
 
     """ properties
     #
@@ -243,8 +266,38 @@ class Project(IdObject):
     def get_jobs_of_trade(self, trade):
         return [job for job in self.jobs if isinstance(job, arch.ArchJob) and job.trade is trade]
 
+    def get_jobs_of_cost_group(self, cost_group):
+        return [job for job in self.jobs if isinstance(job, arch.ArchJob) and job.cost_group is cost_group]
+
+    def get_jobs_of_sub_cost_groups(self, cost_group):
+        return [job for job in self.jobs if isinstance(job, arch.ArchJob) and job.cost_group and job.cost_group.is_sub_group_of(cost_group)]
+
     def get_max_job_number(self, company):
         return max([job.id for job in self.jobs if job.company is company]+[0])
+
+    def get_job_sums_of_trade(self, trade):
+        return sum([job.job_sum_w_additions for job in self.get_jobs_of_trade(trade)])
+
+    def get_job_sums_of_cost_group(self, cost_group):
+        return sum([job.job_sum_w_additions for job in self.get_jobs_of_cost_group(cost_group)])
+
+    def get_job_sums_of_sub_cost_groups(self, cost_group):
+        return sum([job.job_sum_w_additions for job in self.get_jobs_of_sub_cost_groups(cost_group)])
+
+    def get_job_sums_total(self):
+        return sum(job.job_sum_w_additions for job in self.jobs)
+
+    def get_psds_of_trade(self, trade):
+        return sum([job.paid_safety_deposits_sum for job in self.get_jobs_of_trade(trade)])
+
+    def get_psds_of_cost_group(self, cost_group):
+        return sum(job.paid_safety_deposits_sum for job in self.get_jobs_of_cost_group(cost_group))
+
+    def get_psds_of_sub_cost_groups(self, cost_group):
+        return sum(job.paid_safety_deposits_sum for job in self.get_jobs_of_sub_cost_groups(cost_group))
+
+    def get_psds_total(self):
+        return sum(job.paid_safety_deposits_sum for job in self.jobs)
 
     """ properties
     #
@@ -299,7 +352,7 @@ class Project(IdObject):
     """
     @debug.log
     def get_usersave_path(self):
-        return self.config["user_save"]["path"]
+        return Path(self.config["user_save"]["path"])
 
     @debug.log
     def get_usersave_datetime(self):
@@ -317,7 +370,7 @@ class Project(IdObject):
     """
     @debug.log
     def get_autosave_path(self):
-        return self.config["last_auto_save"]["path"]
+        return Path(self.config["last_auto_save"]["path"])
 
     @debug.log
     def get_autosave_datetime(self):
@@ -382,8 +435,7 @@ class Project(IdObject):
 
     @debug.log
     def apply_cost_group_budget(self, pcc, cost_group):
-        cost_group_children = self.get_children_of_cost_group(cost_group)
-        cost_group.budget = sum(pcc.get_cost_group_prognosis(child) for child in cost_group_children) + pcc.get_cost_group_prognosis(cost_group)
+        cost_group.budget = pcc.get_cost_group_prognosis(cost_group)
 
     @debug.log
     def apply_trade_budget(self, pcc, trade):
@@ -810,10 +862,10 @@ class ProjectCostCalculation(IdObject):
     #
     #   Maybe this is not needed
     #
-    def input_inventory_item(self, name, description="", price_per_unit=0, units=0,
+    def input_inventory_item(self, name, description="", unit_price=0, units=0,
                             unit_type="", is_active=True, cost_group=None, trade=None):
         inventory_item = InventoryItem(name=name, description=description,
-                                        price_per_unit=price_per_unit, units=units,
+                                        unit_price=unit_price, units=units,
                                         unit_type=unit_type, is_active=is_active,
                                         cost_group=cost_group, trade=trade)
         self.add_inventory_item(inventory_item)
@@ -833,19 +885,16 @@ class ProjectCostCalculation(IdObject):
     """
     """
     #
-    #   get_main_cost_group_prognosis
+    #   get_sub_cost_groups_prognosis
     #       Since the 100,200,... CostGroups also have their own budgets,
     #       the actual budget for the X00 CostGroup is the sum of the X00
     #       CostGroup plus the sum of all CostGroups that are below in the
     #       CostGroup-tree i.e., X00 is their parent or their parents parent
     #
     """
-    def get_main_cost_group_prognosis(self, main_cost_group, cost_groups):
-        if main_cost_group.parent is None:
-            cost_group_sum = sum(self.get_cost_group_prognosis(cost_group) for cost_group in cost_groups if (cost_group is main_cost_group or cost_group.is_sub_group_of(main_cost_group)))
-            return cost_group_sum
-        else:
-            raise Exception("main_cost_group is not a main cost_group!")
+    def get_sub_cost_groups_prognosis(self, cost_group, cost_groups):
+        cost_group_sum = sum(self.get_cost_group_prognosis(sub_cost_group) for sub_cost_group in cost_groups if sub_cost_group.is_sub_group_of(cost_group))
+        return cost_group_sum
 
     def get_cost_group_prognosis(self, cost_group):
         cost_group_sum = sum(self.get_cost_group_items(cost_group))
@@ -916,7 +965,7 @@ class ProjectCostCalculation(IdObject):
     def __copy__(self):
         new_inventory = list()
         for item in self.inventory:
-            new_item = InventoryItem(name=item.name, description=item.description, price_per_unit=item.price_per_unit,
+            new_item = InventoryItem(name=item.name, description=item.description, unit_price=item.unit_price,
                                     units=item.units, unit_type=item.unit_type, is_active=item.is_active, cost_group=item.cost_group,
                                     cost_group_ref=item._cost_group_ref, trade=item.trade, trade_ref=item._trade_ref)
             new_inventory.append(new_item)
@@ -932,7 +981,7 @@ class InventoryItem(IdObject):
     ]
 
     """docstring for InventoryItem"""
-    def __init__(self, name="", *, description="", price_per_unit=0, units=0,
+    def __init__(self, name="", *, ordinal_number="", description="", unit_price=0, units=0,
                         unit_type="", is_active=True,
                         cost_group=None, cost_group_ref=None,
                         trade=None, trade_ref=None,
@@ -940,8 +989,9 @@ class InventoryItem(IdObject):
                         ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
+        self.ordinal_number = ordinal_number
         self.description = description
-        self.price_per_unit = price_per_unit
+        self.unit_price = unit_price
         self.units = units
         self.unit_type = unit_type
         #   is_active
@@ -962,7 +1012,7 @@ class InventoryItem(IdObject):
     """
     @property
     def total_price(self):
-        return self.price_per_unit * self.units
+        return self.unit_price * self.units
     """
     #
     #   MANIPULATE
@@ -970,11 +1020,12 @@ class InventoryItem(IdObject):
     #
     """
     @debug.log
-    def update(self, name, description, price_per_unit, units,
+    def update(self, name, ordinal_number, description, unit_price, units,
                     unit_type, is_active, cost_group, trade):
         self.name = name
+        self.ordinal_number = ordinal_number
         self.description = description
-        self.price_per_unit = price_per_unit
+        self.unit_price = unit_price
         self.units = units
         self.unit_type = unit_type
         #   is_active

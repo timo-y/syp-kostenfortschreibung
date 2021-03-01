@@ -23,8 +23,13 @@ MAIN_DIRECTORY = main.MAIN_DIRECTORY
 del main
 
 import os
+# for opening directory windows
 import webbrowser
 import json
+# for user data/app config paths
+import appdirs
+# TODO: paths should all be given as Path-objekts
+from pathlib import Path
 
 import zipr, importr, templatr, pdfexportr, encoder, decoder
 from ui import helper
@@ -222,6 +227,14 @@ class AppData:
     #   Functions for exporting data into new formats (for printing or other purposes)
     #
     """
+    # TODO
+    def output_cost_stand_cost_groups_ov(self, app_data):
+        pass
+
+    # TODO
+    def output_cost_stand_trades_ov(self, app_data):
+        pass
+
     def output_invoice_check(self, invoice, create_at_path):
         # Create xlsx-File
         invoice_check_xlsx = templatr.InvoiceCheckExcelTemplate(app_data=self,
@@ -238,9 +251,12 @@ class AppData:
         overview_xlsx.make_file()
         return (overview_xlsx.save_path, overview_xlsx.filename)
 
-    # TODO
-    def output_ov_by_job(self):
-        pass
+    def output_ov_by_cost_groups(self, create_at_path):
+         # Create xlsx-File
+        overview_xlsx = templatr.CostGroupsOVExcelTemplate(app_data=self,
+                                                            save_dir=create_at_path)
+        overview_xlsx.make_file()
+        return (overview_xlsx.save_path, overview_xlsx.filename)
 
     def output_ov_of_company(self, company, create_at_path, selected_job=None):
         # Create xlsx-File
@@ -281,14 +297,25 @@ class AppData:
     """
     @debug.log
     def load_app_config(self):
-        if os.path.isfile("app_config.json"):
+        app_config_path = self.get_app_config_path()
+        self.create_dir(app_config_path)
+        if os.path.isfile(app_config_path):
             debug.debug_msg("app_config.json found, loading into app_data.config...")
-            with open("app_config.json", "r") as file:
-                self.config = json.load(file)
+            try:
+                with open(app_config_path, "r") as file:
+                    self.config = json.load(file)
+            except Exception as e:
+                debug.warning_msg("app_config.json not valid, resetting app config...")
+                with open(app_config_path, "w") as file:
+                    default_app_config = self.get_default_config()
+                    json.dump(default_app_config, file, indent=4)
+                    debug.debug_msg("app_config.json has been set up")
+                    self.config = default_app_config
+            finally:
                 debug.debug_msg("app_data.config loaded!")
         else:
             debug.debug_msg("app_config.json has not been set up, initializing default config...")
-            with open("app_config.json", "w") as file:
+            with open(app_config_path, "w") as file:
                 default_app_config = self.get_default_config()
                 json.dump(default_app_config, file, indent=4)
                 debug.debug_msg("app_config.json has been set up")
@@ -304,7 +331,8 @@ class AppData:
 
     @debug.log
     def save_app_config(self):
-        with open("app_config.json", "w") as file:
+        app_config_path = self.get_app_config_path()
+        with open(app_config_path, "w") as file:
             data = self.config
             json.dump(data, file, indent=4)
 
@@ -329,8 +357,8 @@ class AppData:
     @debug.log
     def create_dir(self, dir_path):
         # create directory if non-existing
-        if not os.path.exists(os.path.dirname(dir_path)):
-            os.makedirs(os.path.dirname(dir_path))
+        if not dir_path.exists():
+            dir_path.mkdir()
 
     # OPEN
     @debug.log
@@ -341,105 +369,102 @@ class AppData:
     @debug.log
     def open_autosave_dir(self):
         path = self.get_autosave_dir()
-        if os.path.exists(path):
-            webbrowser.open(os.path.realpath(path))
+        if path.exists():
+            webbrowser.open(path.realpath())
         else:
             self.open_dir()
 
     @debug.log
     def open_save_dir(self):
         path = self.get_save_dir()
-        if os.path.exists(path):
-            webbrowser.open(os.path.realpath(path))
+        if path.exists():
+            webbrowser.open(path.realpath())
         else:
             self.open_dir()
 
     @debug.log
     def open_invoice_check_dir(self):
         path = self.get_invoice_check_dir()
-        if os.path.exists(path):
-            webbrowser.open(os.path.realpath(path))
+        if path.exists():
+            webbrowser.open(path.realpath())
         else:
             self.open_dir()
 
     @debug.log
     def open_overviews_dir(self):
         path = self.get_app_overviews_dir()
-        if os.path.exists(path):
-            webbrowser.open(os.path.realpath(path))
+        if path.exists():
+            webbrowser.open(path.realpath())
         else:
             self.open_dir()
 
     @debug.log
     def open_client_correspondence_dir(self):
         path = self.get_client_correspondence_dir()
-        if os.path.exists(path):
-            webbrowser.open(os.path.realpath(path))
+        if path.exists():
+            webbrowser.open(path.realpath())
         else:
             self.open_dir()
 
     @debug.log
     def open_syp_dir(self):
         path = self.get_syp_dir()
-        if os.path.exists(path):
-            webbrowser.open(os.path.realpath(path))
+        if path.exists():
+            webbrowser.open(path.realpath())
         else:
             self.open_dir()
 
     @debug.log
     def open_project_dir(self):
         path = self.get_project_dir()
-        if os.path.exists(path):
-            webbrowser.open(os.path.realpath(path))
+        if path.exists():
+            webbrowser.open(path.realpath())
         else:
             self.open_dir()
 
     # GET
+    def get_app_config_path(self):
+        # TODO: set this path dependent on the machine
+        dir = appdirs.user_data_dir("SYP-Kostenfortschreibung", "Timo_Yu")
+        filename = "app_config.json"
+        return Path(dir, filename)
+
     def get_dir(self):
-        dir_path = MAIN_DIRECTORY
-        return dir_path
+        return Path(MAIN_DIRECTORY)
 
     def get_syp_dir(self):
-        return self.config["SYP_dir"]
+        return Path(self.config["SYP_dir"])
 
     def get_project_dir(self):
         if self.project:
-            path = os.path.join(self.config["SYP_dir"], "02 Projekte", self.project.identifier)
-            return path
+            return Path(self.config["SYP_dir"], "02 Projekte", self.project.identifier)
 
     def get_app_invoice_check_dir(self):
         if self.project:
-            path = os.path.join(self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
-            return path
+            return Path(self.config["save_dir"], self.project.identifier, self.config["invoice_check_subdir"])
 
     def get_app_overviews_dir(self):
         if self.project:
-            path = os.path.join(self.config["save_dir"], self.project.identifier, self.config["overviews_subdir"])
-            return path
+            return Path(self.config["save_dir"], self.project.identifier, self.config["overviews_subdir"])
 
     def get_autosave_dir(self):
-        autosave_dir_path = os.path.join(self.config["save_dir"], self.config["autosave_subdir"])
-        return autosave_dir_path
+        return Path(self.config["save_dir"], self.config["autosave_subdir"])
 
     def get_save_dir(self):
-        save_dir_path = self.config["save_dir"]
-        return save_dir_path
+        return Path(self.config["save_dir"])
 
     def get_lang_dir(self):
-        lang_dir_path = self.config["lang_dir"]
-        return lang_dir_path
+        return Path(self.config["lang_dir"])
 
     def get_invoice_check_dir(self):
         #  TODO: maybe outsource this into the config
         invoice_check_dir = "03 Kosten/01 Rechnungsprüfung/"
-        invoice_check_dir_path = os.path.join(self.get_project_dir(), invoice_check_dir)
-        return invoice_check_dir_path
+        return Path(self.get_project_dir(), invoice_check_dir)
 
     def get_client_correspondence_dir(self):
         #  TODO: maybe outsource this into the config
         correspondence_dir = "02 Schriftverkehr/Bauherr/Ausgang"
-        correspondence_dir_path = os.path.join(self.get_project_dir(), correspondence_dir)
-        return correspondence_dir_path
+        return Path(self.get_project_dir(), correspondence_dir)
 
     def get_autosave_filename_suffix(self):
         autosave_filename_suffix = f"autosave-{self.project.identifier}.project"
@@ -468,13 +493,20 @@ class AppData:
                 dir_name += f"-{trade.name.replace(' ', '_')}"
             return dir_name
 
+    def get_cost_groups_overview_folder_name(self, cost_group=None):
+        if self.project_loaded():
+            dir_name = f"{helper.now_str()}-{self.project.identifier}-cost_groups"
+            if cost_group:
+                dir_name += f"-{cost_group.id}"
+            return dir_name
+
     def get_pcc_overview_folder_name(self, pcc):
         if self.project_loaded():
             dir_name = f"{helper.now_str()}-{self.project.identifier}-{pcc.name}"
             return dir_name
 
     def get_loaded_save_path(self):
-        return self.config["loaded_save_path"]
+        return Path(self.config["loaded_save_path"])
 
     def set_usersave_path(self, save_path, datetime_str=helper.now_str()):
         self.project.set_save_path(save_path, datetime_str)
@@ -508,13 +540,13 @@ class AppData:
 
     @debug.log
     def get_init_trades(self):
-        file_path = "resources/default_trades.json"
+        file_path = Path("resources/default_trades.json")
         trades = helper.from_json_file(file_path=file_path, decoder=decoder.TradeDecoder)
         return trades
 
     @debug.log
     def get_init_cost_groups(self):
-        file_path = "resources/default_cost_groups.json"
+        file_path = Path("resources/default_cost_groups.json")
         cost_groups = helper.from_json_file(file_path=file_path, decoder=decoder.CostGroupDecoder)
         return cost_groups
 

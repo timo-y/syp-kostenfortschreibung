@@ -4,7 +4,7 @@
 #   The Template-class writes the info to the proper excel-template.
 #
 """
-date_format = "%d.%m.%Y"
+DATE_FORMAT = "%d.%m.%Y"
 
 import debug
 
@@ -26,7 +26,7 @@ class KFImporter:
 
         self.identifier = os.path.basename(file_path).split("-")[0]
 
-        self.wb = openpyxl.load_workbook(self.file_path)
+        self.wb = openpyxl.load_workbook(self.file_path, data_only=True)
 
         self.invoices_args = list()
         self.jobs_args = list()
@@ -49,10 +49,6 @@ class KFImporter:
         for i in range(2, len(ws['A'])):
             args = {
                 "name": ws[f"A{i}"].value,
-                "cost_group_ref":
-                {
-                    "id": str(ws[f"B{i}"].value),
-                },
                 "budget": ws[f"C{i}"].value if ws[f"C{i}"].value else 0,
                 "comment": ws[f"E{i}"].value if ws[f"E{i}"].value else ""
             }
@@ -78,6 +74,10 @@ class KFImporter:
                 "company_ref":
                 {
                     "name": ws[f"B{i}"].value
+                },
+                "cost_group_ref":
+                {
+                    "id": str(ws[f"D{i}"].value),
                 },
                 "trade_ref":
                 {
@@ -151,7 +151,7 @@ class KFImporter:
 
 
 def str2date(date_str):
-    return datetime.strptime(date_str, date_format)
+    return datetime.strptime(date_str, DATE_FORMAT)
 
 def date2str(date):
-    return date.strftime(date_format)
+    return date.strftime(DATE_FORMAT)

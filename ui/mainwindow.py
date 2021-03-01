@@ -23,7 +23,7 @@ from ui import customqt
 
 from core.obj import (proj, corp, arch)
 from ui import dlg, helper
-from ui.helper import (rnd, amount_str, amount_w_currency_str, percent_str,
+from ui.helper import (rnd, amount_str, percent_str,
                        percent_str_w_sign, qdate_to_str)
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -100,10 +100,20 @@ class MainWindow(QtWidgets.QMainWindow):
         #   TODO: load these from external file
         #
         """
-        self.cost_stand_cols = [
+        self.cost_stand_cost_group_cols = [
             {"title": "cost_group", "width": 130},
             {"title": "project_budget", "width": 130},
             {"title": "project_budget_w_VAT", "width": 130},
+            {"title": "job_sums", "width": 130},
+            {"title": "job_sums_w_VAT", "width": 130},
+            {"title": "approved_invoices_w_VAT", "width": 150},
+            {"title": "approved_invoices_w_VAT_by_job_sums", "width": 150},
+            ]
+
+        self.cost_stand_trade_cols = [
+            {"title": "trade", "width": 130},
+            {"title": "budget", "width": 130},
+            {"title": "budget_w_VAT", "width": 130},
             {"title": "job_sums", "width": 130},
             {"title": "job_sums_w_VAT", "width": 130},
             {"title": "approved_invoices_w_VAT", "width": 150},
@@ -160,6 +170,7 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "comment", "width": 100},
         ]
         self.cost_group_cols = [
+            {"title": "uid", "width": 1},
             {"title": "id", "width": 80},
             {"title": "name", "width": 180},
             {"title": "description", "width": 180},
@@ -211,19 +222,25 @@ class MainWindow(QtWidgets.QMainWindow):
             [self.app_data.titles[col] for col in job_additions_cols]
             )
 
-        cost_groups_costs_cols = ["id", "name", "description", "budget"]
+        cost_groups_costs_cols = ["id", "uid", "name", "description", "budget"]
         self.treeWidget_cost_groups.setHeaderLabels(
             [self.app_data.titles[col] for col in cost_groups_costs_cols]
             )
-
         # order CostGroup view by first column (id) of the TreeWidget
         self.treeWidget_cost_groups.sortItems(0, QtCore.Qt.AscendingOrder)
-        pcc_cost_group_costs_cols = ["cost_group", "inventory_items",
+        # hide the UID column
+        self.treeWidget_cost_groups.setColumnHidden(1, True)
+
+        pcc_cost_group_costs_cols = ["cost_group", "uid", "inventory_items",
                                      "prognosed_costs",
-                                     "prognosed_costs_main_cost_group"]
+                                     "prognosed_costs_sub_cost_groups"]
         self.treeWidget_pcc_cost_group_details.setHeaderLabels(
             [self.app_data.titles[col] for col in pcc_cost_group_costs_cols]
             )
+        # order CostGroup view by first column (id) of the TreeWidget
+        self.treeWidget_pcc_cost_group_details.sortItems(0, QtCore.Qt.AscendingOrder)
+        # hide the UID column
+        self.treeWidget_pcc_cost_group_details.setColumnHidden(1, True)
 
         pcc_trade_costs_cols = ["trade", "inventory_items", "prognosed_costs"]
         self.treeWidget_pcc_trade_details.setHeaderLabels(
@@ -389,7 +406,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """ cost_group buttons """
         self.pushButton_new_cost_group.clicked.connect(self.button_input_cost_group_to_project)
         self.pushButton_edit_cost_group.clicked.connect(self.button_edit_cost_group)
-        self.pushButton_set_cost_group_budget.clicked.connect(self.button_set_cost_group_budget)
+        self.commandLinkButton_cost_groups_ov.clicked.connect(self.button_cost_groups_ov)
 
         """ person buttons """
         self.pushButton_edit_person.clicked.connect(self.button_edit_person)
@@ -398,28 +415,50 @@ class MainWindow(QtWidgets.QMainWindow):
         """ project cost calculation signals """
         self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.table_double_click_pcc)
         self.tableWidget_project_cost_calculations.currentItemChanged.connect(self.table_click_pcc)
-        self.treeWidget_pcc_trade_details.clicked.connect(self.activate_pcc_buttons)
-        self.treeWidget_pcc_cost_group_details.clicked.connect(self.activate_pcc_buttons)
+
+        self.treeWidget_pcc_trade_details.itemClicked.connect(self.activate_pcc_buttons)
+        self.treeWidget_pcc_trade_details.currentItemChanged.connect(self.activate_pcc_buttons)
+
+        self.treeWidget_pcc_cost_group_details.itemClicked.connect(self.activate_pcc_buttons)
+        self.treeWidget_pcc_cost_group_details.currentItemChanged.connect(self.activate_pcc_buttons)
+
         """ invoice signals """
         self.listWidget_invoices.itemDoubleClicked.connect(self.list_double_click_invoice)
+
         self.tableWidget_invoices.itemDoubleClicked.connect(self.table_double_click_invoice)
         self.tableWidget_invoices.currentItemChanged.connect(self.table_click_invoice)
+
         """ job signals """
         self.tableWidget_jobs.itemDoubleClicked.connect(self.table_double_click_job)
         self.tableWidget_jobs.currentItemChanged.connect(self.table_click_job)
+
         self.treeWidget_invoices_of_curr_job.itemDoubleClicked.connect(self.tree_double_click_invoice)
+
         self.treeWidget_paid_safety_desposits.itemClicked.connect(self.activate_job_buttons)
+        self.treeWidget_paid_safety_desposits.currentItemChanged.connect(self.activate_job_buttons)
+
         self.treeWidget_job_additions.itemClicked.connect(self.activate_job_buttons)
+        self.treeWidget_job_additions.currentItemChanged.connect(self.activate_job_buttons)
+
         """ company signals """
         self.tableWidget_companies.itemDoubleClicked.connect(self.table_double_click_company)
         self.tableWidget_companies.currentItemChanged.connect(self.table_click_company)
+
+        self.treeWidget_company_invoices_by_job.itemDoubleClicked.connect(self.tree_double_click_job_invoice)
+
         """ trade signals """
-        self.tableWidget_trades.itemDoubleClicked.connect(self.table_double_click_trade)
+        self.tableWidget_trades .itemDoubleClicked.connect(self.table_double_click_trade)
         self.tableWidget_trades.currentItemChanged.connect(self.table_click_trade)
+
+        self.treeWidget_trade_invoices_by_job.itemDoubleClicked.connect(self.tree_double_click_job_invoice)
+
         """ cost_group signals """
         self.treeWidget_cost_groups.itemDoubleClicked.connect(self.tree_double_click_cost_group)
         self.treeWidget_cost_groups.itemClicked.connect(self.tree_click_cost_group)
         self.treeWidget_cost_groups.currentItemChanged.connect(self.tree_click_cost_group)
+
+        self.treeWidget_cost_group_invoices_by_job.itemDoubleClicked.connect(self.tree_double_click_job_invoice)
+
         """ people signals """
         self.tableWidget_people.itemDoubleClicked.connect(self.table_double_click_person)
         self.tableWidget_people.currentItemChanged.connect(self.table_click_person)
@@ -461,6 +500,24 @@ class MainWindow(QtWidgets.QMainWindow):
     #   functions to that get connected to the widget signals (some might also be directly used and not in this section)
     #
     """
+    """ signal
+    #
+    #   Mixed
+    #
+    """
+    @pyqtSlot(QtWidgets.QTreeWidgetItem)
+    def tree_double_click_job_invoice(self, item):
+        if item:
+            item_data = item.data(1, QtCore.Qt.UserRole)
+            if isinstance(item_data, corp.Invoice):
+                self.edit_invoice(item_data)
+            elif isinstance(item_data, arch.ArchJob):
+                self.edit_job(item_data)
+
+    @pyqtSlot(QtWidgets.QTreeWidgetItem)
+    def tree_double_click_cost_group_job_invoice(self, item):
+        self.tree_double_click_job_invoice(item)
+
     """ signal
     #
     #   PROJECT COST CALCULATION
@@ -843,18 +900,9 @@ class MainWindow(QtWidgets.QMainWindow):
             raise Exception("No cost_group selected!")
 
     @pyqtSlot()
-    def button_set_cost_group_budget(self):
-        if len(self.treeWidget_cost_groups.selectedItems())>0:
-            reply = helper.u_sure_prompt(self)
-            if reply:
-                selection = self.treeWidget_cost_groups.selectedItems()
-                cost_group = selection[0].data(1, QtCore.Qt.UserRole)
-                self.app_data.project.set_cost_group_budget(cost_group)
-                self.reset_cost_group_info()
-                self.update_ui()
-                self.activate_cost_group_buttons()
-        else:
-            raise Exception("No cost_group selected!")
+    def button_cost_groups_ov(self):
+        helper.cost_groups_ov(self.app_data)
+        self.app_data.open_overviews_dir()
 
 
     """ signal
@@ -900,34 +948,39 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_cost_stand(self, set_width=False):
+        self.render_cost_stand_cost_groups(set_width=set_width)
+        self.render_cost_stand_trades(set_width=set_width)
+
+    @debug.log
+    def render_cost_stand_cost_groups(self, set_width=False):
         # disable sorting when filling the table
         # (to avoid bugs with data field)
-        self.tableWidget_cost_stand.setSortingEnabled(False)
+        self.tableWidget_cost_stand_cost_groups.setSortingEnabled(False)
         """
         #   Number of rows is number of cost_groups plus one summary row
         """
-        self.tableWidget_cost_stand.setRowCount(
+        self.tableWidget_cost_stand_cost_groups.setRowCount(
             len(self.app_data.project.main_cost_groups)+1
             )
         """
         #   Set columns of table to the list self.invoice_cols
         """
-        self.tableWidget_cost_stand.setColumnCount(len(self.cost_stand_cols))
+        self.tableWidget_cost_stand_cost_groups.setColumnCount(len(self.cost_stand_cost_group_cols))
         if set_width:
-            for i in range(len(self.cost_stand_cols)):
-                self.tableWidget_cost_stand.setColumnWidth(
-                    i, self.cost_stand_cols[i]["width"]
+            for i in range(len(self.cost_stand_cost_group_cols)):
+                self.tableWidget_cost_stand_cost_groups.setColumnWidth(
+                    i, self.cost_stand_cost_group_cols[i]["width"]
                     )
         """
         #   Set column titles
         """
-        self.tableWidget_cost_stand.setHorizontalHeaderLabels(
-            [self.app_data.titles[col["title"]] for col in self.cost_stand_cols]
+        self.tableWidget_cost_stand_cost_groups.setHorizontalHeaderLabels(
+            [self.app_data.titles[col["title"]] for col in self.cost_stand_cost_group_cols]
             )
         """
         #   Set title height
         """
-        self.tableWidget_cost_stand.horizontalHeader().setFixedHeight(100)
+        self.tableWidget_cost_stand_cost_groups.horizontalHeader().setFixedHeight(100)
         """
         #   Render cost_group to the table
         """
@@ -939,74 +992,261 @@ class MainWindow(QtWidgets.QMainWindow):
         #   Write summary line
         """
         vat = self.app_data.project.get_vat()
-        cost_group_budget_total = sum(cost_group.budget for cost_group in self.app_data.project.main_cost_groups)
-        job_sums_total = sum(job.job_sum for job in self.app_data.project.jobs)
-        approved_invoices_w_VAT_total = sum(invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices)
-        paid_safety_deposit_total = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs)
+        cost_group_budget_total = self.app_data.project.get_cost_group_budget_total()
+        job_sums_total = self.app_data.project.get_job_sums_total()
+        approved_invoices_w_VAT_total = self.app_data.project.get_approved_amounts_total()
+        paid_safety_deposit_total = self.app_data.project.get_psds_total()
 
-        cost_group_total = {
-            "cost_group": self.app_data.titles["total"],
-            "project_budget": amount_w_currency_str(cost_group_budget_total, self.currency),
-            "project_budget_w_VAT":  amount_w_currency_str(cost_group_budget_total * (1+vat), self.currency),
-            "job_sums": amount_w_currency_str(job_sums_total, self.currency),
-            "job_sums_w_VAT": amount_w_currency_str(job_sums_total * (1+vat), self.currency),
-            "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT_total+paid_safety_deposit_total, self.currency),
-            "approved_invoices_w_VAT_by_job_sums": percent_str_w_sign(approved_invoices_w_VAT_total*100 / (job_sums_total * (1+vat))) if job_sums_total else "-"
-        }
         sorting_keys = {
-            "cost_group": float("inf"),
-            "project_budget": cost_group_budget_total,
-            "project_budget_w_VAT":  cost_group_budget_total * (1+vat),
-            "job_sums": job_sums_total,
-            "job_sums_w_VAT": job_sums_total * (1+vat),
-            "approved_invoices_w_VAT": approved_invoices_w_VAT_total+paid_safety_deposit_total,
-            "approved_invoices_w_VAT_by_job_sums": approved_invoices_w_VAT_total*100 / (job_sums_total * (1+vat)) if job_sums_total else 0
+            "cost_group":
+                float("inf"),
+            "project_budget":
+                cost_group_budget_total,
+            "project_budget_w_VAT":
+                cost_group_budget_total * (1+vat),
+            "job_sums":
+                job_sums_total,
+            "job_sums_w_VAT":
+                job_sums_total * (1+vat),
+            "approved_invoices_w_VAT":
+                approved_invoices_w_VAT_total+paid_safety_deposit_total,
+            "approved_invoices_w_VAT_by_job_sums":
+                approved_invoices_w_VAT_total*100 /
+                (job_sums_total * (1+vat))
+                if job_sums_total else 0
         }
+        cost_group_total = {
+            "cost_group":
+                self.app_data.titles["total"],
+            "project_budget":
+                amount_str(sorting_keys["project_budget"], self.currency),
+            "project_budget_w_VAT":
+                amount_str(sorting_keys["project_budget_w_VAT"], self.currency),
+            "job_sums":
+                amount_str(sorting_keys["job_sums"], self.currency),
+            "job_sums_w_VAT":
+                amount_str(sorting_keys["job_sums_w_VAT"], self.currency),
+            "approved_invoices_w_VAT":
+                amount_str(sorting_keys["approved_invoices_w_VAT"], self.currency),
+            "approved_invoices_w_VAT_by_job_sums":
+                percent_str_w_sign(
+                    sorting_keys["approved_invoices_w_VAT_by_job_sums"]
+                    ) if job_sums_total else "-"
+        }
+
         col = 0
         font = QtGui.QFont()
         font.setBold(True)
-        for attr in self.cost_stand_cols:
+        for attr in self.cost_stand_cost_group_cols:
             table_item = customqt.AmountTableWidgetItem(str(cost_group_total[attr["title"]]), sorting_key=sorting_keys[attr["title"]])
             table_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table_item.setFont(font)
             table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
-            self.tableWidget_cost_stand.setItem(row, col, table_item)
+            self.tableWidget_cost_stand_cost_groups.setItem(row, col, table_item)
             col += 1
 
-        self.tableWidget_cost_stand.setSortingEnabled(True) # enable sorting once the table is filled
+        self.tableWidget_cost_stand_cost_groups.setSortingEnabled(True) # enable sorting once the table is filled
+
+    @debug.log
+    def render_cost_stand_trades(self, set_width=False):
+        # disable sorting when filling the table
+        # (to avoid bugs with data field)
+        self.tableWidget_cost_stand_trades.setSortingEnabled(False)
+        """
+        #   Number of rows is number of cost_groups plus one summary row
+        """
+        self.tableWidget_cost_stand_trades.setRowCount(
+            len(self.app_data.project.trades)+1
+            )
+        """
+        #   Set columns of table to the list self.cost_stand_trade_cols
+        """
+        self.tableWidget_cost_stand_trades.setColumnCount(len(self.cost_stand_trade_cols))
+        if set_width:
+            for i in range(len(self.cost_stand_trade_cols)):
+                self.tableWidget_cost_stand_trades.setColumnWidth(
+                    i, self.cost_stand_trade_cols[i]["width"]
+                    )
+        """
+        #   Set column titles
+        """
+        self.tableWidget_cost_stand_trades.setHorizontalHeaderLabels(
+            [self.app_data.titles[col["title"]] for col in self.cost_stand_trade_cols]
+            )
+        """
+        #   Set title height
+        """
+        self.tableWidget_cost_stand_trades.horizontalHeader().setFixedHeight(100)
+        """
+        #   Render cost_group to the table
+        """
+        row = 0
+        for trade in self.app_data.project.trades:
+            self.add_trade_to_table(trade, row)
+            row += 1
+        """
+        #   Write summary line
+        """
+        vat = self.app_data.project.get_vat()
+        trade_budgets_total = self.app_data.project.get_trade_budgets_total()
+        job_sums_total = self.app_data.project.get_job_sums_total()
+        approved_invoices_w_VAT_total = self.app_data.project.get_approved_amounts_total()
+        paid_safety_deposit_total = self.app_data.project.get_psds_total()
+
+        sorting_keys = {
+            "trade":
+                "z"*100,
+            "budget":
+                trade_budgets_total,
+            "budget_w_VAT":
+                trade_budgets_total * (1+vat),
+            "job_sums":
+                job_sums_total,
+            "job_sums_w_VAT":
+                job_sums_total * (1+vat),
+            "approved_invoices_w_VAT":
+                approved_invoices_w_VAT_total+paid_safety_deposit_total,
+            "approved_invoices_w_VAT_by_job_sums":
+                approved_invoices_w_VAT_total*100 / (job_sums_total * (1+vat)) if job_sums_total else 0
+        }
+        trade_total = {
+            "trade":
+                self.app_data.titles["total"],
+            "budget":
+                amount_str(sorting_keys["budget"], self.currency),
+            "budget_w_VAT":
+                amount_str(sorting_keys["budget_w_VAT"], self.currency),
+            "job_sums":
+                amount_str(sorting_keys["job_sums"], self.currency),
+            "job_sums_w_VAT":
+                amount_str(sorting_keys["job_sums_w_VAT"], self.currency),
+            "approved_invoices_w_VAT":
+                amount_str(sorting_keys["approved_invoices_w_VAT"], self.currency),
+            "approved_invoices_w_VAT_by_job_sums":
+                percent_str_w_sign(
+                    sorting_keys["approved_invoices_w_VAT_by_job_sums"]
+                    ) if job_sums_total else "-"
+        }
+
+        col = 0
+        font = QtGui.QFont()
+        font.setBold(True)
+        for attr in self.cost_stand_trade_cols:
+            table_item = customqt.AmountTableWidgetItem(str(trade_total[attr["title"]]), sorting_key=sorting_keys[attr["title"]])
+            table_item.setTextAlignment(QtCore.Qt.AlignCenter)
+            table_item.setFont(font)
+            table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
+            self.tableWidget_cost_stand_trades.setItem(row, col, table_item)
+            col += 1
+
+        self.tableWidget_cost_stand_trades.setSortingEnabled(True) # enable sorting once the table is filled
 
 
     def add_cost_group_to_table(self, cost_group, row):
         """ Calculate values """
         vat = self.app_data.project.get_vat()
-        job_sums = sum([job.job_sum for job in self.app_data.project.jobs if job.cost_group.is_sub_group_of(cost_group)])
-        approved_invoices_w_VAT = sum([invoice.approved_amount_a_discount_amount for invoice in self.app_data.project.invoices if  invoice.job.cost_group.is_sub_group_of(cost_group)])
-        paid_safety_deposit = sum(job.paid_safety_deposits_sum for job in self.app_data.project.jobs if job.cost_group.is_sub_group_of(cost_group))
+        cost_group_budget = self.app_data.project.get_budget_sub_cost_groups(cost_group)
+        job_sums = self.app_data.project.get_job_sums_of_sub_cost_groups(cost_group)
+        approved_invoices_w_VAT = self.app_data.project.get_approved_amounts_of_sub_cost_groups(cost_group)
+        paid_safety_deposit = self.app_data.project.get_psds_of_sub_cost_groups(cost_group)
         """ Create output dictionary """
-        cost_group_attr = {
-            "cost_group":  cost_group.id,
-            "project_budget": amount_w_currency_str(cost_group.budget, self.currency),
-            "project_budget_w_VAT":  amount_w_currency_str(cost_group.budget * (1+vat), self.currency),
-            "job_sums": amount_w_currency_str(job_sums, self.currency),
-            "job_sums_w_VAT": amount_w_currency_str(job_sums * (1+vat), self.currency),
-            "approved_invoices_w_VAT": amount_w_currency_str(approved_invoices_w_VAT+paid_safety_deposit, self.currency),
-            "approved_invoices_w_VAT_by_job_sums": percent_str_w_sign(approved_invoices_w_VAT*100 / (job_sums * (1+vat))) if job_sums else "-"
-        }
+
         sorting_keys = {
-            "cost_group":  int(cost_group.id),
-            "project_budget": cost_group.budget,
-            "project_budget_w_VAT":  cost_group.budget * (1+vat),
-            "job_sums": job_sums,
-            "job_sums_w_VAT": job_sums * (1+vat),
-            "approved_invoices_w_VAT": approved_invoices_w_VAT+paid_safety_deposit,
-            "approved_invoices_w_VAT_by_job_sums": approved_invoices_w_VAT*100 / (job_sums * (1+vat)) if job_sums else 0
+            "cost_group":
+                int(cost_group.id),
+            "project_budget":
+                cost_group_budget,
+            "project_budget_w_VAT":
+                cost_group_budget * (1+vat),
+            "job_sums":
+                job_sums,
+            "job_sums_w_VAT":
+                job_sums * (1+vat),
+            "approved_invoices_w_VAT":
+                approved_invoices_w_VAT+paid_safety_deposit,
+            "approved_invoices_w_VAT_by_job_sums":
+                approved_invoices_w_VAT*100 /
+                (job_sums * (1+vat))
+                if job_sums else 0
         }
+        cost_group_attr = {
+            "cost_group":
+                sorting_keys["cost_group"],
+            "project_budget":
+                amount_str(sorting_keys["project_budget"], self.currency),
+            "project_budget_w_VAT":
+                amount_str(sorting_keys["project_budget_w_VAT"], self.currency),
+            "job_sums":
+                amount_str(sorting_keys["job_sums"], self.currency),
+            "job_sums_w_VAT":
+                amount_str(sorting_keys["job_sums_w_VAT"], self.currency),
+            "approved_invoices_w_VAT":
+                amount_str(sorting_keys["approved_invoices_w_VAT"], self.currency),
+            "approved_invoices_w_VAT_by_job_sums":
+                percent_str_w_sign(
+                    sorting_keys["approved_invoices_w_VAT_by_job_sums"]
+                    ) if job_sums else "-"
+        }
+
         col = 0
-        for attr in self.cost_stand_cols:
+        for attr in self.cost_stand_cost_group_cols:
             table_item = customqt.AmountTableWidgetItem(str(cost_group_attr[attr["title"]]), sorting_key=sorting_keys[attr["title"]])
             table_item.setTextAlignment(QtCore.Qt.AlignCenter)
             table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
-            self.tableWidget_cost_stand.setItem(row, col, table_item)
+            self.tableWidget_cost_stand_cost_groups.setItem(row, col, table_item)
+            col += 1
+
+    def add_trade_to_table(self, trade, row):
+        """ Calculate values """
+        vat = self.app_data.project.get_vat()
+        job_sums = self.app_data.project.get_job_sums_of_trade(trade)
+        approved_invoices_w_VAT = self.app_data.project.get_approved_amounts_of_trade(trade)
+        paid_safety_deposit = self.app_data.project.get_psds_of_trade(trade)
+
+        """ Create output dictionary """
+        sorting_keys = {
+            "trade":
+                trade.name,
+            "budget":
+                trade.budget,
+            "budget_w_VAT":
+                trade.budget * (1+vat),
+            "job_sums":
+                job_sums,
+            "job_sums_w_VAT":
+                job_sums * (1+vat),
+            "approved_invoices_w_VAT":
+                approved_invoices_w_VAT+paid_safety_deposit,
+            "approved_invoices_w_VAT_by_job_sums":
+                approved_invoices_w_VAT*100 /
+                (job_sums * (1+vat))
+                if job_sums else 0
+        }
+        trade_attr = {
+            "trade":
+                trade.name,
+            "budget":
+                amount_str(sorting_keys["budget"], self.currency),
+            "budget_w_VAT":
+                amount_str(sorting_keys["budget_w_VAT"], self.currency),
+            "job_sums":
+                amount_str(sorting_keys["job_sums"], self.currency),
+            "job_sums_w_VAT":
+                amount_str(sorting_keys["job_sums_w_VAT"], self.currency),
+            "approved_invoices_w_VAT":
+                amount_str(sorting_keys["approved_invoices_w_VAT"], self.currency),
+            "approved_invoices_w_VAT_by_job_sums":
+                percent_str_w_sign(
+                    sorting_keys["approved_invoices_w_VAT_by_job_sums"]
+                    ) if job_sums else "-"
+        }
+
+        col = 0
+        for attr in self.cost_stand_trade_cols:
+            table_item = customqt.AmountTableWidgetItem(str(trade_attr[attr["title"]]), sorting_key=sorting_keys[attr["title"]])
+            table_item.setTextAlignment(QtCore.Qt.AlignCenter)
+            table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
+            self.tableWidget_cost_stand_trades.setItem(row, col, table_item)
             col += 1
 
     """ render
@@ -1087,7 +1327,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.commandLinkButton_invoice_check_all_jobs.setEnabled(True)
             self.commandLinkButton_invoice_check_curr_job.setEnabled(True)
             self.pushButton_edit_invoice.setEnabled(True)
-
         else:
             self.pushButton_go_to_job.setEnabled(False)
             self.commandLinkButton_invoice_check_all_jobs.setEnabled(False)
@@ -1158,9 +1397,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_amount_a_reductions_VAT_amount.setText(amount_str(amount_a_reductions_amount_VAT_amount))
         """ approved amount """
         self.label_safety_deposit_amount.setText(amount_str(safety_deposit_amount))
-        self.label_approved_amount.setText(amount_w_currency_str(approved_amount, self.currency))
+        self.label_approved_amount.setText(amount_str(approved_amount, self.currency))
         self.label_discount_amount.setText(amount_str(discount_amount))
-        self.label_approved_amount_a_discount_amount.setText(amount_w_currency_str(approved_amount_a_discount_amount, self.currency))
+        self.label_approved_amount_a_discount_amount.setText(amount_str(approved_amount_a_discount_amount, self.currency))
         """ reductions """
         self.label_rebate_2.setText(percent_str_w_sign(rebate*100))
         self.label_reduction_insurance_costs_2.setText(percent_str_w_sign(reduction_insurance_costs*100))
@@ -1303,14 +1542,14 @@ class MainWindow(QtWidgets.QMainWindow):
         for psd in paid_safety_deposits:
             helper.add_item_to_tree(content_item=psd,
                                     parent=self.treeWidget_paid_safety_desposits,
-                                    cols=[str(psd["date"].toPyDate()), amount_w_currency_str(psd["amount"], self.currency), psd["comment"]])
+                                    cols=[str(psd["date"].toPyDate()), amount_str(psd["amount"], self.currency), psd["comment"]])
 
     def set_job_additions_of_job(self, job_additions=list()):
         self.treeWidget_job_additions.clear()
         for job_addition in job_additions:
             helper.add_item_to_tree(content_item=job_addition,
                                     parent=self.treeWidget_job_additions,
-                                    cols=[str(job_addition["date"].toPyDate()), job_addition["name"], amount_w_currency_str(job_addition["amount"], self.currency), job_addition["comment"]])
+                                    cols=[str(job_addition["date"].toPyDate()), job_addition["name"], amount_str(job_addition["amount"], self.currency), job_addition["comment"]])
 
     #   Fill the listwidget with the invoices
     def set_invoices_of_job(self, invoices_of_job=list()):
@@ -1318,7 +1557,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for invoice in invoices_of_job:
             helper.add_item_to_tree(content_item=invoice,
                                     parent=self.treeWidget_invoices_of_curr_job,
-                                    cols=[str(invoice.invoice_date.toPyDate()), str(invoice.id), amount_w_currency_str(invoice.safety_deposit_amount, self.currency), amount_w_currency_str(invoice.amount_a_reductions_amount, self.currency)],
+                                    cols=[str(invoice.invoice_date.toPyDate()), str(invoice.id), amount_str(invoice.safety_deposit_amount, self.currency), amount_str(invoice.amount_a_reductions_amount, self.currency)],
                                     )
 
     """ render
@@ -1398,12 +1637,12 @@ class MainWindow(QtWidgets.QMainWindow):
             for invoice in invoices_of_company_and_job:
                 helper.add_item_to_tree(content_item=invoice,
                                             parent=job_node,
-                                            cols=["","", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
+                                            cols=["","", str(invoice.id), amount_str(invoice.amount_wout_prev_payments, currency)])
                 job_sum += invoice.amount_wout_prev_payments
             job_node.setText(0, f"{job.id}")
-            job_node.setText(1, f"{amount_w_currency_str(job.job_sum, currency)}")
+            job_node.setText(1, f"{amount_str(job.job_sum, currency)}")
             job_node.setText(2, f"{len(invoices_of_company_and_job)}")
-            job_node.setText(3, amount_w_currency_str(job_sum, currency))
+            job_node.setText(3, amount_str(job_sum, currency))
         helper.resize_tree_columns(self.treeWidget_company_invoices_by_job)
 
     """ render
@@ -1474,14 +1713,14 @@ class MainWindow(QtWidgets.QMainWindow):
             for invoice in invoices_of_trade_and_job:
                 helper.add_item_to_tree(content_item=invoice,
                                             parent=job_node,
-                                            cols=["","","","", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
+                                            cols=["","","","", str(invoice.id), amount_str(invoice.amount_wout_prev_payments, currency)])
                 job_sum += invoice.amount_wout_prev_payments
             job_node.setText(0, f"{job.id}")
             job_node.setText(1, f"{job.company.name}")
-            job_node.setText(2, f"{amount_w_currency_str(job.job_sum, currency)}")
+            job_node.setText(2, f"{amount_str(job.job_sum, currency)}")
             job_node.setText(3, f"{job.cost_group.id}")
             job_node.setText(4, f"{len(invoices_of_trade_and_job)}")
-            job_node.setText(5, amount_w_currency_str(job_sum, currency))
+            job_node.setText(5, amount_str(job_sum, currency))
         helper.resize_tree_columns(self.treeWidget_trade_invoices_by_job)
 
     """ render
@@ -1506,23 +1745,36 @@ class MainWindow(QtWidgets.QMainWindow):
     #       help us to render the cost_groups with the tree-structure.
     """
     def render_cost_groups_to_treewidget(self):
+        # if a cost_group was selected, save here
+        sel_items = self.treeWidget_cost_groups.selectedItems()
+        sel_cost_group = sel_items[0].data(1, QtCore.Qt.UserRole) if len(sel_items)>0 else None
+
         self.treeWidget_cost_groups.clear()
         # go layer by layer
         tree_depth = 0
         cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
         cost_groups.sort(key=lambda cost_group:int(cost_group.id), reverse=True)
+
         while len(cost_groups)>0:
             for cost_group in cost_groups:
                 cols = [
                     str(cost_group.id),
+                    str(cost_group.uid),
                     cost_group.name,
                     cost_group.description,
-                    amount_w_currency_str(cost_group.budget, self.currency)
+                    amount_str(cost_group.budget, self.currency)
                 ]
                 self.render_cc_nodes(self.treeWidget_cost_groups, cost_group, cols)
             tree_depth += 1
             cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
         helper.resize_tree_columns(self.treeWidget_cost_groups)
+        # reselect the cost_grop if there was a selection
+        sel_items = self.treeWidget_cost_groups.findItems(str(sel_cost_group.uid),
+            QtCore.Qt.MatchFlag.MatchExactly
+            |QtCore.Qt.MatchFlag.MatchRecursive,
+            1) if sel_cost_group else list()
+        if len(sel_items)>0:
+            self.treeWidget_cost_groups.setCurrentItem(sel_items[0])
 
     def render_cc_nodes(self, tree_widget, cost_group, cols):
         parent_node = None
@@ -1530,7 +1782,10 @@ class MainWindow(QtWidgets.QMainWindow):
             parent_node = tree_widget
         else:
             # Since we are rendering layer by layer, we can assume, that the parent node already exists and thus the below list is never empty
-            parent_node = tree_widget.findItems(str(cost_group.parent.id), QtCore.Qt.MatchFlag.MatchExactly|QtCore.Qt.MatchFlag.MatchRecursive)[0]
+            parent_node = tree_widget.findItems(str(cost_group.parent.uid),
+                QtCore.Qt.MatchFlag.MatchExactly
+                |QtCore.Qt.MatchFlag.MatchRecursive,
+                1)[0]
         helper.add_item_to_tree(content_item=cost_group,
                                             parent=parent_node,
                                             cols=cols)
@@ -1538,7 +1793,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def render_cost_group_info(self, cost_group):
         if cost_group.is_not_deleted():
             args = vars(cost_group).copy()
-            self.set_cost_group_data(**args)
+            self.set_cost_group_data(**args,
+                        sub_costgroups_budget=self.app_data.project.get_budget_sub_cost_groups(cost_group))
             self.set_invoices_of_cost_group_by_job(cost_group)
             self.activate_cost_group_buttons()
         else:
@@ -1547,17 +1803,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def activate_cost_group_buttons(self):
         if len(self.treeWidget_cost_groups.selectedItems())>0:
             self.pushButton_edit_cost_group.setEnabled(True)
-            self.pushButton_set_cost_group_budget.setEnabled(True)
         else:
             self.pushButton_edit_cost_group.setEnabled(False)
-            self.pushButton_set_cost_group_budget.setEnabled(False)
 
     def reset_cost_group_info(self):
         self.set_cost_group_data()
         self.treeWidget_cost_group_invoices_by_job.clear()
         self.activate_cost_group_buttons()
 
-    def set_cost_group_data(self, *, _uid=None, id="", name="", description="", budget=0, parent=None, **kwargs):
+    def set_cost_group_data(self, *, _uid=None, id="", name="", description="", budget=0, sub_costgroups_budget=0, parent=None, **kwargs):
         """ meta data """
         self.label_cost_group_uid.setText(_uid.labelize() if _uid else "-")
 
@@ -1572,6 +1826,12 @@ class MainWindow(QtWidgets.QMainWindow):
         budget_w_VAT = budget + budget_VAT_amount
         self.label_cost_group_budget_w_VAT.setText(amount_str(budget_w_VAT))
         self.label_cost_group_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
+        """ sub_cost_groups budget """
+        self.label_sub_cost_groups_budget.setText(amount_str(sub_costgroups_budget))
+        sub_cost_groups_budget_VAT_amount = sub_costgroups_budget * self.app_data.project.get_vat()
+        sub_cost_groups_budget_w_VAT = sub_costgroups_budget + sub_cost_groups_budget_VAT_amount
+        self.label_sub_cost_groups_budget_w_VAT.setText(amount_str(sub_cost_groups_budget_w_VAT))
+        self.label_sub_cost_groups_budget_VAT_amount.setText(amount_str(sub_cost_groups_budget_VAT_amount))
 
     def set_invoices_of_cost_group_by_job(self, cost_group):
         self.treeWidget_cost_group_invoices_by_job.clear()
@@ -1586,14 +1846,14 @@ class MainWindow(QtWidgets.QMainWindow):
             for invoice in invoices_of_cost_group_and_job:
                 helper.add_item_to_tree(content_item=invoice,
                                             parent=job_node,
-                                            cols=["","","","", str(invoice.id), amount_w_currency_str(invoice.amount_wout_prev_payments, currency)])
+                                            cols=["","","","", str(invoice.id), amount_str(invoice.amount_wout_prev_payments, currency)])
                 job_sum += invoice.amount_wout_prev_payments
             job_node.setText(0, f"{job.id}")
             job_node.setText(1, f"{job.company.name}")
-            job_node.setText(2, f"{amount_w_currency_str(job.job_sum, currency)}")
+            job_node.setText(2, f"{amount_str(job.job_sum, currency)}")
             job_node.setText(3, f"{job.trade.name}")
             job_node.setText(4, f"{len(invoices_of_cost_group_and_job)}")
-            job_node.setText(5, amount_w_currency_str(job_sum, currency))
+            job_node.setText(5, amount_str(job_sum, currency))
         helper.resize_tree_columns(self.treeWidget_cost_group_invoices_by_job)
 
     """ render
@@ -1673,9 +1933,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_pcc_date.setText(qdate_to_str(date) if date else "-")
 
         """ total cost """
-        self.label_pcc_total_cost.setText(amount_w_currency_str(total_cost, self.currency))
+        self.label_pcc_total_cost.setText(amount_str(total_cost, self.currency))
 
     def set_costs_of_cost_group_of_pcc(self, pcc):
+        # if a cost_group was selected, save here
+        sel_items = self.treeWidget_pcc_cost_group_details.selectedItems()
+        sel_cost_group = sel_items[0].data(1, QtCore.Qt.UserRole) if len(sel_items)>0 else None
+
         self.treeWidget_pcc_cost_group_details.clear()
         # go layer by layer
         tree_depth = 0
@@ -1684,14 +1948,22 @@ class MainWindow(QtWidgets.QMainWindow):
             for cost_group in cost_groups:
                 cols = [
                     str(cost_group.id),
+                    str(cost_group.uid),
                     str(len(pcc.get_cost_group_items(cost_group))),
-                    amount_w_currency_str(pcc.get_cost_group_prognosis(cost_group), self.currency),
-                    amount_w_currency_str(pcc.get_main_cost_group_prognosis(cost_group.get_main_cost_group(), self.app_data.project.cost_groups), self.currency)
+                    amount_str(pcc.get_cost_group_prognosis(cost_group), self.currency),
+                    amount_str(pcc.get_sub_cost_groups_prognosis(cost_group, self.app_data.project.cost_groups), self.currency)
                 ]
                 self.render_cc_nodes(self.treeWidget_pcc_cost_group_details, cost_group, cols)
             tree_depth += 1
             cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
         helper.resize_tree_columns(self.treeWidget_pcc_cost_group_details)
+        # reselect the cost_grop if there was a selection
+        sel_items = self.treeWidget_pcc_cost_group_details.findItems(str(sel_cost_group.uid),
+            QtCore.Qt.MatchFlag.MatchExactly
+            |QtCore.Qt.MatchFlag.MatchRecursive,
+            1) if sel_cost_group else list()
+        if len(sel_items)>0:
+            self.treeWidget_pcc_cost_group_details.setCurrentItem(sel_items[0])
 
 
     def set_costs_of_trade_of_pcc(self, pcc):
@@ -1700,7 +1972,7 @@ class MainWindow(QtWidgets.QMainWindow):
             cols = [
                 str(trade.name),
                 str(len(pcc.get_trade_items(trade))),
-                amount_w_currency_str(pcc.get_trade_prognosis(trade), self.currency)
+                amount_str(pcc.get_trade_prognosis(trade), self.currency)
             ]
             helper.add_item_to_tree(content_item=trade,
                                             parent=self.treeWidget_pcc_trade_details,
@@ -2170,7 +2442,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             name_length = random.randint(0,12)
             name = id_generator(name_length)
-            type = random.choice(proj.ProjectCostCalculation().PCC_TYPES)
+            type = random.choice(proj.ProjectCostCalculation.PCC_TYPES)
             pcc = proj.ProjectCostCalculation(name=name, date=QDate.currentDate(), type=type)
             self.app_data.project.add_pcc(pcc)
             number_of_inventory_items = random.randint(1, 150)

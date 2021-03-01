@@ -9,7 +9,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui, uic
 from PyQt5.QtWidgets import QDialogButtonBox
 
 from ui import dlg, helper
-from ui.helper import two_inputs_to_float, amount_str, amount_w_currency_str, rnd
+from ui.helper import two_inputs_to_float, amount_str, rnd
 from core.obj import (proj, corp, arch)
 
 class JobDialog(QtWidgets.QDialog):
@@ -22,7 +22,7 @@ class JobDialog(QtWidgets.QDialog):
         self.sel_company = sel_company
         self.loaded_job = loaded_job
 
-        self.paid_safety_deposits = loaded_job.paid_safety_deposits if loaded_job else list()
+        self.paid_safety_deposits = list()
 
         self.initialize_ui()
         """ set title """
@@ -49,13 +49,14 @@ class JobDialog(QtWidgets.QDialog):
             """ activate delete button """
             self.pushButton_delete.setEnabled(True)
             """ activate safety deposits of invoices of job """
+            self.paid_safety_deposits = loaded_job.paid_safety_deposits
+            self.set_paid_safety_deposits(self.paid_safety_deposits)
             self.groupBox_safety_deposits_of_jobs.setEnabled(True)
             """ load job data to input """
             loaded_args = vars(self.loaded_job).copy()
             self.set_input(**loaded_args)
 
         self.update_ui()
-        self.set_paid_safety_deposits(self.paid_safety_deposits)
 
     """
     #
@@ -179,6 +180,7 @@ class JobDialog(QtWidgets.QDialog):
         self.comboBox_company.activated.connect(self.update_ui)
         self.comboBox_company.currentIndexChanged.connect(self.set_to_max_job_number)
         self.comboBox_trade.activated.connect(self.update_ui)
+        self.comboBox_cost_group.activated.connect(self.update_ui)
 
     def set_spin_box_actions(self):
         # update the set_max_job_nr_button on change
@@ -262,7 +264,7 @@ class JobDialog(QtWidgets.QDialog):
         for invoice in invoices:
             helper.add_item_to_tree(content_item=invoice,
                                     parent=self.treeWidget_safety_deposits_of_invoices,
-                                    cols=[str(invoice.invoice_date.toPyDate()), amount_w_currency_str(invoice.safety_deposit_amount, self.currency)])
+                                    cols=[str(invoice.invoice_date.toPyDate()), amount_str(invoice.safety_deposit_amount, self.currency)])
             sd_sum += invoice.safety_deposit_amount
         self.label_safety_deposits_of_invoices_sum.setText(amount_str(sd_sum))
 
@@ -272,7 +274,7 @@ class JobDialog(QtWidgets.QDialog):
         for psd in paid_safety_deposits:
             helper.add_item_to_tree(content_item=psd,
                                     parent=self.treeWidget_paid_safety_deposits,
-                                    cols=[str(psd["date"].toPyDate()), amount_w_currency_str(psd["amount"], self.currency)])
+                                    cols=[str(psd["date"].toPyDate()), amount_str(psd["amount"], self.currency)])
             psd_sum += psd["amount"]
         self.label_paid_safety_deposits_sum.setText(amount_str(psd_sum))
 

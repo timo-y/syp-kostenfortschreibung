@@ -374,7 +374,7 @@
          <enum>QTabWidget::South</enum>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="tab_overview">
          <attribute name="title">
@@ -434,51 +434,114 @@
            </widget>
           </item>
           <item>
-           <widget class="QTableWidget" name="tableWidget_cost_stand">
-            <property name="alternatingRowColors">
-             <bool>true</bool>
+           <widget class="QTabWidget" name="tabWidget_3">
+            <property name="currentIndex">
+             <number>0</number>
             </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-            <property name="sortingEnabled">
-             <bool>true</bool>
-            </property>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>120</number>
-            </attribute>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderDefaultSectionSize">
-             <number>40</number>
-            </attribute>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_12">
-            <property name="title">
-             <string>GroupBox</string>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_34">
-             <item>
-              <widget class="QCommandLinkButton" name="commandLinkButton">
-               <property name="text">
-                <string>CommandLinkButton</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCommandLinkButton" name="commandLinkButton_2">
-               <property name="text">
-                <string>CommandLinkButton</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QWidget" name="tab_4">
+             <attribute name="title">
+              <string>Kostengruppen</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_36">
+              <item>
+               <widget class="QTableWidget" name="tableWidget_cost_stand_cost_groups">
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>120</number>
+                </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>40</number>
+                </attribute>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_12">
+                <property name="title">
+                 <string>GroupBox</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_34">
+                 <item>
+                  <widget class="QCommandLinkButton" name="commandLinkButton">
+                   <property name="text">
+                    <string>CommandLinkButton</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCommandLinkButton" name="commandLinkButton_2">
+                   <property name="text">
+                    <string>CommandLinkButton</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_5">
+             <attribute name="title">
+              <string>Gewerke</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_37">
+              <item>
+               <widget class="QTableWidget" name="tableWidget_cost_stand_trades">
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::SingleSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_19">
+                <property name="title">
+                 <string>GroupBox</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_38">
+                 <item>
+                  <widget class="QCommandLinkButton" name="commandLinkButton_5">
+                   <property name="text">
+                    <string>CommandLinkButton</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCommandLinkButton" name="commandLinkButton_4">
+                   <property name="text">
+                    <string>CommandLinkButton</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
          </layout>
@@ -2106,6 +2169,19 @@
                          <property name="verticalSpacing">
                           <number>9</number>
                          </property>
+                         <item row="0" column="0" colspan="2">
+                          <widget class="QLabel" name="label_company_3">
+                           <property name="font">
+                            <font>
+                             <pointsize>10</pointsize>
+                             <italic>false</italic>
+                            </font>
+                           </property>
+                           <property name="text">
+                            <string>Firma</string>
+                           </property>
+                          </widget>
+                         </item>
                          <item row="1" column="0" colspan="2">
                           <widget class="QLabel" name="label_job_company">
                            <property name="font">
@@ -2123,19 +2199,6 @@
                            </property>
                            <property name="wordWrap">
                             <bool>true</bool>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="0" colspan="2">
-                          <widget class="QLabel" name="label_company_3">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                             <italic>false</italic>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Firma</string>
                            </property>
                           </widget>
                          </item>
@@ -2172,7 +2235,7 @@
                            </property>
                           </widget>
                          </item>
-                         <item row="4" column="0" colspan="2">
+                         <item row="6" column="0" colspan="2">
                           <widget class="QLabel" name="label_trade">
                            <property name="font">
                             <font>
@@ -2185,7 +2248,7 @@
                            </property>
                           </widget>
                          </item>
-                         <item row="5" column="0" colspan="2">
+                         <item row="7" column="0" colspan="2">
                           <widget class="QLabel" name="label_job_trade">
                            <property name="font">
                             <font>
@@ -2205,35 +2268,41 @@
                            </property>
                           </widget>
                          </item>
-                         <item row="6" column="0">
+                         <item row="4" column="0" colspan="2">
                           <widget class="QLabel" name="label_cost_group">
                            <property name="enabled">
-                            <bool>false</bool>
+                            <bool>true</bool>
                            </property>
                            <property name="font">
                             <font>
                              <pointsize>8</pointsize>
-                             <italic>true</italic>
+                             <italic>false</italic>
                             </font>
+                           </property>
+                           <property name="acceptDrops">
+                            <bool>true</bool>
                            </property>
                            <property name="text">
                             <string>Kostengruppe:</string>
                            </property>
                            <property name="alignment">
-                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                            </property>
                           </widget>
                          </item>
-                         <item row="6" column="1">
+                         <item row="5" column="0" colspan="2">
                           <widget class="QLabel" name="label_job_cost_group_2">
                            <property name="enabled">
-                            <bool>false</bool>
+                            <bool>true</bool>
                            </property>
                            <property name="font">
                             <font>
-                             <pointsize>10</pointsize>
-                             <italic>true</italic>
+                             <pointsize>12</pointsize>
+                             <italic>false</italic>
                             </font>
+                           </property>
+                           <property name="acceptDrops">
+                            <bool>true</bool>
                            </property>
                            <property name="text">
                             <string>-</string>
@@ -2731,7 +2800,7 @@
                         </sizepolicy>
                        </property>
                        <property name="currentIndex">
-                        <number>0</number>
+                        <number>2</number>
                        </property>
                        <widget class="QWidget" name="tabWidget_2Page1">
                         <attribute name="title">
@@ -3600,6 +3669,9 @@
                       <property name="sortingEnabled">
                        <bool>true</bool>
                       </property>
+                      <property name="expandsOnDoubleClick">
+                       <bool>false</bool>
+                      </property>
                       <property name="columnCount">
                        <number>1</number>
                       </property>
@@ -3971,6 +4043,9 @@
                       <property name="sortingEnabled">
                        <bool>true</bool>
                       </property>
+                      <property name="expandsOnDoubleClick">
+                       <bool>false</bool>
+                      </property>
                       <column>
                        <property name="text">
                         <string notr="true">1</string>
@@ -4227,186 +4302,346 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QGroupBox" name="groupBox_job_sum_4">
-                   <property name="title">
-                    <string>&amp;Budget</string>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_12">
-                    <item row="3" column="4">
-                     <widget class="QLabel" name="label_currency_30">
-                      <property name="enabled">
-                       <bool>false</bool>
-                      </property>
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>6</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>€</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0">
-                     <widget class="QLabel" name="label_w_tax_8">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>brutto</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="4">
-                     <widget class="QLabel" name="label_currency_28">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>€</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1" colspan="3">
-                     <widget class="QLabel" name="label_cost_group_budget">
-                      <property name="font">
-                       <font>
-                        <pointsize>14</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>-</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="0">
-                     <widget class="QLabel" name="label_VAT_8">
-                      <property name="enabled">
-                       <bool>false</bool>
-                      </property>
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>6</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>MwSt.:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="4">
-                     <widget class="QLabel" name="label_currency_29">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>€</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1" colspan="3">
-                     <widget class="QLabel" name="label_cost_group_budget_w_VAT">
-                      <property name="font">
-                       <font>
-                        <pointsize>10</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>-</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QLabel" name="label_net_8">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>netto</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="1" colspan="3">
-                     <widget class="QLabel" name="label_cost_group_budget_VAT_amount">
-                      <property name="enabled">
-                       <bool>false</bool>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>6</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>-</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="0" colspan="4">
-                     <widget class="QPushButton" name="pushButton_set_cost_group_budget">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>Auf Summe der Untergruppen setzen</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_39">
+                   <item>
+                    <widget class="QGroupBox" name="groupBox_job_sum_4">
+                     <property name="title">
+                      <string>&amp;Budget</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_12">
+                      <item row="1" column="3">
+                       <widget class="QLabel" name="label_currency_28">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>€</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="3">
+                       <widget class="QLabel" name="label_currency_29">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>€</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1" colspan="2">
+                       <widget class="QLabel" name="label_cost_group_budget_w_VAT">
+                        <property name="font">
+                         <font>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1" colspan="2">
+                       <widget class="QLabel" name="label_cost_group_budget_VAT_amount">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>6</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="3">
+                       <widget class="QLabel" name="label_currency_30">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>6</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>€</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0">
+                       <widget class="QLabel" name="label_VAT_8">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>6</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>MwSt.:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1" colspan="2">
+                       <widget class="QLabel" name="label_cost_group_budget">
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_w_tax_8">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>brutto</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_net_8">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>netto</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="groupBox_job_sum_7">
+                     <property name="title">
+                      <string>&amp;Budget der Kostengruppe und Untergruppen</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_21">
+                      <item row="1" column="3">
+                       <widget class="QLabel" name="label_currency_34">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>€</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1" colspan="2">
+                       <widget class="QLabel" name="label_sub_cost_groups_budget_w_VAT">
+                        <property name="font">
+                         <font>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="3">
+                       <widget class="QLabel" name="label_currency_35">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>€</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_net_9">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>netto</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_w_tax_9">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>brutto</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1" colspan="2">
+                       <widget class="QLabel" name="label_sub_cost_groups_budget">
+                        <property name="font">
+                         <font>
+                          <pointsize>14</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0">
+                       <widget class="QLabel" name="label_VAT_9">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>6</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>MwSt.:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="3">
+                       <widget class="QLabel" name="label_currency_33">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>6</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>€</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1" colspan="2">
+                       <widget class="QLabel" name="label_sub_cost_groups_budget_VAT_amount">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>6</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item>
                   <widget class="QGroupBox" name="groupBox_18">
@@ -4416,6 +4651,12 @@
                    <layout class="QVBoxLayout" name="verticalLayout_35">
                     <item>
                      <widget class="QTreeWidget" name="treeWidget_cost_group_invoices_by_job">
+                      <property name="alternatingRowColors">
+                       <bool>true</bool>
+                      </property>
+                      <property name="expandsOnDoubleClick">
+                       <bool>false</bool>
+                      </property>
                       <column>
                        <property name="text">
                         <string notr="true">1</string>
@@ -4429,7 +4670,7 @@
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_37">
                    <item>
-                    <widget class="QCommandLinkButton" name="commandLinkButton_3">
+                    <widget class="QCommandLinkButton" name="commandLinkButton_cost_groups_ov">
                      <property name="text">
                       <string>Kostengruppenübersicht</string>
                      </property>
@@ -5597,6 +5838,9 @@
    </property>
    <property name="statusTip">
     <string>Klicken Sie hier um das Programm zu beenden</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionRecentlyOpened">

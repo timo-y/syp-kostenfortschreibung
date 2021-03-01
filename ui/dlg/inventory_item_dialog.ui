@@ -16,84 +16,45 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_units">
-       <property name="maximum">
-        <double>999999999999999983222784.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_name">
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="2">
-      <widget class="QComboBox" name="comboBox_unit_type"/>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_units_2">
-       <property name="text">
-        <string>Kostengruppe</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="doubleSpinBox_price_per_unit">
-       <property name="maximum">
-        <double>999999999999999983222784.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QComboBox" name="comboBox_cost_group"/>
-     </item>
-     <item row="7" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="label_descr">
        <property name="text">
         <string>Beschreibung</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="checkBox_is_active">
-       <property name="text">
-        <string>aktiv</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEdit_name"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_price_per_unit">
-       <property name="text">
-        <string>Preis (pro Einheit)</string>
-       </property>
-      </widget>
-     </item>
      <item row="6" column="1">
-      <widget class="QComboBox" name="comboBox_trade"/>
-     </item>
-     <item row="8" column="0" colspan="3">
-      <widget class="QTextEdit" name="textEdit_description"/>
+      <widget class="QDoubleSpinBox" name="doubleSpinBox_units">
+       <property name="maximum">
+        <double>999999999999999983222784.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item row="6" column="0">
+      <widget class="QLabel" name="label_units">
+       <property name="text">
+        <string>Menge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QPushButton" name="pushButton_add_trade">
+       <property name="text">
+        <string>Neues Gewerk</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QLabel" name="label_units_3">
        <property name="text">
         <string>Gewerk</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="0" colspan="3">
+     <item row="12" column="0" colspan="3">
       <widget class="QGroupBox" name="groupBox_amount_a_reductions">
        <property name="title">
-        <string>Totaler Preis</string>
+        <string>GP (Gesamtpreis)</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_7">
         <item row="2" column="0">
@@ -239,24 +200,73 @@
        </layout>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_units">
+     <item row="4" column="1">
+      <widget class="QComboBox" name="comboBox_trade"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEdit_name"/>
+     </item>
+     <item row="6" column="2">
+      <widget class="QComboBox" name="comboBox_unit_type"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_ordial_number">
        <property name="text">
-        <string>Einheiten</string>
+        <string>Ordnungszahl</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
+     <item row="11" column="0" colspan="3">
+      <widget class="QTextEdit" name="textEdit_description"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_units_2">
+       <property name="text">
+        <string>Kostengruppe</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit_ordinal_number"/>
+     </item>
+     <item row="3" column="2">
       <widget class="QPushButton" name="pushButton_add_cost_group">
        <property name="text">
         <string>Neue Kostengruppe</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="2">
-      <widget class="QPushButton" name="pushButton_add_trade">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="checkBox_is_active">
        <property name="text">
-        <string>Neues Gewerk</string>
+        <string>aktiv</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_name">
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="comboBox_cost_group"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_unit_price">
+       <property name="text">
+        <string>EP (Einheitspreis)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QDoubleSpinBox" name="doubleSpinBox_unit_price">
+       <property name="maximum">
+        <double>999999999999999983222784.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -343,13 +353,8 @@
  </widget>
  <tabstops>
   <tabstop>lineEdit_name</tabstop>
-  <tabstop>doubleSpinBox_price_per_unit</tabstop>
   <tabstop>doubleSpinBox_units</tabstop>
   <tabstop>comboBox_unit_type</tabstop>
-  <tabstop>comboBox_cost_group</tabstop>
-  <tabstop>pushButton_add_cost_group</tabstop>
-  <tabstop>comboBox_trade</tabstop>
-  <tabstop>pushButton_add_trade</tabstop>
   <tabstop>textEdit_description</tabstop>
   <tabstop>checkBox_is_active</tabstop>
   <tabstop>pushButton_delete</tabstop>

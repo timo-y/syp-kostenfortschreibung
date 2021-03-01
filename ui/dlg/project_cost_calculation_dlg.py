@@ -11,7 +11,7 @@ from PyQt5.QtCore import QDate
 
 from core.obj import proj
 from ui import dlg, helper
-from ui.helper import amount_w_currency_str
+from ui.helper import amount_str
 
 class ProjectCostCalculationDialog(QtWidgets.QDialog):
     def __init__(self, *, app_data, loaded_pcc=None):
@@ -59,7 +59,15 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
     def initialize_ui(self):
         uic.loadUi('ui/dlg/project_cost_calculation_dialog.ui', self)
         """ TODO: figure out where to put this """
-        tree_widget_cols = ["is_active", "name", "cost_group", "trade", "units", "unit_type", "price_per_unit", "total_price"] # maybe put on top of file
+        tree_widget_cols = ["is_active",
+                            "ordinal_number",
+                            "name",
+                            "cost_group",
+                            "trade",
+                            "units",
+                            "unit_type",
+                            "unit_price",
+                            "total_price"] # maybe put on top of file
         self.treeWidget_inventory.setHeaderLabels([self.app_data.titles[col] for col in tree_widget_cols])
 
     def set_date_today(self):
@@ -206,16 +214,17 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
             helper.add_item_to_tree(content_item=inventory_item,
                                     parent=self.treeWidget_inventory,
                                     cols=[f"{inventory_item.is_active}",
+                                        inventory_item.ordinal_number,
                                         inventory_item.name,
                                         f"{inventory_item.cost_group.id} / {inventory_item.cost_group.name}",
                                         str(inventory_item.trade.name),
                                         f"{inventory_item.units}",
                                         f"{inventory_item.unit_type}",
-                                        amount_w_currency_str(inventory_item.price_per_unit, self.currency),
-                                        amount_w_currency_str(inventory_item.total_price, self.currency)])
+                                        amount_str(inventory_item.unit_price, self.currency),
+                                        amount_str(inventory_item.total_price, self.currency)])
             total_price_sum += inventory_item.total_price if inventory_item.is_active else 0
 
-        self.label_total_price_sum.setText(amount_w_currency_str(total_price_sum, self.currency))
+        self.label_total_price_sum.setText(amount_str(total_price_sum, self.currency))
 
     """
     #

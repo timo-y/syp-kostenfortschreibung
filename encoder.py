@@ -126,7 +126,7 @@ class InventoryItemEncoder(JSONEncoder):
                 #  data
                 "name": o.name,
                 "description": o.description,
-                "price_per_unit": o.price_per_unit,
+                "unit_price": o.unit_price,
                 "units": o.units,
                 "unit_type": o.unit_type,
                 "is_active": o.is_active,

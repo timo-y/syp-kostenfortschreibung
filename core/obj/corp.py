@@ -272,8 +272,8 @@ class Invoice(IdObject):
                     ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
-        self.company = company
-        self.job = job
+        self._company = company
+        self._job = job
         self.cumulative = cumulative
         self.invoice_date = invoice_date
         self.inbox_date = inbox_date
@@ -305,16 +305,31 @@ class Invoice(IdObject):
     #
     #
     """
+    @property
+    def company(self):
+        return self._company if self._company and self._company.is_not_deleted() else None
+    @company.setter
+    def company(self, company):
+        self._company = company
+
+    @property
+    def job(self):
+        return self._job if self._job and self._job.is_not_deleted() else None
+    @job.setter
+    def job(self, job):
+        self._job = job
+
+
     """
     #   second level properties
     """
     @property
     def trade(self):
-        return self.job.trade
+        return self.job.trade if self.job else None
 
     @property
     def cost_group(self):
-        return self.job.trade.cost_group if self.job.trade else None
+        return self.job.cost_group if self.job else None
 
     """
     #   calculated properties

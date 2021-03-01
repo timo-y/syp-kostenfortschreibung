@@ -9,7 +9,7 @@ from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import QDialogButtonBox
 
 from ui import dlg, helper
-from ui.helper import amount_str, amount_w_currency_str
+from ui.helper import amount_str
 from core.obj import proj
 
 class InventoryItemDialog(QtWidgets.QDialog):
@@ -90,7 +90,7 @@ class InventoryItemDialog(QtWidgets.QDialog):
 
     def update_ui(self):
         args = self.get_input()
-        total_price = args["price_per_unit"] * args["units"]
+        total_price = args["unit_price"] * args["units"]
         self.set_labels(total_price)
         self.activate_ok_button()
 
@@ -109,7 +109,7 @@ class InventoryItemDialog(QtWidgets.QDialog):
     def set_spin_box_actions(self):
         """ spinbox update """
         self.doubleSpinBox_units.valueChanged.connect(self.update_ui)
-        self.doubleSpinBox_price_per_unit.valueChanged.connect(self.update_ui)
+        self.doubleSpinBox_unit_price.valueChanged.connect(self.update_ui)
 
     def set_combo_box_actions(self):
         """ ok button """
@@ -171,11 +171,11 @@ class InventoryItemDialog(QtWidgets.QDialog):
                                     cost_group=self.treeView_inventory,
                                     cols=[inventory_item.name,
                                         f"{inventory_item.units} {inventory_item.unit_type}",
-                                        amount_w_currency_str(inventory_item.price_per_unit, self.currency),
-                                        amount_w_currency_str(inventory_item.total_price, self.currency)])
+                                        amount_str(inventory_item.unit_price, self.currency),
+                                        amount_str(inventory_item.total_price, self.currency)])
             total_price_sum += inventory_item.total_price
 
-        self.label_total_price_sum.setText(amount_w_currency_str(total_price_sum, self.currency))
+        self.label_total_price_sum.setText(amount_str(total_price_sum, self.currency))
 
     """
     #
@@ -205,19 +205,21 @@ class InventoryItemDialog(QtWidgets.QDialog):
         self.label_total_price_w_VAT.setText(amount_str(total_price_w_VAT))
         self.label_total_price_VAT_amount.setText(amount_str(total_price_VAT_amount))
 
-    def set_input(self, *, _uid=None, name, price_per_unit, units, description, **kwargs):
+    def set_input(self, *, _uid=None, name, ordinal_number, unit_price, units, description, **kwargs):
         """ meta data """
         self.label_uid.setText(_uid.labelize() if _uid else "-")
 
         self.lineEdit_name.setText(name)
-        self.doubleSpinBox_price_per_unit.setValue(price_per_unit)
+        self.lineEdit_ordinal_number.setText(ordinal_number)
+        self.doubleSpinBox_unit_price.setValue(unit_price)
         self.doubleSpinBox_units.setValue(units)
         self.textEdit_description.setText(description)
 
     def get_input(self):
         args = {
                 "name": self.lineEdit_name.text(),
-                "price_per_unit": self.doubleSpinBox_price_per_unit.value(),
+                "ordinal_number": self.lineEdit_ordinal_number.text(),
+                "unit_price": self.doubleSpinBox_unit_price.value(),
                 "units": self.doubleSpinBox_units.value(),
                 "unit_type": self.comboBox_unit_type.currentData(),
                 "is_active": self.checkBox_is_active.isChecked(),

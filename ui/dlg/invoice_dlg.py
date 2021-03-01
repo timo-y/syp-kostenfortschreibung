@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (QDialog, QInputDialog, QFileDialog, QDialogButtonBo
 from PyQt5.QtCore import QDate
 
 from ui import dlg, helper
-from ui.helper import input_to_float, two_inputs_to_float, str_to_float, amount_str, amount_w_currency_str, rnd
+from ui.helper import input_to_float, two_inputs_to_float, str_to_float, amount_str, rnd
 from core.obj import (proj, corp, arch)
 
 class InvoiceDialog(QtWidgets.QDialog):
@@ -301,9 +301,9 @@ class InvoiceDialog(QtWidgets.QDialog):
         self.label_amount_a_reductions_amount_w_VAT.setText(amount_str(amount_a_reductions_amount_w_VAT))
         self.label_amount_a_reductions_VAT_amount.setText(amount_str(amount_a_reductions_amount_VAT_amount))
         """ approved amount """
-        self.label_approved_amount.setText(amount_w_currency_str(approved_amount, self.app_data.project.get_currency()))
+        self.label_approved_amount.setText(amount_str(approved_amount, self.app_data.project.get_currency()))
         self.label_discount_amount.setText(amount_str(discount_amount))
-        self.label_approved_amount_a_discount_amount.setText(amount_w_currency_str(approved_amount_a_discount_amount, self.app_data.project.get_currency()))
+        self.label_approved_amount_a_discount_amount.setText(amount_str(approved_amount_a_discount_amount, self.app_data.project.get_currency()))
         """ safety deposit """
         if not self.checkBox_sd_absolute.isChecked():
             self.doubleSpinBox_safety_deposit_absolute.setValue(safety_deposit_amount)

@@ -147,7 +147,7 @@ class InventoryItemDecoder(JSONDecoder):
                 "deleted": dct["deleted"],
                 "name": dct["name"],
                 "description": dct["description"],
-                "price_per_unit": dct["price_per_unit"],
+                "unit_price": dct["unit_price"] if "unit_price" in dct else dct["price_per_unit"],
                 "units": dct["units"],
                 "unit_type": dct["unit_type"],
                 "is_active": dct["is_active"],

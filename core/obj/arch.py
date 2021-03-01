@@ -207,16 +207,20 @@ class CostGroup(IdObject):
     def is_sub_group(self):
         return not(self.is_main_group())
 
+    """
+    #    is_sub_group_of
+    #       Check whether a cost_group is subgroup of another one.
+    #       Every cost_group is a subgroup of itself.
+    """
     def is_sub_group_of(self, cost_group):
-        if self is cost_group:
-            return True
-        elif self.parent is None:
+        """if self is cost_group:
+            return True"""
+        if self.parent is None:
             return False
+        elif self.parent is cost_group:
+            return True
         else:
-            if self.parent is cost_group:
-                return True
-            else:
-                return self.parent.is_sub_group_of(cost_group)
+            return self.parent.is_sub_group_of(cost_group)
     """
     #
     #   GETTER

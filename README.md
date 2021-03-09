@@ -11,3 +11,10 @@ Accounting application developed for Scharmer-Yu + Partner.
 ### optional:
 - ujson / simplejson    (for more performance for loading/saving data)
 - pillow                (image support in the xlsx-templates)
+
+
+## To Do
+- Documentation
+- Templates and Outputs of Overviews
+- Features:
+-- graphical representations of project

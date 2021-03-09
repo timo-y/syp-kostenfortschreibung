@@ -1,7 +1,7 @@
 """
 #
 #   Main programm
-#
+#   Run this file to open the application.
 #
 """
 import debug
@@ -13,13 +13,13 @@ import logging
 import logging.config
 import logging.handlers
 
-MAIN_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
 from ui import mainwindow
 from core import api
+
+APP_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 class Application(QtWidgets.QApplication):
     """docstring for Application"""

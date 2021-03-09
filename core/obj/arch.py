@@ -11,8 +11,17 @@ from core.obj import IdObject
 from core.obj import restore
 
 class ArchJob(corp.Job):
-    """docstring for ArchJob"""
+    """A class representing an Architecture Job.
 
+    Instance Variables:
+    company - Corp.Company --
+    trade - arch.Trade --
+    cost_group - arch.CostGroup --
+    job_sum - float --
+    comment - string --
+    job_additions - list --
+    paid_safety_deposits - list --
+    """
     def __init__(self,  id, *, uid=None, deleted=False,  company=None, trade=None, cost_group=None, job_sum=None, comment="",
                     company_ref=None, trade_ref=None, cost_group_ref=None, job_additions=None,
                     paid_safety_deposits=None):
@@ -91,6 +100,7 @@ class ArchJob(corp.Job):
     """
     @debug.log
     def update(self, *,id, company, job_sum, trade, cost_group, paid_safety_deposits):
+        """ Update instance variables. """
         super(ArchJob, self).update(id=id, company=company, job_sum=job_sum)
         self.trade = trade
         self.cost_group = cost_group
@@ -104,12 +114,14 @@ class ArchJob(corp.Job):
     """
     @debug.log
     def restore(self, project):
+        """ Restore pointers by UID. """
         super(ArchJob, self).restore(project)
         self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades)
         self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups)
 
     @debug.log
     def restore_after_import(self, project):
+        """ Restore pointers by name/id. """
         super(ArchJob, self).restore_after_import(project)
         self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades, by=["name"])
         self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups, by=["id"])

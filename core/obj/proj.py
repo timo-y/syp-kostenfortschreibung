@@ -14,7 +14,18 @@ from core.obj import IdObject
 from core.obj import restore
 
 class Project(IdObject):
+    """ Represents an architecture project.
 
+    Contains all relevant variables of a project. It contains a config,
+    some basic metadata, the project status, a ProjectData object containing advanced
+    metadata and lists of the following obects:
+    arch.ArchJob
+    corp.Invoice
+    Corp.Company
+    arch.Trade
+    arch.CostGroup
+    ProjectCostCalculation
+    """
     def __init__(self, identifier, *, config=None, uid=None, deleted=False,  construction_scheme="", address=None, client=None,
                         project_data=None, project_cost_calculations=None, companies=None, trades=None, cost_groups=None,
                         invoices=None, jobs=None, commissioned_date=None, planning_finished_date = None,
@@ -29,45 +40,47 @@ class Project(IdObject):
         #       window_size (dict: width, height), building_classes (list), planning_phases (list of tuples)
         self.config = config
 
+        #   Basic metadata
         self.identifier = identifier
         self.construction_scheme = construction_scheme
         self._address = address
         self._client = client
+        #   Project status
+        self.commissioned_date = commissioned_date
+        self.planning_finished_date = planning_finished_date
+        self.billed_date = billed_date
+        self.planning_status = planning_status
 
         #   ProjectData (obj.proj.ProjectData)
         #       Object containing more detailed project data like usable floor space.
         #       For more informations look at obj.proj.ProjectData.
         self._project_data = project_data
-        #   ProjectCostCalculations
-        #       TODO: descr
-        #       TODO: descr
-        self._project_cost_calculations = project_cost_calculations if project_cost_calculations is not None else list()
+
         """
-        #   Companies, Trades and COST_GROUPS
-        #       These lists are initialized with the default lists and can be
-        #       extended in a project.
-        """
-        self._companies = companies if companies is not None else list()
-        self._trades = trades if trades is not None else list()
-        self._cost_groups = cost_groups if cost_groups is not None else list()
-        """
-        #   Invoices, JOBS and PEOPLE
+        #   Invoices, Jobs
         #       Initialized empty and accumulated during the project.
         """
+        self._jobs = jobs if jobs is not None else list()
         self._invoices = invoices if invoices is not None else list()
-        #   self.sort_invoices():
+        self.sort_invoices()
+        #   sort_invoices():
         #       Invoices must always be sorted by date (oldest first)
         #       because the way the previous invoices are calculated.
         #       In most cases of appending invoices, the sorting is automatically
         #       taken care of via the "setter" self.add_invoice(...).
-        self.sort_invoices()
-        self._jobs = jobs if jobs is not None else list()
+        """
+        #   Companies, Trades and CostGroups
+        #       These lists are initialized with the default lists and can be
+        #       extended in a project. The initialization takes place in the AppData container.
+        """
+        self._companies = companies if companies is not None else list()
+        self._trades = trades if trades is not None else list()
+        self._cost_groups = cost_groups if cost_groups is not None else list()
+        #   ProjectCostCalculations
+        #       TODO: descr
+        #       TODO: descr
+        self._project_cost_calculations = project_cost_calculations if project_cost_calculations is not None else list()
 
-        """ project status """
-        self.commissioned_date = commissioned_date
-        self.planning_finished_date = planning_finished_date
-        self.billed_date = billed_date
-        self.planning_status = planning_status
 
     """
     #
@@ -77,6 +90,7 @@ class Project(IdObject):
     """
     @property
     def address(self):
+        """ Return the address of the project. """
         return self._address
     @address.setter
     def address(self, address):
@@ -87,6 +101,7 @@ class Project(IdObject):
 
     @property
     def client(self):
+        """ Return the client of the project. """
         return self._client
     @client.setter
     def client(self, client):
@@ -97,6 +112,7 @@ class Project(IdObject):
 
     @property
     def project_data(self):
+        """ Return the advanced metadata of the project. """
         return self._project_data
     @project_data.setter
     def project_data(self, project_data):
@@ -112,6 +128,7 @@ class Project(IdObject):
     """
     @property
     def project_cost_calculations(self):
+        """ Return the non-deleted ProjectCostCalculations of the project. """
         return [pcc for pcc in self._project_cost_calculations if pcc.is_not_deleted()]
     @project_cost_calculations.setter
     def project_cost_calculations(self, project_cost_calculations):
@@ -121,6 +138,7 @@ class Project(IdObject):
             raise Exception("Existing list of project_cost_calculations is non-empty.")
 
     def get_deleted_project_cost_calculations(self):
+        """ Return the deleted ProjectCostCalculations of the project. """
         return [pcc for pcc in self._project_cost_calculations if pcc.is_deleted()]
 
     """ properties
@@ -130,6 +148,7 @@ class Project(IdObject):
     """
     @property
     def companies(self):
+        """ Return the non-deleted Companies of the project. """
         return [company for company in self._companies if company.is_not_deleted()]
     @companies.setter
     def companies(self, companies):
@@ -139,9 +158,11 @@ class Project(IdObject):
             raise Exception("Existing list of companies is non-empty.")
 
     def get_deleted_companies(self):
+        """ Return the deleted Companies of the project. """
         return [company for company in self._companies if company.is_deleted()]
 
     def get_companies_of_person(self, person):
+        """ Return the non-deleted Companies having a given person as contact person. """
         return [company for company in self.companies if company.contact_person is person]
 
     """ properties
@@ -151,6 +172,7 @@ class Project(IdObject):
     """
     @property
     def trades(self):
+        """ Return the non-deleted Trades of the project. """
         return [trade for trade in self._trades if trade.is_not_deleted()]
     @trades.setter
     def trades(self, trades):
@@ -160,9 +182,11 @@ class Project(IdObject):
             raise Exception("Existing list of trades is non-empty.")
 
     def get_deleted_trades(self):
+        """ Return the deleted Trades of the project. """
         return [trade for trade in self._trades if trade.is_deleted()]
 
     def get_trade_budgets_total(self):
+        """ Return tne sum of the budgets of all Trades of the project. """
         return sum(trade.budget for trade in self.trades)
 
     """ properties
@@ -363,7 +387,7 @@ class Project(IdObject):
     @debug.log
     def set_save_path(self, save_path, datetime=datetime.now()):
         self.config["user_save"]["datetime"] = datetime
-        self.config["user_save"]["path"] = save_path
+        self.config["user_save"]["path"] = str(save_path)
 
     """
     #   Autosave Path / Time
@@ -381,7 +405,7 @@ class Project(IdObject):
     @debug.log
     def set_autosave_path(self, save_path, datetime=datetime.now()):
         self.config["last_auto_save"]["datetime"] = datetime
-        self.config["last_auto_save"]["path"] = save_path
+        self.config["last_auto_save"]["path"] = str(save_path)
 
     """
     #
@@ -687,17 +711,15 @@ class Project(IdObject):
 
         self.edited()
 
-    """
-    #
-    #   Restore
-    #       Functions that help to reconstruct the data-structure after loading
-    #       or after import. When loading, we can restore pointers by UID.
-    #       When importing, we have other attributes, like name, id, etc.
-    #       to restore the links.
-    #
-    """
     @debug.log
     def restore(self):
+        """Restore pointers from UID.
+
+        Function that help to reconstruct the data-structure after loading.
+        When loading, we can restore pointers by UID, since they were all
+        created in the same project and hence the UIDs are known. If that
+        is not the case, use restore_after_import().
+        """
         self.restore_people()
         self.restore_cost_groups()
         self.restore_project_cost_calculations()
@@ -710,6 +732,13 @@ class Project(IdObject):
 
     @debug.log
     def restore_after_import(self):
+        """Restore pointers from name/id/... .
+
+        Function that help to reconstruct the data-structure after import.
+        When importing, we don't know the UID and have to use other attributes,
+        like name, id, etc. to restore the links.
+        If UID is known, use restore().
+        """
         self.restore_after_import_people()
         self.restore_after_import_cost_groups()
         self.restore_after_import_project_cost_calculations()
@@ -789,16 +818,12 @@ class Project(IdObject):
     def has_been_saved(self):
         return True if self.config["user_save"]["path"] else False
 
-"""
-#
-#   ProjectData
-#       This Object contains all hardfacts of a project, i.e. its
-#       property size or the building class.
-#
-"""
 class ProjectData(IdObject):
-    """ docstring for ProjectData """
+    """Encapsulates the advanced project data.
 
+    This Object contains all hardfacts of a project, i.e. its
+    property size or the building class.
+    """
     def __init__(self, commissioned_services=None, property_size=0,
                     usable_floor_space_nuf=0, usable_floor_space_bgf=0,
                     rental_space=0, building_class=None,
@@ -818,20 +843,18 @@ class ProjectData(IdObject):
         self.contract_fee = contract_fee
         self.execution_period = execution_period
 
-"""
-#
-#   ProjectCostCalculation
-#       A project costcalculation is mainly a list
-#       of objects (dicts), which represent some
-#       item or service and they belong to a CostGroup
-#       and/or Trade, with cost per unit and units.
-#       Then we can make a pre-calculation of the project
-#       costs. During a project, these calculation can
-#       be updated and the Trade/CostGroup budgets
-#       updated w.r.t. this.
-#
-"""
 class ProjectCostCalculation(IdObject):
+    """Represents a cost calculation.
+
+    A project costcalculation is mainly a list
+    of objects (dicts), which represent some
+    item or service and they belong to a CostGroup
+    and/or Trade, with cost per unit and units.
+    Then we can make a pre-calculation of the project
+    costs. During a project, these calculation can
+    be updated and the Trade/CostGroup budgets
+    updated w.r.t. this.
+    """
     PCC_TYPES = [
         "Kostenrahmen (LP1)",
         "Kostenschätzung (LP2)",
@@ -839,7 +862,7 @@ class ProjectCostCalculation(IdObject):
         "Kostenvoranschlag (LP4->LP5)",
         "Kostenanschlag (LP6, LP7, LP8)",
     ]
-    """docstring for CostCalculation"""
+
     def __init__(self, name, type, uid=None, deleted=False, date=None, inventory=None):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name

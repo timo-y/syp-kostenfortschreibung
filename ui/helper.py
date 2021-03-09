@@ -27,13 +27,6 @@ from core.obj import proj
 #   Input, add and edit objects.
 #
 """
-def save_curr_project_prompt(dialog, app_data):
-    reply = dlg.open_save_curr_project_prompt(dialog)
-    if reply == QtWidgets.QMessageBox.Save:
-        save_project(dialog, app_data)
-    elif reply == QtWidgets.QMessageBox.Cancel:
-        return False
-    return True
 
 """ i,a&e
 #
@@ -721,35 +714,58 @@ def select_table_item(table, content_item):
 def resize_tree_columns(treewidget):
     for i in range(1,treewidget.columnCount()):
         treewidget.resizeColumnToContents(i)
+
 """
 #
+#   PROMPTS
+#
+#
+"""
+"""
+#   WANT TO SAVE?
+#   Open a prompt asking if you want to save.
+"""
+def save_curr_project_prompt(dialog, app_data):
+    """  Open a dialog asking user if they want to save and,
+    if confirmed, save tne project.
+    """
+    reply = dlg.open_save_curr_project_prompt(dialog)
+    if reply == QtWidgets.QMessageBox.Save:
+        save_project(dialog, app_data)
+    elif reply == QtWidgets.QMessageBox.Cancel:
+        return False
+    return True
+
+"""
 #   ARE YOU SURE?
 #   Open a prompt asking if sure to do action.
-#
 """
 def u_sure_prompt(dialog):
+    """  Open a dialog asking user if they are sure to proceed. """
     reply = dlg.open_u_sure_prompt(dialog)
     if reply == QtWidgets.QMessageBox.Yes:
         return True
     return False
+
 """
-#
 #   DELETE
 #       This function is called within the a dialo from ui.dlg.
 #       Ask first via prompt, if yes close dialog and return signal -1.
-#
 """
 def delete(dialog, object):
-    # TODO: object not needed. maybe remove or delete here...
-    reply = delete_prompt(dialog)
-    if reply:
-        dialog.done(-1)
+    """ Open a dialog to confirm the deletion.
 
-def delete_prompt(dialog):
+    Since we can only delete objects from their respective edit dialog, this prompt,
+    if confirmed, closes the parent dialog with the value -1.
+    """
+    # TODO: object not needed. maybe remove or delete here...
     reply = dlg.open_delete_prompt(dialog)
     if reply == QtWidgets.QMessageBox.Yes:
+        # close dialog with the value -1
+        dialog.done(-1)
         return True
-    return False
+    else:
+        return False
 
 """
 #
@@ -758,17 +774,34 @@ def delete_prompt(dialog):
 #
 """
 def from_json_file(file_path, *, decoder=json.JSONDecoder):
+    """ Import a *.json file.
+
+    Arguments:
+    file_path -- path to the file
+    decoder -- the decoder (default: json.JSONDecoder)
+    """
     output = None
     with open(file_path, "r") as file:
         output = json.load(file, object_hook=decoder().object_hook)
     return output
 
 def to_json_file(data, save_path, *, encoder=json.JSONEncoder):
+    """ Export data to a *.json file.
+
+    Arguments:
+    save_path -- destination path of the file
+    encoder -- the encoder (default: json.JSONEncoder)
+    """
     with open(save_path, "w") as file:
         json.dump(data, file, cls=encoder, indent=4)
 
 def xlsx2pdf(input_path, filename):
-    # Export PDF
+    """ Export PDF from xlsx-file.
+
+    Arguments:
+    input_path -- path of xlsx-file
+    filename -- destination path of PDF
+    """
     dir_path = os.path.dirname(input_path)
     pdf_filename = f"{filename}.pdf"
     pdf_save_path = os.path.join(dir_path, pdf_filename)

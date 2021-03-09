@@ -6,12 +6,8 @@
 """
 import uuid
 
-"""
-#
 #   ULTRA JSON
-#       More performance de- and encoding
-#
-"""
+#   More performance de- and encoding
 try:
     import ujson as json
 except ImportError:
@@ -30,7 +26,6 @@ from core.obj import corp, proj, arch, uid
 class AllDecoder(JSONDecoder):
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
-
 
     def dict_to_object(self, dct):
         if "UID" in dct:

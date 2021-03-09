@@ -4,12 +4,9 @@
 #   Encoding objects into JSON-format
 #
 """
-"""
-#
+
 #   ULTRA JSON
-#       More performance de- and encoding
-#
-#"""
+#   More performance de- and encoding
 try:
     import ujson as json
 except ImportError:

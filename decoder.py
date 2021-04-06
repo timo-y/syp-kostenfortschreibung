@@ -35,7 +35,7 @@ class AllDecoder(JSONDecoder):
         """Check the object type and decodes JSON to the original object.
 
         Args:
-            dct (dict): json formated input
+            dct (dict): json formatted input
 
         Returns:
             Restored object

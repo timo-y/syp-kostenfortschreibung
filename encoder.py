@@ -21,7 +21,18 @@ from core.obj import corp, proj, arch
 # maybe stupid
 class AllEncoder(JSONEncoder):
 
+    """ JSON-Encoder for all objects.
+    """
+
     def default(self, o):
+        """ Check the object type and encodes the original object to JSON.
+
+        Args:
+            o (TYPE): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, proj.Project):
             ProjectEncoder.default(o)
         elif isinstance(o. proj.ProjectData):
@@ -47,7 +58,18 @@ class AllEncoder(JSONEncoder):
 
 class ProjectEncoder(JSONEncoder):
 
+    """ JSON-Encoder for Project objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (proj.Project): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, proj.Project):
             encoded_project = {
                 # meta data
@@ -71,7 +93,18 @@ class ProjectEncoder(JSONEncoder):
 
 class ProjectDataEncoder(JSONEncoder):
 
+    """ JSON-Encoder for ProjectData objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (proj.ProjectData): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, proj.ProjectData):
             encoded_project_data = {
                 # meta data
@@ -95,7 +128,18 @@ class ProjectDataEncoder(JSONEncoder):
 
 class ProjectCostCalculationEncoder(JSONEncoder):
 
+    """ JSON-Encoder for ProjectCostCalculation objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (proj.ProjectCostCalculation): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, proj.ProjectCostCalculation):
             encoded_pcc = {
                 # meta data
@@ -113,7 +157,18 @@ class ProjectCostCalculationEncoder(JSONEncoder):
 
 class InventoryItemEncoder(JSONEncoder):
 
+    """ JSON-Encoder for InventoryItem objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (proj.InventoryItem): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, proj.InventoryItem):
             encoded_inventory_item = {
                 # meta data
@@ -143,7 +198,18 @@ class InventoryItemEncoder(JSONEncoder):
 
 class CompanyEncoder(JSONEncoder):
 
+    """ JSON-Encoder for Company objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (corp.Company): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, corp.Company):
             encoded_company = {
                 # meta data
@@ -163,7 +229,18 @@ class CompanyEncoder(JSONEncoder):
 
 class TradeEncoder(JSONEncoder):
 
+    """ JSON-Encoder for Trade objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (arch.Trade): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, arch.Trade):
             encoded_trade = {
                 # meta data
@@ -180,7 +257,18 @@ class TradeEncoder(JSONEncoder):
 
 class CostGroupEncoder(JSONEncoder):
 
+    """ JSON-Encoder for CostGroup objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (arch.CostGroup): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, arch.CostGroup):
             encoded_cost_group = {
                 # meta data
@@ -203,7 +291,18 @@ class CostGroupEncoder(JSONEncoder):
 
 class PersonEncoder(JSONEncoder):
 
+    """ JSON-Encoder for Person objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (corp.Person): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, corp.Person):
             encoded_person = {
                 # meta data
@@ -229,7 +328,18 @@ class PersonEncoder(JSONEncoder):
 
 class AddressEncoder(JSONEncoder):
 
+    """ JSON-Encoder for Address objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (corp.Address): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, corp.Address):
             encoded_address = {
                 # meta data
@@ -249,7 +359,18 @@ class AddressEncoder(JSONEncoder):
 
 class JobEncoder(JSONEncoder):
 
+    """ JSON-Encoder for Job objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (corp.Job): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, corp.Job):
             encoded_job = {
                 # meta data
@@ -270,7 +391,18 @@ class JobEncoder(JSONEncoder):
 
 class ArchJobEncoder(JobEncoder):
 
+    """ JSON-Encoder for ArchJob objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (arch.ArchJob): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, arch.ArchJob):
             encoded_job = {
                 # meta data
@@ -303,7 +435,18 @@ class ArchJobEncoder(JobEncoder):
 
 class InvoiceEncoder(JSONEncoder):
 
+    """ JSON-Encoder for Invoice objects.
+    """
+
     def default(self, o):
+        """Check the object type and encode to JSON.
+
+        Args:
+            o (corp.Invoice): Input object
+
+        Returns:
+            dict: JSON encoded object
+        """
         if isinstance(o, corp.Invoice):
             encoded_invoice = {
                 # meta data

@@ -106,9 +106,11 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
     def activate_inventory_item_buttons(self):
         if self.treeWidget_inventory.currentItem():
             self.pushButton_edit_inventory_item.setEnabled(True)
+            self.pushButton_copy_inventory_item.setEnabled(True)
             self.pushButton_remove_inventory_item.setEnabled(True)
         else:
             self.pushButton_edit_inventory_item.setEnabled(False)
+            self.pushButton_copy_inventory_item.setEnabled(False)
             self.pushButton_remove_inventory_item.setEnabled(False)
 
     def activate_ok_button(self):
@@ -139,6 +141,7 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
         self.pushButton_reset_filter.clicked.connect(self.button_reset_filter)
         self.pushButton_add_inventory_item.clicked.connect(self.button_new_inventory_item)
         self.pushButton_edit_inventory_item.clicked.connect(self.button_edit_inventory_item)
+        self.pushButton_copy_inventory_item.clicked.connect(self.button_copy_inventory_item)
         self.pushButton_remove_inventory_item.clicked.connect(self.button_remove_inventory_item)
         """ delete button """
         self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_pcc))
@@ -167,6 +170,12 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
     def button_edit_inventory_item(self):
         inventory_item = self.treeWidget_inventory.currentItem().data(1, QtCore.Qt.UserRole)
         self.edit_inventory_item(inventory_item)
+
+    def button_copy_inventory_item(self):
+        inventory_item = self.treeWidget_inventory.currentItem().data(1, QtCore.Qt.UserRole)
+        copied_item = inventory_item.__copy__()
+        self.inventory.append(copied_item)
+        self.update_ui()
 
     def button_remove_inventory_item(self):
         inventory_item = self.treeWidget_inventory.currentItem().data(1, QtCore.Qt.UserRole)

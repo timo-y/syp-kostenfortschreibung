@@ -11,7 +11,7 @@ from core.obj import IdObject
 from core.obj import restore
 
 class ArchJob(corp.Job):
-    """A class representing an Architecture Job.
+    """ A class representing an Architecture Job.
 
     Instance Variables:
     company - Corp.Company --

@@ -687,16 +687,11 @@ class Project(IdObject):
             person.company.contact_person = None
         return person
 
-    """
-    #
-    #   Update
-    #   Fuctions updating a project
-    #
-    """
     @debug.log
     def update(self, identifier, * ,construction_scheme="", address=None, client=None, project_data=None,
                 commissioned_date=None, planning_finished_date = None, billed_date=None, planning_status=None, **kwargs
                 ):
+        """ Update instance variables. """
         self.identifier = identifier
         self.construction_scheme = construction_scheme
         self.address = address
@@ -713,7 +708,7 @@ class Project(IdObject):
 
     @debug.log
     def restore(self):
-        """Restore pointers from UID.
+        """ Restore pointers from UID.
 
         Function that help to reconstruct the data-structure after loading.
         When loading, we can restore pointers by UID, since they were all
@@ -729,10 +724,9 @@ class Project(IdObject):
         self.restore_invoices()
         self.update_all_prev_invoices()
 
-
     @debug.log
     def restore_after_import(self):
-        """Restore pointers from name/id/... .
+        """ Restore pointers from name/id/... .
 
         Function that help to reconstruct the data-structure after import.
         When importing, we don't know the UID and have to use other attributes,
@@ -819,7 +813,7 @@ class Project(IdObject):
         return True if self.config["user_save"]["path"] else False
 
 class ProjectData(IdObject):
-    """Encapsulates the advanced project data.
+    """ Encapsulates the advanced project data.
 
     This Object contains all hardfacts of a project, i.e. its
     property size or the building class.
@@ -844,7 +838,7 @@ class ProjectData(IdObject):
         self.execution_period = execution_period
 
 class ProjectCostCalculation(IdObject):
-    """Represents a cost calculation.
+    """ Represents a cost calculation.
 
     A project costcalculation is mainly a list
     of objects (dicts), which represent some
@@ -879,20 +873,10 @@ class ProjectCostCalculation(IdObject):
     @property
     def inventory(self):
         return [item for item in self._inventory if item.is_not_deleted()]
+
     def add_inventory_item(self, inventory_item):
         self._inventory.append(inventory_item)
-    """
-    #
-    #   Maybe this is not needed
-    #
-    def input_inventory_item(self, name, description="", unit_price=0, units=0,
-                            unit_type="", is_active=True, cost_group=None, trade=None):
-        inventory_item = InventoryItem(name=name, description=description,
-                                        unit_price=unit_price, units=units,
-                                        unit_type=unit_type, is_active=is_active,
-                                        cost_group=cost_group, trade=trade)
-        self.add_inventory_item(inventory_item)
-    """
+
     def delete_inventory_item(self, inventory_item):
         inventory_item.delete()
 
@@ -906,20 +890,19 @@ class ProjectCostCalculation(IdObject):
     #       Make a prognosis of the costs of a project via the inventory
     #
     """
-    """
-    #
-    #   get_sub_cost_groups_prognosis
-    #       Since the 100,200,... CostGroups also have their own budgets,
-    #       the actual budget for the X00 CostGroup is the sum of the X00
-    #       CostGroup plus the sum of all CostGroups that are below in the
-    #       CostGroup-tree i.e., X00 is their parent or their parents parent
-    #
-    """
     def get_sub_cost_groups_prognosis(self, cost_group, cost_groups):
+        """ Get the sum of the prognosises of strict subgroups of a given cost group.
+
+        Since the 100,200,... cost groups also have their own budgets,
+        the actual budget for the X00 cost group is the sum of the X00
+        cost group plus the sum of all cost group that are below in the
+        tree i.e., X00 is their parent or their parents parent
+        """
         cost_group_sum = sum(self.get_cost_group_prognosis(sub_cost_group) for sub_cost_group in cost_groups if sub_cost_group.is_sub_group_of(cost_group))
         return cost_group_sum
 
     def get_cost_group_prognosis(self, cost_group):
+        """ Get the cost prognosis of a cost group. """
         cost_group_sum = sum(self.get_cost_group_items(cost_group))
         return cost_group_sum
 
@@ -985,14 +968,15 @@ class ProjectCostCalculation(IdObject):
     #
     #
     """
-    def __copy__(self):
+    def __copy__(self, copy_index=0):
         new_inventory = list()
         for item in self.inventory:
             new_item = InventoryItem(name=item.name, description=item.description, unit_price=item.unit_price,
                                     units=item.units, unit_type=item.unit_type, is_active=item.is_active, cost_group=item.cost_group,
                                     cost_group_ref=item._cost_group_ref, trade=item.trade, trade_ref=item._trade_ref)
             new_inventory.append(new_item)
-        new_pcc = ProjectCostCalculation(name=f"{self.name} copy", date=QDate.currentDate(), inventory=new_inventory)
+            name = f"{self.name} copy{' '+copy_index if copy_index>0 else ''}"
+        new_pcc = ProjectCostCalculation(name=name, type=self.type, date=QDate.currentDate(), inventory=new_inventory)
         return new_pcc
 
 
@@ -1004,12 +988,12 @@ class InventoryItem(IdObject):
     ]
 
     """docstring for InventoryItem"""
-    def __init__(self, name="", *, ordinal_number="", description="", unit_price=0, units=0,
+    def __init__(self, name="", *args, ordinal_number="", description="", unit_price=0, units=0,
                         unit_type="", is_active=True,
                         cost_group=None, cost_group_ref=None,
                         trade=None, trade_ref=None,
-                         uid=None, deleted=False
-                        ):
+                        uid=None, deleted=False,
+                        **kwargs):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
         self.ordinal_number = ordinal_number
@@ -1054,8 +1038,8 @@ class InventoryItem(IdObject):
         #   is_active
         #       count the item in the calculation only if True
         self.is_active = is_active
-        self._cost_group = cost_group
-        self._trade = trade
+        self.cost_group = cost_group
+        self.trade = trade
         """ set edited date """
         self.edited()
 
@@ -1069,3 +1053,15 @@ class InventoryItem(IdObject):
     def restore(self, project):
         self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups)
         self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades)
+
+    """
+    #
+    #   __FUNCTIONS__
+    #
+    #
+    """
+    def __copy__(self):
+        args = vars(self).copy()
+        args["name"] = args["name"]+" copy"
+        new_item = InventoryItem(**args)
+        return new_item

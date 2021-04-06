@@ -33,7 +33,7 @@ from ui import helper
 from core.obj import  (proj, corp, arch)
 
 class AppData:
-    """Contains the project (if one is loaded) and is basically the interface
+    """ Contains the project (if one is loaded) and is basically the interface
     of the app.
 
     Instance variables:

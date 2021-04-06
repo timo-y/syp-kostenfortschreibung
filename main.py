@@ -17,9 +17,9 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QTimer
 
 from ui import mainwindow
-from core import api
 
 APP_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+from core import api
 
 class Application(QtWidgets.QApplication):
     """docstring for Application"""

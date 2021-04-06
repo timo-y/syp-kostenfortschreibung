@@ -152,6 +152,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButton_copy_inventory_item">
+       <property name="text">
+        <string>dublizieren</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButton_remove_inventory_item">
        <property name="text">
         <string>entfernen</string>

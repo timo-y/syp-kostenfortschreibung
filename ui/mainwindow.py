@@ -1153,7 +1153,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         sorting_keys = {
             "cost_group":
-                int(cost_group.id),
+                int(cost_group.id) if cost_group.id.isnumeric() else helper.to_lex(cost_group.id),
             "project_budget":
                 cost_group_budget,
             "project_budget_w_VAT":
@@ -1171,7 +1171,7 @@ class MainWindow(QtWidgets.QMainWindow):
         }
         cost_group_attr = {
             "cost_group":
-                sorting_keys["cost_group"],
+                cost_group.id,
             "project_budget":
                 amount_str(sorting_keys["project_budget"], self.currency),
             "project_budget_w_VAT":
@@ -1753,7 +1753,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # go layer by layer
         tree_depth = 0
         cost_groups = self.app_data.project.get_cost_groups_of_level(tree_depth)
-        cost_groups.sort(key=lambda cost_group:int(cost_group.id), reverse=True)
+        cost_groups.sort(key=lambda cost_group:int(cost_group.id) if cost_group.id.isnumeric() else helper.to_lex(cost_group.id), reverse=True)
 
         while len(cost_groups)>0:
             for cost_group in cost_groups:

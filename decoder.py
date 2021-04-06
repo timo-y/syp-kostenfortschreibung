@@ -22,12 +22,25 @@ from PyQt5.QtCore import QDate
 
 from core.obj import corp, proj, arch, uid
 
-#maybe stupid
+# maybe stupid
 class AllDecoder(JSONDecoder):
+
+    """ Decoder for all objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): json formated input
+
+        Returns:
+            Restored object
+        """
+
         if "UID" in dct:
             UIDDecoder.dict_to_object(dct)
         elif "Project" in dct:
@@ -54,10 +67,22 @@ class AllDecoder(JSONDecoder):
 
 
 class UIDDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded UID objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            uid.UID: Restored object
+        """
         if "UID" in dct:
             args = {
                 "class_name": dct["class_name"],
@@ -69,10 +94,22 @@ class UIDDecoder(JSONDecoder):
         return dct
 
 class ProjectDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded Project objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            proj.Project: Restored object
+        """
         if "Project" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -92,10 +129,22 @@ class ProjectDecoder(JSONDecoder):
         return dct
 
 class ProjectDataDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded ProjectData objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            proj.ProjectData: Restored object
+        """
         if "ProjectData" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -115,10 +164,22 @@ class ProjectDataDecoder(JSONDecoder):
         return dct
 
 class ProjectCostCalculationDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded ProjectCostCalculation objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            proj.ProjectCostCalculation: Restored object
+        """
         if "ProjectCostCalculation" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -132,10 +193,22 @@ class ProjectCostCalculationDecoder(JSONDecoder):
         return dct
 
 class InventoryItemDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded InventoryItem objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            proj.InventoryItem: Restored object
+        """
         if "InventoryItem" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -161,10 +234,22 @@ class InventoryItemDecoder(JSONDecoder):
         return dct
 
 class CompanyDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded Company objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            corp.Company: Restored object
+        """
         if "Company" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -179,10 +264,22 @@ class CompanyDecoder(JSONDecoder):
         return dct
 
 class TradeDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded Trade objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            arch.Trade: Restored object
+        """
         if "Trade" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -195,10 +292,22 @@ class TradeDecoder(JSONDecoder):
         return dct
 
 class CostGroupDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded CostGroup objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            arch.CostGroup: Restored object
+        """
         if "CostGroup" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -217,10 +326,22 @@ class CostGroupDecoder(JSONDecoder):
         return dct
 
 class PersonDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded Person objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            corp.Person: Restored object
+        """
         if "Person" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -242,10 +363,22 @@ class PersonDecoder(JSONDecoder):
         return dct
 
 class AddressDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded Address objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            corp.Address: Restored object
+        """
         if "Address" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -261,10 +394,22 @@ class AddressDecoder(JSONDecoder):
         return dct
 
 class JobDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded Job objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            corp.Job: Restored object
+        """
         if "Job" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -281,10 +426,22 @@ class JobDecoder(JSONDecoder):
         return dct
 
 class ArchJobDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded ArchJob objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            arch.ArchJob: Restored object
+        """
         if "ArchJob" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),
@@ -322,10 +479,22 @@ class ArchJobDecoder(JSONDecoder):
         return dct
 
 class InvoiceDecoder(JSONDecoder):
+
+    """ Decoder for JSON-encoded Invoice objects.
+    """
+
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
 
     def dict_to_object(self, dct):
+        """Check the object type and decodes JSON to the original object.
+
+        Args:
+            dct (dict): JSON formatted input
+
+        Returns:
+            corp.Invoice: Restored object
+        """
         if "Invoice" in dct:
             args = {
                 "uid": UIDDecoder().object_hook(dct["uid"]),

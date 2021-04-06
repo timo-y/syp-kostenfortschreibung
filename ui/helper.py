@@ -817,6 +817,12 @@ def xlsx2pdf(input_path, filename):
 #
 """
 
+def to_lex(cost_group_id):
+    """ Convert an ID containing letters into a number to rder the table cell. """
+    # add 1000 to make the id be listed after the last regular cost group
+    id = 1000+int("".join([f"{ord(char)}" for char in cost_group_id]))
+    return id
+
 """
 #   input amounts
 """

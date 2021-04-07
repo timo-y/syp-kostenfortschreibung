@@ -461,23 +461,23 @@ def edit_job(app_data, job):
 def pay_safety_deposit(job):
     """Open a dialog to input a new safety deposite for a job.
 
-        Args:
-            job (corp.Job): The selected job
-        """
-        paid_safety_deposit_args = dlg.open_pay_safety_deposit_dialog()
-        if paid_safety_deposit_args:
-            job.pay_safety_deposit(**paid_safety_deposit_args)
+    Args:
+        job (corp.Job): The selected job
+    """
+    paid_safety_deposit_args = dlg.open_pay_safety_deposit_dialog()
+    if paid_safety_deposit_args:
+        job.pay_safety_deposit(**paid_safety_deposit_args)
 
 @debug.log
 def add_job_addition(job):
     """Open a dialog to input a new job addition for a job.
 
-        Args:
-            job (corp.Job): The selected Job
-        """
-        job_addition_args = dlg.open_add_job_addition_dialog()
-        if job_addition_args:
-            job.add_job_addition(**job_addition_args)
+    Args:
+        job (corp.Job): The selected Job
+    """
+    job_addition_args = dlg.open_add_job_addition_dialog()
+    if job_addition_args:
+        job.add_job_addition(**job_addition_args)
 """ i,a&e
 #
 #   COMPANY

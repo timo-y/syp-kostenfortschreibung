@@ -3,6 +3,9 @@
 #   TEMPLATE
 #   The Template-class writes the info to the proper excel-template.
 #
+#
+#   Attributes:
+#       DATE_FORMAT (str): Date format used for import
 """
 DATE_FORMAT = "%d.%m.%Y"
 
@@ -20,11 +23,30 @@ from core.obj import proj, arch, corp
 from PyQt5.QtCore import QDate
 
 class KFImporter:
-    """docstring for KFImporter"""
-    def __init__(self, file_path):
-        self.file_path = file_path
+    """ Import *-Kostenfortschreibung.xlsx files/projects.
 
-        self.identifier = os.path.basename(file_path).split("-")[0]
+    Attributes:
+        companies (list): List of Company objects
+        companies_args (list): List of dicts
+        file_path (pathlib.Path): Path to xlsx-file
+        identifier (str): Identifier of the project
+        invoices (list): List of Invoice objects
+        invoices_args (list):  List of dicts
+        jobs (list): List of Job objects
+        jobs_args (list):  List of dicts
+        trades (list): List of Trade objects
+        trades_args (list):  List of dicts
+        wb (openpyxl.Workbook): Excel workbook
+    """
+    def __init__(self, file_path):
+        """Initilize KFImporter.
+
+        Args:
+            file_path (str): Path to xlsx-file
+        """
+        self.file_path = pathlib.Path(file_path)
+
+        self.identifier = file_path.name.split("-")[0]
 
         self.wb = openpyxl.load_workbook(self.file_path, data_only=True)
 
@@ -39,12 +61,16 @@ class KFImporter:
         self.companies = list()
 
     def import_data(self):
+        """Do the import.
+        """
         self.import_trades_args()
         self.import_companies_args()
         self.import_jobs_args()
         self.import_invoices_args()
 
     def import_trades_args(self):
+        """Improt the trades from the worksheet.
+        """
         ws = self.wb["Gewerke"]
         for i in range(2, len(ws['A'])):
             args = {
@@ -56,6 +82,8 @@ class KFImporter:
                 self.trades_args.append(args)
 
     def import_companies_args(self):
+        """Improt the companies from the worksheet.
+        """
         ws = self.wb["Firmen"]
         for i in range(2, len(ws['A'])):
             args = {
@@ -67,6 +95,8 @@ class KFImporter:
                 self.companies_args.append(args)
 
     def import_jobs_args(self):
+        """Improt the jobs from the worksheet.
+        """
         ws = self.wb["Aufträge"]
         for i in range(2, len(ws['A'])):
             args = {
@@ -90,6 +120,8 @@ class KFImporter:
                 self.jobs_args.append(args)
 
     def import_invoices_args(self):
+        """Improt the invoices from the worksheet.
+        """
         ws = self.wb["Kostenfortschreibung"]
         for i in range(7, len(ws['A'])):
             invoice_date = ws[f"H{i}"].value if ws[f"H{i}"].value else str2date("01.07.2020")
@@ -132,6 +164,8 @@ class KFImporter:
                 self.invoices_args.append(args)
 
     def create_objects(self):
+        """Create the ojects from the imported args.
+        """
         for trade_args in self.trades_args:
             trade = arch.Trade(**trade_args)
             self.trades.append(trade)
@@ -151,7 +185,23 @@ class KFImporter:
 
 
 def str2date(date_str):
+    """Convert String to Date.
+
+    Args:
+        date_str (str): Input
+
+    Returns:
+        datetime.datetime.Date: Output
+    """
     return datetime.strptime(date_str, DATE_FORMAT)
 
 def date2str(date):
+    """Convert Date to String.
+
+    Args:
+        date (datetime.datetime.Date): Input
+
+    Returns:
+        str: Output
+    """
     return date.strftime(DATE_FORMAT)

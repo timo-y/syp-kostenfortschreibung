@@ -11,20 +11,37 @@ from core.obj import IdObject
 from core.obj import restore
 
 class ArchJob(corp.Job):
-    """ A class representing an Architecture Job.
+    """A class representing an Architecture Job.
 
-    Instance Variables:
-    company - Corp.Company --
-    trade - arch.Trade --
-    cost_group - arch.CostGroup --
-    job_sum - float --
-    comment - string --
-    job_additions - list --
-    paid_safety_deposits - list --
+    Attributes:
+        company (corp.Company): Company
+        trade (arch.Trade): Trade
+        cost_group (arch.CostGroup): CostGroup
+        job_sum (float): Job sum
+        comment (str): Comment
+        job_additions (list): List of dicts representing job additions
+        paid_safety_deposits (list):  List of dicts representing paid safety deposits
     """
     def __init__(self,  id, *, uid=None, deleted=False,  company=None, trade=None, cost_group=None, job_sum=None, comment="",
                     company_ref=None, trade_ref=None, cost_group_ref=None, job_additions=None,
                     paid_safety_deposits=None):
+        """Initialize ArchJob.
+
+        Args:
+            id (str): Job ID
+            uid (uid.UID, optional): UID, if None, generated
+            deleted (bool, optional): True, if deleted
+            company (corp.Company, optional): Company
+            trade (arch.Trade, optional): Trade
+            cost_group (arch.CostGroup, optional): Cost group
+            job_sum (float, optional): Job sum
+            comment (str, optional): Comment
+            company_ref (dict, optional): Company reference for restration
+            trade_ref (dict, optional): Trade reference for restoration
+            cost_group_ref (dict, optional): Cost group reference for restoration
+            job_additions (list, optional): List of job additions
+            paid_safety_deposits (list, optional): List of paid safety deposits
+        """
         super(ArchJob, self).__init__(id, uid=uid, deleted=deleted, company=company, job_sum=job_sum, comment=comment, company_ref=company_ref)
         self.trade = trade
         self.cost_group = cost_group
@@ -62,16 +79,39 @@ class ArchJob(corp.Job):
 
     @job_additions.setter
     def job_additions(self, list):
+        """Deactivate setting the list of job additions.
+
+        Raises:
+            Exception: Just don't
+        """
         raise Exception("You can't set job_additions. Use add_job_addition(date, amount) instead!")
 
     @property
     def job_sum_w_additions(self):
+        """Get the job sum with plus the sum of the amounts of the job additions.
+
+        Returns:
+            float: Total job sum
+        """
         return self.job_sum+sum([job_addition["amount"] for job_addition in self._job_additions])
 
     def add_job_addition(self, date, name, amount, comment=""):
+        """Add a job addition to the job.
+
+        Args:
+            date (datetime.date): Date of job addition
+            name (str): Name
+            amount (float): Amount
+            comment (str, optional): Comment
+        """
         self._job_additions.append({"date": date, "name": name, "amount": amount, "comment": comment})
 
     def remove_job_addition(self, job_addition):
+        """Remove a job addition of the job.
+
+        Args:
+            job_addition (dict): Job addition to remove
+        """
         self._job_additions.remove(job_addition)
 
     @property
@@ -80,16 +120,38 @@ class ArchJob(corp.Job):
 
     @paid_safety_deposits.setter
     def paid_safety_deposits(self, list):
+        """Deactivate setting the list of paid safety deposits.
+
+        Raises:
+            Exception: Just don't
+        """
         raise Exception("You can't set paid_safety_deposits. Use pay_safety_deposit(date, amount) instead!")
 
     @property
     def paid_safety_deposits_sum(self):
+        """Get the sum of the amounts of all paid safety deposits.
+
+        Returns:
+            float: Total paid safety deposits amount
+        """
         return sum([psd["amount"] for psd in self._paid_safety_deposits])
 
     def pay_safety_deposit(self, date, amount, comment=""):
+        """Add a paid safety deposit to the job.
+
+        Args:
+            date (Date): Date of payment
+            amount (float): Amount
+            comment (str, optional): Comment
+        """
         self._paid_safety_deposits.append({"date": date, "amount": amount, "comment": comment})
 
     def remove_psd(self, psd):
+        """Remove paid safety deposit.
+
+        Args:
+            psd (dict): Paid safety deposit to remove
+        """
         self._paid_safety_deposits.remove(psd)
 
     """
@@ -100,7 +162,16 @@ class ArchJob(corp.Job):
     """
     @debug.log
     def update(self, *,id, company, job_sum, trade, cost_group, paid_safety_deposits):
-        """ Update instance variables. """
+        """Update instance variables.
+
+        Args:
+            id (int): Job ID
+            company (corp.Company): Company
+            job_sum (float): Job sum
+            trade (arch.Trade): Trade
+            cost_group (arch.CostGroup): Cost group
+            paid_safety_deposits (list): List of paid safety deposits
+        """
         super(ArchJob, self).update(id=id, company=company, job_sum=job_sum)
         self.trade = trade
         self.cost_group = cost_group
@@ -114,14 +185,22 @@ class ArchJob(corp.Job):
     """
     @debug.log
     def restore(self, project):
-        """ Restore pointers by UID. """
+        """Restore pointers by UID.
+
+        Args:
+            project (proj.Project): Embedding project
+        """
         super(ArchJob, self).restore(project)
         self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades)
         self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups)
 
     @debug.log
     def restore_after_import(self, project):
-        """ Restore pointers by name/id. """
+        """Restore pointers by name/id.
+
+        Args:
+            project (proj.Project): Embedding project
+        """
         super(ArchJob, self).restore_after_import(project)
         self.trade = restore.restore_by(self.trade, self._trade_ref, project.trades, by=["name"])
         self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups, by=["id"])
@@ -129,9 +208,27 @@ class ArchJob(corp.Job):
 
 
 class Trade(IdObject):
-    """docstring for Trade"""
+    """This class represents a trade.
+
+    Attributes:
+        budget (float): Budget for the trade
+        comment (str): Comment
+        cost_group (arch.CostGroup): Cost group the trade belongs to
+        name (str): Name
+    """
 
     def __init__(self, *, name, budget, comment, uid=None, deleted=False,  cost_group=None, cost_group_ref=None):
+        """Initialize Trade.
+
+        Args:
+            name (str): Name
+            budget (float): Budget
+            comment (str): Comment
+            uid (uid.UID, optional): UID, if None, generated
+            deleted (bool, optional): True, if deleted
+            cost_group (arch.CostGroup, optional): Cost group
+            cost_group_ref (dict, optional): Cost group reference for restoration
+        """
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
         self.cost_group = cost_group
@@ -149,6 +246,14 @@ class Trade(IdObject):
     """
     @debug.log
     def update(self, name, cost_group, budget, comment):
+        """Update variables.
+
+        Args:
+            name (str): Name
+            cost_group (arch.CostGroup): Description
+            budget (float): Budget
+            comment (str): Comment
+        """
         self.name = name
         self.cost_group = cost_group
         self.budget = 0 if budget == "" else budget
@@ -164,10 +269,20 @@ class Trade(IdObject):
     """
     @debug.log
     def restore(self, project):
+        """Restore pointers by UID.
+
+        Args:
+            project (proj.Project): Embedding project
+        """
         self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups)
 
     @debug.log
     def restore_after_import(self, project):
+        """Restore pointers by name/id.
+
+        Args:
+            project (proj.Project): Embedding project
+        """
         self.cost_group = restore.restore_by(self.cost_group, self._cost_group_ref, project.cost_groups, by=["id"])
 
     """
@@ -180,9 +295,30 @@ class Trade(IdObject):
         return self.name
 
 class CostGroup(IdObject):
-    """docstring for CostGroup"""
+    """A class representing a Cost Group.
+
+    Attributes:
+        budget (float): Budget
+        description (str): Description
+        id (str): Cost Group ID
+        name (str): Name
+        parent (arch.CostGroup): Parent Cost Group (can be None,
+                                 then it's called a Main Cost Group)
+    """
 
     def __init__(self, id, name="", description="", *, uid=None, deleted=False, budget=0, parent=None, parent_ref=None):
+        """Summary
+
+        Args:
+            id (TYPE): Description
+            name (str, optional): Description
+            description (str, optional): Description
+            uid (uid.UID, optional): UID, if None, generated
+            deleted (bool, optional): True, if deleted
+            budget (int, optional): Description
+            parent (None, optional): Description
+            parent_ref (None, optional): Description
+        """
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
         self.name = name
@@ -201,9 +337,19 @@ class CostGroup(IdObject):
     """
     @property
     def parent(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         return self._parent
     @parent.setter
     def parent(self, cost_group):
+        """Summary
+
+        Args:
+            cost_group (TYPE): Description
+        """
         if self.parent_allowed(cost_group):
             self._parent = cost_group
         else:
@@ -211,12 +357,22 @@ class CostGroup(IdObject):
             debug.warning_msg(f"Setting parent of {self.id} / {self.name} to {cost_group.id} / {cost_group.name} failed, due to recursion! Setting parent to None.")
 
     def is_main_group(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         if self.parent is None:
             return True
         else:
             return False
 
     def is_sub_group(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         return not(self.is_main_group())
 
     """
@@ -226,7 +382,14 @@ class CostGroup(IdObject):
     """
     def is_sub_group_of(self, cost_group):
         """if self is cost_group:
-            return True"""
+        return True
+
+        Args:
+            cost_group (TYPE): Description
+
+        Returns:
+            TYPE: Description
+        """
         if self.parent is None:
             return False
         elif self.parent is cost_group:
@@ -240,6 +403,11 @@ class CostGroup(IdObject):
     #
     """
     def get_main_cost_group(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         if self.parent is None:
             return self
         else:
@@ -253,6 +421,11 @@ class CostGroup(IdObject):
     #       Then, we can go render them layer by layer.
     """
     def get_tree_level(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         if self.parent is None:
             return 0
         else:
@@ -269,6 +442,14 @@ class CostGroup(IdObject):
     #   cost_group is allowed (i.e. there is no recursion)
     @debug.log
     def parent_allowed(self, parent):
+        """Summary
+
+        Args:
+            parent (TYPE): Description
+
+        Returns:
+            TYPE: Description
+        """
         if parent and parent is not self and parent.parent:
             if parent.parent is self:
                 return False
@@ -283,6 +464,15 @@ class CostGroup(IdObject):
     """
     @debug.log
     def update(self, id, name, description, budget, parent):
+        """Summary
+
+        Args:
+            id (TYPE): Description
+            name (str): Name
+            description (TYPE): Description
+            budget (float): Budget
+            parent (TYPE): Description
+        """
         self.id = id
         self.name = name
         self.description = description
@@ -299,10 +489,20 @@ class CostGroup(IdObject):
     """
     @debug.log
     def restore(self, project):
+        """Restore pointers by UID.
+
+        Args:
+            project (proj.Project): Embedding project
+        """
         self.parent = restore.restore_by(self.parent, self._parent_ref, project.cost_groups)
 
     @debug.log
     def restore_after_import(self, project):
+        """Restore pointers by name/id.
+
+        Args:
+            project (proj.Project): Embedding project
+        """
         self.parent = restore.restore_by(self.parent, self._parent_ref, project.cost_groups, by=["id"])
 
     """

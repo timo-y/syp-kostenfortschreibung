@@ -6,7 +6,7 @@
 #
 """
 import debug
-import operator # operator.attrgetter needed for second depht access like invoice.company.name
+import operator # operator.attrgetter needed for second depth access like invoice.company.name
 
 def restore_by(link, ref, set, by=["uid"]):
     if ref and not(link):

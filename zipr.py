@@ -52,6 +52,12 @@ class ZipArchiveFile(Zipr):
 
 @debug.log
 def save_project(path, app_data):
+    """Save a project to a *.project file.
+
+    Args:
+        path (Path): Path to save to
+        app_data (api.AppData): Application data containing the project data
+    """
     # Less annoying make archive with workaround classes
     with ZipArchive(path, "w") as z:
 
@@ -98,6 +104,14 @@ def save_project(path, app_data):
 
 @debug.log
 def open_project(path):
+    """Open a *.project file.
+
+    Args:
+        path (Path): Path to saved project
+
+    Returns:
+        dict: Project as a dict
+    """
     loaded_args = dict()
     with zipfile.ZipFile(path, "r") as z:
 

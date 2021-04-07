@@ -3,6 +3,9 @@
 #   Main programm
 #   Run this file to open the application.
 #
+#
+#   Attributes:
+#       APP_DIRECTORY (str): Path to directory of this file
 """
 import debug
 
@@ -22,8 +25,20 @@ APP_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 from core import api
 
 class Application(QtWidgets.QApplication):
-    """docstring for Application"""
+    """ Application widget.
+
+    Attributes:
+        app_data (api.AppData): Application data containing config and project
+        autosave_timer (PyQt5.QtCore.QTimer): Timer for repetetive autosaving
+        logger (TYPE): Logger
+        window (mainwindow.MainWindow): Main window of the application
+    """
     def __init__(self, *args, project_file = None, **kwargs):
+        """Initialize application.
+
+        Args:
+            project_file (None, optional): Description
+        """
         super(Application, self).__init__(*args, **kwargs)
         """ for debuggin and error tracing """
         self.initialize_logger()
@@ -52,6 +67,8 @@ class Application(QtWidgets.QApplication):
     """
     @debug.log
     def initialize_style(self):
+        """Initialize stylesheet.
+        """
         stylesheet_path = os.path.join("qss","style.qss")
         with open(stylesheet_path,"r") as file:
             stylesheet = file.read()
@@ -65,16 +82,22 @@ class Application(QtWidgets.QApplication):
     """
     @debug.log_info
     def initialize_autosaver(self):
+        """Initilize autosave timer.
+        """
         self.autosave_timer = QTimer()
         self.autosave_timer.timeout.connect(self.autosave_project)
 
     @debug.log_info
     def start_autosaving(self):
+        """Start repeated autosaving.
+        """
         autosave_time = self.app_data.config["autosave_time"]
         self.autosave_timer.start(autosave_time)
 
     @debug.log_info
     def autosave_project(self):
+        """Save project with autosave name including a timestamp.
+        """
         debug.info_msg("Checking whether the file has already been saved...")
         if self.app_data.project and self.app_data.project.has_been_saved():
             debug.info_msg("Yes! Autosaving...")
@@ -96,6 +119,8 @@ class Application(QtWidgets.QApplication):
     """
     @debug.log_error
     def exception_hook(self, exctype, value, tb):
+        """Custom exception hook, handling errors.
+        """
         traceback_formated = traceback.format_exception(exctype, value, tb)
         traceback_string = "".join(traceback_formated)
         debug.error_msg(traceback_string)
@@ -104,6 +129,11 @@ class Application(QtWidgets.QApplication):
         # QtWidgets.QApplication.quit()
     @debug.log
     def show_exception_box(self, log_msg):
+        """Open a popup window with an error message.
+
+        Args:
+            log_msg (str): Error message
+        """
         errorbox = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Critical, "Oops... Error!", f"Oops. An unexpected error occured:\n{log_msg}")
         errorbox.exec_()
 
@@ -114,6 +144,8 @@ class Application(QtWidgets.QApplication):
     #
     """
     def initialize_logger(self):
+        """Initilize a logger from the logging.conf file.
+        """
         logging.config.fileConfig('logging.conf')
 
         # create logger

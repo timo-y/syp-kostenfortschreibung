@@ -18,3 +18,4 @@ Accounting application developed for Scharmer-Yu + Partner.
 - Templates and Outputs of Overviews
 - Features:
 -- graphical representations of project
+-- add scans (images) to objects

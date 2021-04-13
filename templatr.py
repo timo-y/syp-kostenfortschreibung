@@ -2,6 +2,8 @@
 #
 #   TEMPLATE
 #   The Template-class writes the info to the proper excel-template.
+#   The templates are stored in the template folder. Every class writes
+#   the data in the corresponding cell of the worksheet.
 #
 """
 import debug
@@ -65,13 +67,13 @@ class Template():
     @debug.log
     def add_rows(self, before_row, number_of_rows):
         """Add rows in a template before some row.
+        Add rows, by simply moving "everything" (A-AA and 99 rows) down by
+        the amount of rows you want to add
 
         Args:
             before_row (int): Row index where to insert the new rows
             number_of_rows (int): Number of rows to insert
         """
-        #   Add rows, by simply moving "everything" (A-AA and 99 rows) down by
-        #   the amount of rows you want to add
         self.ws.move_range(f"A{before_row}:AA{99+before_row}", rows=number_of_rows, cols=0)
 
     @debug.log

@@ -307,17 +307,18 @@ class CostGroup(IdObject):
     """
 
     def __init__(self, id, name="", description="", *, uid=None, deleted=False, budget=0, parent=None, parent_ref=None):
-        """Summary
+        """Initialize Cost Group.
 
         Args:
-            id (TYPE): Description
-            name (str, optional): Description
+            id (str): Cost Group ID
+            name (str, optional): Name
             description (str, optional): Description
             uid (uid.UID, optional): UID, if None, generated
             deleted (bool, optional): True, if deleted
-            budget (int, optional): Description
-            parent (None, optional): Description
-            parent_ref (None, optional): Description
+            budget (float, optional): Budget
+            parent (arch.CostGroup): Parent Cost Group (can be None,
+                                     then it's called a Main Cost Group)
+            parent_ref (dict, optional): A reference to the parent for restoration
         """
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
@@ -337,19 +338,9 @@ class CostGroup(IdObject):
     """
     @property
     def parent(self):
-        """Summary
-
-        Returns:
-            TYPE: Description
-        """
         return self._parent
     @parent.setter
     def parent(self, cost_group):
-        """Summary
-
-        Args:
-            cost_group (TYPE): Description
-        """
         if self.parent_allowed(cost_group):
             self._parent = cost_group
         else:
@@ -357,10 +348,10 @@ class CostGroup(IdObject):
             debug.warning_msg(f"Setting parent of {self.id} / {self.name} to {cost_group.id} / {cost_group.name} failed, due to recursion! Setting parent to None.")
 
     def is_main_group(self):
-        """Summary
+        """Returns if Cost Group is a main-group, i.e. if it is a root.
 
         Returns:
-            TYPE: Description
+            bool: True, if Cost Group is a root
         """
         if self.parent is None:
             return True
@@ -368,27 +359,24 @@ class CostGroup(IdObject):
             return False
 
     def is_sub_group(self):
-        """Summary
+        """Returns if Cost Group is a sub-group, i.e. if it has a parent.
 
         Returns:
-            TYPE: Description
+            bool: True, if Cost Group has a parent
         """
         return not(self.is_main_group())
 
     """
     #    is_sub_group_of
-    #       Check whether a cost_group is subgroup of another one.
-    #       Every cost_group is a subgroup of itself.
     """
     def is_sub_group_of(self, cost_group):
-        """if self is cost_group:
-        return True
+        """Check whether a Cost Group is sub-group of another one.
 
         Args:
-            cost_group (TYPE): Description
+            cost_group (arch.CostGroup): The potential parent Cost Group
 
         Returns:
-            TYPE: Description
+            bool: True, if self is sub-group of cost_group
         """
         if self.parent is None:
             return False
@@ -403,28 +391,23 @@ class CostGroup(IdObject):
     #
     """
     def get_main_cost_group(self):
-        """Summary
+        """Get the root Cost Group of self.
 
         Returns:
-            TYPE: Description
+            arch.CostGroup Root Cost Group
         """
         if self.parent is None:
             return self
         else:
             return self.parent.get_main_cost_group()
 
-    """
-    #
-    #   get_tree_level
-    #       In order to render the CostGroups in a TreeWidget
-    #       we need to know the layer they are at in the CostGroup-tree.
-    #       Then, we can go render them layer by layer.
-    """
     def get_tree_level(self):
-        """Summary
+        """In order to render the CostGroups in a TreeWidget
+        we need to know the layer they are at in the CostGroup-tree.
+        Then, we can go render them layer by layer.
 
         Returns:
-            TYPE: Description
+            int: Depth of self in Cost Group tree
         """
         if self.parent is None:
             return 0
@@ -438,17 +421,16 @@ class CostGroup(IdObject):
     #
     #
     """
-    #   Check, if setting the parent to an existing
-    #   cost_group is allowed (i.e. there is no recursion)
     @debug.log
     def parent_allowed(self, parent):
-        """Summary
+        """Check, if setting the parent to an existing
+        cost_group is allowed (i.e. there is no recursion)
 
         Args:
-            parent (TYPE): Description
+            parent (arch.CostGroup): The potential parento check
 
         Returns:
-            TYPE: Description
+            bool: True, if there is no recursion
         """
         if parent and parent is not self and parent.parent:
             if parent.parent is self:
@@ -464,14 +446,15 @@ class CostGroup(IdObject):
     """
     @debug.log
     def update(self, id, name, description, budget, parent):
-        """Summary
+        """Update variables.
 
         Args:
-            id (TYPE): Description
+            id (str): Cost Group ID
             name (str): Name
-            description (TYPE): Description
+            description (str): Description
             budget (float): Budget
-            parent (TYPE): Description
+            parent (arch.CostGroup): Parent Cost Group (can be None,
+                                     then it's called a Main Cost Group)
         """
         self.id = id
         self.name = name

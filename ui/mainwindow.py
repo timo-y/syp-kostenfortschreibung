@@ -27,7 +27,28 @@ from ui.helper import (rnd, amount_str, percent_str,
                        percent_str_w_sign, qdate_to_str)
 
 class MainWindow(QtWidgets.QMainWindow):
+
+    """The main window of the app.
+
+    Attributes:
+        app_data (core.api.AppData): App data incl. project data
+        company_cols (dict): Columns to render in the company tab
+        cost_group_cols (dict): Columns to render in the cost group tab
+        cost_stand_cost_group_cols (dict): Columns to render in the cost group view of the stand tab
+        cost_stand_trade_cols (dict): Columns to render in the trade view of the cost stand tab
+        invoice_cols (dict): Columns to render in the invoice tab
+        job_cols (dict): Columns to render in the job tab
+        person_cols (TYPE): Columns to render in the people tab
+        project_cost_calculation_cols (TYPE): Columns to render in the cost calculation tab
+        trade_cols (TYPE): Columns to render in the trade tab
+    """
+
     def __init__(self, app_data):
+        """Summary
+
+        Args:
+            app_data (TYPE): Description
+        """
         super().__init__()
 
         self.app_data = app_data
@@ -50,6 +71,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @property
     def currency(self):
+        """Get the currency abbreviation.
+
+        Returns:
+            str: Sign of the currency
+        """
         if self.app_data.project_loaded():
             return self.app_data.project.get_currency()
         return self.app_data.get_currency()
@@ -61,14 +87,20 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def initialize_ui(self):
+        """Initialize UI.
+        """
         uic.loadUi('ui/mainwindow.ui', self) # Load the .ui file
         self.initialize_tabwidget()
         self.init_tree_header()
 
     def set_window_icon(self):
+        """Set the icon of the main window.
+        """
         self.setWindowIcon(QtGui.QIcon('images/icon.png'))
 
     def initialize_tabwidget(self):
+        """Initialize the center widget.
+        """
         self.tabWidget_content.clear()
         self.tabWidget_content.setTabBar(customqt.TabBar(self))
         self.tabWidget_content.setTabPosition(QtWidgets.QTabWidget.West)
@@ -84,6 +116,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.tabWidget_content.addTab(self.tab_invoice_check, "???")
 
     def init_table_header(self):
+        """Initilized the header of the table columns.
+        """
         self.render_cost_stand(set_width=True)
         self.render_invoice_view(set_width=True)
         self.render_job_view(set_width=True)
@@ -133,9 +167,9 @@ class MainWindow(QtWidgets.QMainWindow):
             {"title": "invoice_date", "width": 110},
             {"title": "company", "width": 120},
             {"title": "job", "width": 60},
-            {"title": "cumulative", "width": 60},
+            #{"title": "cumulative", "width": 60},
             #{"title": "inbox_date", "width": 95},
-            {"title": "checked_date", "width": 95},
+            #{"title": "checked_date", "width": 95},
             {"title": "trade", "width": 105},
             {"title": "cost_group", "width": 90},
             #{"title": "amount", "width": 100},
@@ -167,28 +201,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.trade_cols = [
             {"title": "name", "width": 150},
             {"title": "budget", "width": 120},
-            {"title": "comment", "width": 100},
+            #{"title": "comment", "width": 100},
         ]
         self.cost_group_cols = [
             {"title": "uid", "width": 1},
             {"title": "id", "width": 80},
             {"title": "name", "width": 180},
-            {"title": "description", "width": 180},
+            #{"title": "description", "width": 180},
             {"title": "budget", "width": 120},
         ]
         self.person_cols = [
             {"title": "first_name", "width": 150},
             {"title": "last_name", "width": 150},
             #{"title": "address", "width": 180},
-            {"title": "telephone", "width": 150},
+            #{"title": "telephone", "width": 150},
             #{"title": "fax", "width": 150},
-            {"title": "mobile", "width": 150},
+            #{"title": "mobile", "width": 150},
             {"title": "email", "width": 150},
             {"title": "company", "width": 150}
         ]
 
     def init_tree_header(self):
-        """ TODO: figure out where to put this
+        """TODO: figure out where to put this
         #         maybe put on top of file
         """
         company_tree_view_cols = ["job", "job_sum", "invoice", "verified_amount"]
@@ -222,7 +256,13 @@ class MainWindow(QtWidgets.QMainWindow):
             [self.app_data.titles[col] for col in job_additions_cols]
             )
 
-        cost_groups_costs_cols = ["id", "uid", "name", "description", "budget"]
+        cost_groups_costs_cols = [
+                                    "id",
+                                    "uid",
+                                    "name",
+                                    #"description",
+                                    "budget"
+                                    ]
         self.treeWidget_cost_groups.setHeaderLabels(
             [self.app_data.titles[col] for col in cost_groups_costs_cols]
             )
@@ -249,6 +289,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def enable_ui(self):
+        """Enable the UI.
+        """
         self.centralwidget.setEnabled(True)
         self.menuProjekt.setEnabled(True)
         self.menuImport.setEnabled(True)
@@ -257,6 +299,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionSaveAs.setEnabled(True)
 
     def disable_ui(self):
+        """Disable the UI.
+        """
         self.centralwidget.setEnabled(False)
         self.menuProjekt.setEnabled(False)
         self.menuImport.setEnabled(False)
@@ -266,18 +310,26 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def set_debug_ui(self):
+        """Enable debug buttons when debug mode is enabled.
+        """
         if self.app_data.debug_on():
             self.groupBox_debug.setVisible(True)
         else:
             self.groupBox_debug.setVisible(False)
 
     def center_window(self):
+        """Move the window to the center of the screen.
+        """
         qr = self.frameGeometry()
         cp = QtWidgets.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
     def update_ui(self):
+        """Update the UI.
+
+        This function collects changes on the UI, when the data changes.
+        """
         if self.app_data.project:
             self.enable_ui()
             """ set title """
@@ -298,6 +350,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_debug_ui()
 
     def update_labels(self):
+        """Update the QTextLabel fields.
+        """
         self.label_cur_proj.setText(self.app_data.project.identifier)
         self.label_cur_proj_construction_scheme.setText(
             self.app_data.project.construction_scheme
@@ -316,6 +370,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def closeEvent(self, event):
+        """Eventlistener for closing the window.
+        """
         if self.app_data.project_loaded():
             reply = QtWidgets.QMessageBox.question(
                 self, 'Sichern vor dem Schließen?',
@@ -341,9 +397,12 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
 
+    # TODO
     # this function is probably not needed
     def minimize_invoice_info(self):
-        print("this should minimize the invoice info widget")
+        """Minimize the right info panel.
+        """
+        pass
 
     """
     #
@@ -352,6 +411,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def set_button_actions(self):
+        """Connect the buttons with the actions.
+        """
         """ DEBUG """
         self.pushButton_debug_run.clicked.connect(self.button_run_test)
         self.pushButton_debug_add_invoices.clicked.connect(self.button_debug_add_invoices)
@@ -412,6 +473,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButton_edit_person.clicked.connect(self.button_edit_person)
 
     def load_widget_signals(self):
+        """Load the signals connected to the widgets.
+        """
         """ project cost calculation signals """
         self.tableWidget_project_cost_calculations.itemDoubleClicked.connect(self.table_double_click_pcc)
         self.tableWidget_project_cost_calculations.currentItemChanged.connect(self.table_click_pcc)
@@ -465,6 +528,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def load_action_signals(self):
+        """Load menu-action signals.
+        """
         self.actionNewProject.triggered.connect(lambda:self.input_new_project())
         self.actionNewInvoice.triggered.connect(lambda:self.input_invoice_to_project())
         self.actionNewJob.triggered.connect(lambda:self.input_job_to_project())
@@ -493,6 +558,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionClose.triggered.connect(lambda:self.close())
 
     def load_line_edit_signals(self):
+        """Summary
+        """
         self.lineEdit_invoice_search.returnPressed.connect(lambda:self.render_invoice_view())
     """
     #
@@ -507,6 +574,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_double_click_job_invoice(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         if item:
             item_data = item.data(1, QtCore.Qt.UserRole)
             if isinstance(item_data, corp.Invoice):
@@ -516,6 +588,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_double_click_cost_group_job_invoice(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.tree_double_click_job_invoice(item)
 
     """ signal
@@ -525,21 +602,35 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_pcc(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         pcc = item.data(1)
         self.edit_pcc(pcc)
 
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_pcc(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         if item:
             pcc = item.data(1)
             self.render_pcc_info(pcc)
 
     @pyqtSlot()
     def button_input_pcc_to_project(self):
+        """Summary
+        """
         self.input_pcc_to_project()
 
     @pyqtSlot()
     def button_edit_pcc(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
             pcc = item.data(1)
@@ -549,6 +640,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_copy_pcc(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
             self.copy_pcc(item.data(1))
@@ -557,6 +650,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_apply_pcc_budgets(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
             reply = helper.u_sure_prompt(self)
@@ -569,6 +664,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_apply_pcc_budget_cost_group(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         cost_group_items = self.treeWidget_pcc_cost_group_details.selectedItems()
         if item and len(cost_group_items)>0:
@@ -583,6 +680,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_apply_pcc_budget_trade(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         trade_items = self.treeWidget_pcc_trade_details.selectedItems()
         if item and len(trade_items)>0:
@@ -597,6 +696,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_apply_pcc_budgets_cost_groups(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
             reply = helper.u_sure_prompt(self)
@@ -609,6 +710,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_apply_pcc_budgets_trades(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
             reply = helper.u_sure_prompt(self)
@@ -622,6 +725,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_pcc_overviews(self):
+        """Summary
+        """
         item = self.tableWidget_project_cost_calculations.currentItem()
         if item:
             helper.pcc_overviews(app_data=self.app_data, pcc=item.data(1))
@@ -635,30 +740,58 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_invoice(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         invoice = item.data(1)
         self.edit_invoice(invoice)
 
     @pyqtSlot(QtWidgets.QListWidgetItem)
     def list_double_click_invoice(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         invoice = item.data(1)
         self.edit_invoice(invoice)
 
     @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_double_click_invoice(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.edit_invoice(item.data(1, QtCore.Qt.UserRole))
 
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_invoice(self, item, prev_item=None):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+            prev_item (None, optional): Description
+        """
         if item:
             invoice = item.data(1)
             self.render_invoice_info(invoice)
 
     @pyqtSlot()
     def button_input_invoice_to_project(self):
+        """Summary
+        """
         self.input_invoice_to_project()
 
     @pyqtSlot()
     def button_input_invoice_w_curr_job(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         item = self.tableWidget_jobs.currentItem()
         if item:
             sel_job = item.data(1)
@@ -668,6 +801,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_edit_invoice(self):
+        """Summary
+        """
         item = self.tableWidget_invoices.currentItem()
         if item:
             self.edit_invoice(item.data(1))
@@ -676,6 +811,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_invoice_check_curr_job(self):
+        """Summary
+        """
         item = self.tableWidget_invoices.currentItem()
         if item:
             helper.invoice_check(self.app_data, invoice=item.data(1), curr_job_only=True)
@@ -686,6 +823,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_invoice_check_all_jobs(self):
+        """Summary
+        """
         item = self.tableWidget_invoices.currentItem()
         if item:
             helper.invoice_check(self.app_data, invoice=item.data(1), curr_job_only=False)
@@ -696,6 +835,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_reset_invoice_search(self):
+        """Summary
+        """
         self.lineEdit_invoice_search.setText("")
         self.render_invoice_view()
 
@@ -706,20 +847,38 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_job(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.edit_job(item.data(1))
 
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_job(self, item, prev_item=None):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+            prev_item (None, optional): Description
+        """
         if item:
             job = item.data(1)
             self.render_job_info(job)
 
     @pyqtSlot()
     def button_input_job_to_project(self):
+        """Summary
+        """
         self.input_job_to_project()
 
     @pyqtSlot()
     def button_edit_job(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         if self.tableWidget_jobs.currentItem():
             self.edit_job(self.tableWidget_jobs.currentItem().data(1))
         else:
@@ -727,6 +886,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_pay_safety_deposit(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         item = self.tableWidget_jobs.currentItem()
         if item:
             sel_job = item.data(1)
@@ -738,6 +902,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_remove_psd(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         item = self.tableWidget_jobs.currentItem()
         if item:
             sel_job = item.data(1)
@@ -757,6 +926,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_add_job_addition(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         item = self.tableWidget_jobs.currentItem()
         if item:
             sel_job = item.data(1)
@@ -768,6 +942,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_remove_job_addition(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         item = self.tableWidget_jobs.currentItem()
         if item:
             sel_job = item.data(1)
@@ -788,6 +967,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_job_ov(self):
+        """Summary
+        """
         item = self.tableWidget_jobs.currentItem()
         if item:
             helper.company_ov(self.app_data, company=item.data(1).company, selected_job=item.data(1))
@@ -802,20 +983,38 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_company(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.edit_company(item.data(1))
 
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_company(self, item, prev_item=None):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+            prev_item (None, optional): Description
+        """
         if item:
             company = item.data(1)
             self.render_company_info(company)
 
     @pyqtSlot()
     def button_input_company_to_project(self):
+        """Summary
+        """
         self.input_company_to_project()
 
     @pyqtSlot()
     def button_edit_company(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         if self.tableWidget_companies.currentItem():
             self.edit_company(self.tableWidget_companies.currentItem().data(1))
         else:
@@ -823,6 +1022,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_company_ov(self):
+        """Summary
+        """
         item = self.tableWidget_companies.currentItem()
         if item:
             helper.company_ov(self.app_data, company=item.data(1))
@@ -837,20 +1038,38 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_trade(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.edit_trade(item.data(1))
 
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_trade(self, item, prev_item=None):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+            prev_item (None, optional): Description
+        """
         if item:
             trade = item.data(1)
             self.render_trade_info(trade)
 
     @pyqtSlot()
     def button_input_trade_to_project(self):
+        """Summary
+        """
         self.input_trade_to_project()
 
     @pyqtSlot()
     def button_edit_trade(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         if self.tableWidget_trades.currentItem():
             self.edit_trade(self.tableWidget_trades.currentItem().data(1))
         else:
@@ -858,6 +1077,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_trades_ov(self):
+        """Summary
+        """
         helper.trades_ov(self.app_data)
         self.app_data.open_overviews_dir()
 
@@ -868,30 +1089,58 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_cost_group(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.edit_cost_group(item.data(1))
 
     @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_double_click_cost_group(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.edit_cost_group(item.data(1, QtCore.Qt.UserRole))
 
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_cost_group(self, item, prev_item=None):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+            prev_item (None, optional): Description
+        """
         if item:
             cost_group = item.data(1)
             self.render_cost_group_info(cost_group)
 
     @pyqtSlot(QtWidgets.QTreeWidgetItem)
     def tree_click_cost_group(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         if item:
             cost_group = item.data(1, QtCore.Qt.UserRole)
             self.render_cost_group_info(cost_group)
 
     @pyqtSlot()
     def button_input_cost_group_to_project(self):
+        """Summary
+        """
         self.input_cost_group_to_project()
 
     @pyqtSlot()
     def button_edit_cost_group(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         if len(self.treeWidget_cost_groups.selectedItems())>0:
             selection = self.treeWidget_cost_groups.selectedItems()
             cost_group = selection[0].data(1, QtCore.Qt.UserRole)
@@ -901,6 +1150,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot()
     def button_cost_groups_ov(self):
+        """Summary
+        """
         helper.cost_groups_ov(self.app_data)
         self.app_data.open_overviews_dir()
 
@@ -912,16 +1163,32 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_double_click_person(self, item):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+        """
         self.edit_person(item.data(1))
 
     @pyqtSlot(QtWidgets.QTableWidgetItem)
     def table_click_person(self, item, prev_item=None):
+        """Summary
+
+        Args:
+            item (TYPE): Description
+            prev_item (None, optional): Description
+        """
         if item:
             person = item.data(1)
             self.render_person_info(person)
 
     @pyqtSlot()
     def button_edit_person(self):
+        """Summary
+
+        Raises:
+            Exception: Description
+        """
         if self.tableWidget_people.currentItem():
             self.edit_person(self.tableWidget_people.currentItem().data(1))
         else:
@@ -948,11 +1215,21 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_cost_stand(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.render_cost_stand_cost_groups(set_width=set_width)
         self.render_cost_stand_trades(set_width=set_width)
 
     @debug.log
     def render_cost_stand_cost_groups(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         # disable sorting when filling the table
         # (to avoid bugs with data field)
         self.tableWidget_cost_stand_cost_groups.setSortingEnabled(False)
@@ -1049,6 +1326,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @debug.log
     def render_cost_stand_trades(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         # disable sorting when filling the table
         # (to avoid bugs with data field)
         self.tableWidget_cost_stand_trades.setSortingEnabled(False)
@@ -1143,7 +1425,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def add_cost_group_to_table(self, cost_group, row):
-        """ Calculate values """
+        """Calculate values
+
+        Args:
+            cost_group (TYPE): Description
+            row (TYPE): Description
+        """
         vat = self.app_data.project.get_vat()
         cost_group_budget = self.app_data.project.get_budget_sub_cost_groups(cost_group)
         job_sums = self.app_data.project.get_job_sums_of_sub_cost_groups(cost_group)
@@ -1197,7 +1484,12 @@ class MainWindow(QtWidgets.QMainWindow):
             col += 1
 
     def add_trade_to_table(self, trade, row):
-        """ Calculate values """
+        """Calculate values
+
+        Args:
+            trade (TYPE): Description
+            row (TYPE): Description
+        """
         vat = self.app_data.project.get_vat()
         job_sums = self.app_data.project.get_job_sums_of_trade(trade)
         approved_invoices_w_VAT = self.app_data.project.get_approved_amounts_of_trade(trade)
@@ -1260,6 +1552,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_invoice_view(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.activate_invoice_buttons()
         date_cols = ["invoice_date", "inbox_date", "checked_date"]
         search_terms = self.lineEdit_invoice_search.text().split(" ") \
@@ -1293,6 +1590,11 @@ class MainWindow(QtWidgets.QMainWindow):
     #   This functions renders the right info panel of the selected invoice
     """
     def render_invoice_info(self, invoice):
+        """Summary
+
+        Args:
+            invoice (TYPE): Description
+        """
         if invoice.is_not_deleted():
             args = vars(invoice).copy()
             self.set_invoice_info(**args,
@@ -1322,6 +1624,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #   and activates or deactivates the buttons of the right info panel
     """
     def activate_invoice_buttons(self):
+        """Summary
+        """
         if self.tableWidget_invoices.currentItem() and self.tableWidget_invoices.currentItem().data(1).is_not_deleted():
             self.pushButton_go_to_job.setEnabled(True)
             self.commandLinkButton_invoice_check_all_jobs.setEnabled(True)
@@ -1334,6 +1638,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.pushButton_edit_invoice.setEnabled(False)
 
     def reset_invoice_info(self):
+        """Summary
+        """
         self.set_invoice_info()
         self.activate_invoice_buttons()
 
@@ -1353,7 +1659,43 @@ class MainWindow(QtWidgets.QMainWindow):
                     safety_deposit_amount=0, approved_amount=0,
                     discount_amount=0, approved_amount_a_discount_amount=0,
                     **kwargs):
-        """ LABELS """
+        """LABELS
+
+        Args:
+            _uid (None, optional): Description
+            id (str, optional): Description
+            VAT (None, optional): Description
+            cumulative (bool, optional): Description
+            invoice_date (None, optional): Description
+            inbox_date (None, optional): Description
+            checked_date (None, optional): Description
+            company (None, optional): Description
+            job (None, optional): Description
+            amount (int, optional): Description
+            verified_amount (int, optional): Description
+            rebate (int, optional): Description
+            reduction_insurance_costs (int, optional): Description
+            reduction_usage_costs (int, optional): Description
+            safety_deposit (int, optional): Description
+            discount (int, optional): Description
+            amount_w_VAT (int, optional): Description
+            amount_VAT_amount (int, optional): Description
+            verified_amount_w_VAT (int, optional): Description
+            verified_amount_VAT_amount (int, optional): Description
+            prev_invoices_count (str, optional): Description
+            prev_invoices_amount (int, optional): Description
+            rebate_amount (int, optional): Description
+            reduction_insurance_costs_amount (int, optional): Description
+            reduction_usage_costs_amount (int, optional): Description
+            amount_a_reductions_amount (int, optional): Description
+            amount_a_reductions_amount_w_VAT (int, optional): Description
+            amount_a_reductions_amount_VAT_amount (int, optional): Description
+            safety_deposit_amount (int, optional): Description
+            approved_amount (int, optional): Description
+            discount_amount (int, optional): Description
+            approved_amount_a_discount_amount (int, optional): Description
+            **kwargs: Description
+        """
         """ uid """
         self.label_invoice_uid.setText(_uid.labelize() if _uid else "-")
         """ id """
@@ -1414,6 +1756,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_job_view(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.activate_job_buttons()
         amount_cols = ["job_sum", "job_sum_w_additions"]
         helper.render_to_table(content=self.app_data.project.jobs,
@@ -1429,6 +1776,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.render_job_info(curr_job)
 
     def render_job_info(self, job):
+        """Summary
+
+        Args:
+            job (TYPE): Description
+        """
         if job.is_not_deleted():
             args = vars(job).copy()
             invoices_of_job = self.app_data.project.get_invoices_of_job(job)
@@ -1459,6 +1811,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reset_job_info()
 
     def activate_job_buttons(self):
+        """Summary
+        """
         if self.tableWidget_jobs.currentItem():
             self.pushButton_edit_job.setEnabled(True)
             self.pushButton_add_invoice_for_curr_job.setEnabled(True)
@@ -1485,6 +1839,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.pushButton_remove_job_addition.setEnabled(False)
 
     def reset_job_info(self):
+        """Summary
+        """
         self.set_job_data()
         self.set_invoice_sum_info()
         self.set_paid_safety_deposits_of_job()
@@ -1496,6 +1852,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def set_job_data(self, *, _uid=None, company=None, id="-", trade=None, cost_group=None, job_sum=0, job_sum_w_additions=0,
                         inv_sum_w_VAT=0, safety_deposits_sum=0, paid_safety_deposits_sum=0,
                         **kwargs):
+        """Summary
+
+        Args:
+            _uid (None, optional): Description
+            company (None, optional): Description
+            id (str, optional): Description
+            trade (None, optional): Description
+            cost_group (None, optional): Description
+            job_sum (int, optional): Description
+            job_sum_w_additions (int, optional): Description
+            inv_sum_w_VAT (int, optional): Description
+            safety_deposits_sum (int, optional): Description
+            paid_safety_deposits_sum (int, optional): Description
+            **kwargs: Description
+        """
         company_name = company.name if company else "-"
         self.label_job_company.setText(company_name)
         trade_name = trade.name if trade else "-"
@@ -1532,12 +1903,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_job_remaining_sd_percent.setText(percent_str(remaining_sd_percent))
 
     def set_invoice_sum_info(self, inv_sum=0, inv_sum_w_VAT=0, inv_sum_VAT_amount=0):
-        """ amounts """
+        """amounts
+
+        Args:
+            inv_sum (int, optional): Description
+            inv_sum_w_VAT (int, optional): Description
+            inv_sum_VAT_amount (int, optional): Description
+        """
         self.label_job_invoice_sum.setText(amount_str(inv_sum))
         self.label_job_invoice_sum_w_VAT.setText(amount_str(inv_sum_w_VAT))
         self.label_job_invoice_sum_VAT_amount.setText(amount_str(inv_sum_VAT_amount))
 
     def set_paid_safety_deposits_of_job(self, paid_safety_deposits=list()):
+        """Summary
+
+        Args:
+            paid_safety_deposits (TYPE, optional): Description
+        """
         self.treeWidget_paid_safety_desposits.clear()
         for psd in paid_safety_deposits:
             helper.add_item_to_tree(content_item=psd,
@@ -1545,6 +1927,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                     cols=[str(psd["date"].toPyDate()), amount_str(psd["amount"], self.currency), psd["comment"]])
 
     def set_job_additions_of_job(self, job_additions=list()):
+        """Summary
+
+        Args:
+            job_additions (TYPE, optional): Description
+        """
         self.treeWidget_job_additions.clear()
         for job_addition in job_additions:
             helper.add_item_to_tree(content_item=job_addition,
@@ -1553,6 +1940,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     #   Fill the listwidget with the invoices
     def set_invoices_of_job(self, invoices_of_job=list()):
+        """Summary
+
+        Args:
+            invoices_of_job (TYPE, optional): Description
+        """
         self.treeWidget_invoices_of_curr_job.clear()
         for invoice in invoices_of_job:
             helper.add_item_to_tree(content_item=invoice,
@@ -1567,6 +1959,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_company_view(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.activate_company_buttons()
         amount_cols = ["budget"]
         helper.render_to_table(content=self.app_data.project.companies,
@@ -1582,6 +1979,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.render_company_info(curr_company)
 
     def render_company_info(self, company):
+        """Summary
+
+        Args:
+            company (TYPE): Description
+        """
         if company.is_not_deleted():
             args = vars(company).copy()
             self.set_company_data(**args)
@@ -1591,6 +1993,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reset_company_info()
 
     def activate_company_buttons(self):
+        """Summary
+        """
         if self.tableWidget_companies.currentItem():
             self.pushButton_edit_company.setEnabled(True)
             self.commandLinkButton_company_ov.setEnabled(True)
@@ -1599,12 +2003,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self.commandLinkButton_company_ov.setEnabled(False)
 
     def reset_company_info(self):
+        """Summary
+        """
         self.set_company_data()
         self.treeWidget_company_invoices_by_job.clear()
         self.activate_company_buttons()
 
     def set_company_data(self, *, _uid=None, name="-", service="-", service_type="-", budget=0, contact_person=None, **kwargs):
-        """ data """
+        """data
+
+        Args:
+            _uid (None, optional): Description
+            name (str, optional): Description
+            service (str, optional): Description
+            service_type (str, optional): Description
+            budget (int, optional): Description
+            contact_person (None, optional): Description
+            **kwargs: Description
+        """
         self.label_company_uid.setText(_uid.labelize() if _uid else "-")
         """ company attributes """
         self.label_company_name.setText(name)
@@ -1625,6 +2041,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.label_company_contact_person_last_name.setText("")
 
     def set_invoices_of_company_by_job(self, company):
+        """Summary
+
+        Args:
+            company (TYPE): Description
+        """
         self.treeWidget_company_invoices_by_job.clear()
         invoices_of_company = self.app_data.project.get_invoices_of_company(company)
         jobs = {invoice.job for invoice in invoices_of_company}
@@ -1652,6 +2073,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_trades(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.activate_trade_buttons()
         amount_cols = ["budget"]
         helper.render_to_table(content=self.app_data.project.trades,
@@ -1667,6 +2093,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.render_trade_info(curr_trade)
 
     def render_trade_info(self, trade):
+        """Summary
+
+        Args:
+            trade (TYPE): Description
+        """
         if trade.is_not_deleted():
             args = vars(trade).copy()
             self.set_trade_data(**args)
@@ -1676,18 +2107,30 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reset_trade_info()
 
     def activate_trade_buttons(self):
+        """Summary
+        """
         if self.tableWidget_trades.currentItem():
             self.pushButton_edit_trade.setEnabled(True)
         else:
             self.pushButton_edit_trade.setEnabled(False)
 
     def reset_trade_info(self):
+        """Summary
+        """
         self.set_trade_data()
         self.treeWidget_trade_invoices_by_job.clear()
         self.activate_trade_buttons()
 
     def set_trade_data(self, *, _uid=None, name="", comment="", budget=0, **kwargs):
-        """ meta data """
+        """meta data
+
+        Args:
+            _uid (None, optional): Description
+            name (str, optional): Description
+            comment (str, optional): Description
+            budget (int, optional): Description
+            **kwargs: Description
+        """
         self.label_trade_uid.setText(_uid.labelize() if _uid else "-")
 
         self.label_trade_name.setText(str(name))
@@ -1701,6 +2144,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_trade_budget_VAT_amount.setText(amount_str(budget_VAT_amount))
 
     def set_invoices_of_trade_by_job(self, trade):
+        """Summary
+
+        Args:
+            trade (TYPE): Description
+        """
         self.treeWidget_trade_invoices_by_job.clear()
         invoices_of_trade = self.app_data.project.get_invoices_of_trade(trade)
         jobs = {invoice.job for invoice in invoices_of_trade}
@@ -1730,6 +2178,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_cost_groups(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.activate_cost_group_buttons()
         # TREE WIDGET
         self.render_cost_groups_to_treewidget()
@@ -1745,6 +2198,8 @@ class MainWindow(QtWidgets.QMainWindow):
     #       help us to render the cost_groups with the tree-structure.
     """
     def render_cost_groups_to_treewidget(self):
+        """Summary
+        """
         # if a cost_group was selected, save here
         sel_items = self.treeWidget_cost_groups.selectedItems()
         sel_cost_group = sel_items[0].data(1, QtCore.Qt.UserRole) if len(sel_items)>0 else None
@@ -1777,6 +2232,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.treeWidget_cost_groups.setCurrentItem(sel_items[0])
 
     def render_cc_nodes(self, tree_widget, cost_group, cols):
+        """Summary
+
+        Args:
+            tree_widget (TYPE): Description
+            cost_group (TYPE): Description
+            cols (TYPE): Description
+        """
         parent_node = None
         if cost_group.parent is None:
             parent_node = tree_widget
@@ -1791,6 +2253,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                             cols=cols)
 
     def render_cost_group_info(self, cost_group):
+        """Summary
+
+        Args:
+            cost_group (TYPE): Description
+        """
         if cost_group.is_not_deleted():
             args = vars(cost_group).copy()
             self.set_cost_group_data(**args,
@@ -1801,18 +2268,33 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reset_cost_group_info()
 
     def activate_cost_group_buttons(self):
+        """Summary
+        """
         if len(self.treeWidget_cost_groups.selectedItems())>0:
             self.pushButton_edit_cost_group.setEnabled(True)
         else:
             self.pushButton_edit_cost_group.setEnabled(False)
 
     def reset_cost_group_info(self):
+        """Summary
+        """
         self.set_cost_group_data()
         self.treeWidget_cost_group_invoices_by_job.clear()
         self.activate_cost_group_buttons()
 
     def set_cost_group_data(self, *, _uid=None, id="", name="", description="", budget=0, sub_costgroups_budget=0, parent=None, **kwargs):
-        """ meta data """
+        """meta data
+
+        Args:
+            _uid (None, optional): Description
+            id (str, optional): Description
+            name (str, optional): Description
+            description (str, optional): Description
+            budget (int, optional): Description
+            sub_costgroups_budget (int, optional): Description
+            parent (None, optional): Description
+            **kwargs: Description
+        """
         self.label_cost_group_uid.setText(_uid.labelize() if _uid else "-")
 
         self.label_cost_group_id.setText(str(id))
@@ -1834,6 +2316,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_sub_cost_groups_budget_VAT_amount.setText(amount_str(sub_cost_groups_budget_VAT_amount))
 
     def set_invoices_of_cost_group_by_job(self, cost_group):
+        """Summary
+
+        Args:
+            cost_group (TYPE): Description
+        """
         self.treeWidget_cost_group_invoices_by_job.clear()
         invoices_of_cost_group = self.app_data.project.get_invoices_of_cost_group(cost_group)
         jobs = {invoice.job for invoice in invoices_of_cost_group}
@@ -1863,6 +2350,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_project_cost_calculations(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.activate_pcc_buttons()
         amount_cols = ["total_cost"]
         date_cols = ["date"]
@@ -1876,6 +2368,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                 set_width=set_width)
 
     def render_pcc_info(self, pcc):
+        """Summary
+
+        Args:
+            pcc (TYPE): Description
+        """
         if pcc.is_not_deleted():
             args = vars(pcc).copy()
             self.set_pcc_data(**args,
@@ -1887,6 +2384,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reset_pcc_info()
 
     def activate_pcc_buttons(self):
+        """Summary
+        """
         if self.tableWidget_project_cost_calculations.currentItem():
             self.pushButton_pcc_apply_budgets.setEnabled(True)
             self.pushButton_pcc_apply_budgets_cost_groups.setEnabled(True)
@@ -1919,13 +2418,24 @@ class MainWindow(QtWidgets.QMainWindow):
             self.commandLinkButton_export_pcc_overviews_3.setEnabled(False)
 
     def reset_pcc_info(self):
+        """Summary
+        """
         self.treeWidget_pcc_cost_group_details.clear()
         self.treeWidget_pcc_trade_details.clear()
         self.set_pcc_data()
         self.activate_pcc_buttons()
 
     def set_pcc_data(self, *, _uid=None, name="", type=None, date=None, total_cost=0, **kwargs):
-        """ meta data """
+        """meta data
+
+        Args:
+            _uid (None, optional): Description
+            name (str, optional): Description
+            type (None, optional): Description
+            date (None, optional): Description
+            total_cost (int, optional): Description
+            **kwargs: Description
+        """
         self.label_pcc_uid.setText(_uid.labelize() if _uid else "-")
 
         self.label_pcc_name.setText(str(name))
@@ -1936,6 +2446,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_pcc_total_cost.setText(amount_str(total_cost, self.currency))
 
     def set_costs_of_cost_group_of_pcc(self, pcc):
+        """Summary
+
+        Args:
+            pcc (TYPE): Description
+        """
         # if a cost_group was selected, save here
         sel_items = self.treeWidget_pcc_cost_group_details.selectedItems()
         sel_cost_group = sel_items[0].data(1, QtCore.Qt.UserRole) if len(sel_items)>0 else None
@@ -1967,6 +2482,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def set_costs_of_trade_of_pcc(self, pcc):
+        """Summary
+
+        Args:
+            pcc (TYPE): Description
+        """
         self.treeWidget_pcc_trade_details.clear()
         for trade in self.app_data.project.trades:
             cols = [
@@ -1986,6 +2506,11 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log
     def render_people(self, set_width=False):
+        """Summary
+
+        Args:
+            set_width (bool, optional): Description
+        """
         self.activate_person_buttons()
         amount_cols = ["budget"]
         helper.render_to_table(content=self.app_data.project.people,
@@ -2001,6 +2526,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.render_person_info(curr_person)
 
     def render_person_info(self, person):
+        """Summary
+
+        Args:
+            person (TYPE): Description
+        """
         if person.is_not_deleted():
             args = vars(person).copy()
             self.set_person_data(**args)
@@ -2009,17 +2539,34 @@ class MainWindow(QtWidgets.QMainWindow):
             self.reset_person_info()
 
     def activate_person_buttons(self):
+        """Summary
+        """
         if self.tableWidget_people.currentItem():
             self.pushButton_edit_person.setEnabled(True)
         else:
             self.pushButton_edit_person.setEnabled(False)
 
     def reset_person_info(self):
+        """Summary
+        """
         self.set_person_data()
         self.activate_person_buttons()
 
     def set_person_data(self, *, _uid=None, first_name="", last_name="", telephone="", mobile="", fax="", email="", address=None, company=None, **kwargs):
-        """ meta data """
+        """meta data
+
+        Args:
+            _uid (None, optional): Description
+            first_name (str, optional): Description
+            last_name (str, optional): Description
+            telephone (str, optional): Description
+            mobile (str, optional): Description
+            fax (str, optional): Description
+            email (str, optional): Description
+            address (None, optional): Description
+            company (None, optional): Description
+            **kwargs: Description
+        """
         self.label_person_uid.setText(_uid.labelize() if _uid else "-")
 
         self.label_person_company_2.setText(str(company) if company else "-")
@@ -2053,15 +2600,27 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @pyqtSlot()
     def button_set_job_view_sel_invoice(self):
+        """Summary
+        """
         sel_invoice = self.tableWidget_invoices.currentItem().data(1)
         self.set_job_view(sel_job=sel_invoice.job)
         self.render_job_info(sel_invoice.job)
 
     def set_job_view(self, sel_job=None):
+        """Summary
+
+        Args:
+            sel_job (None, optional): Description
+        """
         helper.select_table_item(self.tableWidget_jobs, sel_job)
         self.change_tab("tab_jobs_table")
 
     def change_tab(self, tab_name):
+        """Summary
+
+        Args:
+            tab_name (TYPE): Description
+        """
         tab = self.tabWidget_content.findChild(QtWidgets.QWidget, tab_name)
         self.tabWidget_content.setCurrentWidget(tab)
 
@@ -2080,6 +2639,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot()
     @debug.log_info
     def input_new_project(self):
+        """Summary
+        """
         # TODO: If current project is not empty ask to save
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
@@ -2093,11 +2654,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @debug.log_info
     def edit_project(self):
+        """Summary
+        """
         helper.edit_project(self.app_data)
         self.update_ui()
 
     @debug.log_info
     def load_project(self):
+        """Summary
+        """
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
             if reply:
@@ -2110,10 +2675,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @debug.log_info
     def save_project(self):
+        """Summary
+        """
         helper.save_project(self, self.app_data)
 
     @debug.log_info
     def save_project_as(self):
+        """Summary
+        """
         helper.save_project_as(self, self.app_data)
         self.update_ui()
 
@@ -2123,12 +2692,18 @@ class MainWindow(QtWidgets.QMainWindow):
     #
     """
     def export_companies(self):
+        """Summary
+        """
         helper.export_companies(self, self.app_data)
 
     def export_trades(self):
+        """Summary
+        """
         helper.export_trades(self, self.app_data)
 
     def export_cost_groups(self):
+        """Summary
+        """
         helper.export_cost_groups(self, self.app_data)
 
     """ func
@@ -2138,6 +2713,8 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def import_project(self):
+        """Summary
+        """
         if self.app_data.project_loaded():
             reply = helper.save_curr_project_prompt(self, self.app_data)
             if reply:
@@ -2147,14 +2724,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.update_ui()
 
     def import_companies(self):
+        """Summary
+        """
         helper.import_companies(self, self.app_data)
         self.update_ui()
 
     def import_trades(self):
+        """Summary
+        """
         helper.import_trades(self, self.app_data)
         self.update_ui()
 
     def import_cost_groups(self):
+        """Summary
+        """
         helper.import_cost_groups(self, self.app_data)
         self.update_ui()
 
@@ -2165,6 +2748,8 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_client(self):
+        """Summary
+        """
         person = helper.input_person(self.app_data)
         if person:
             self.app_data.project.client = person
@@ -2178,11 +2763,18 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_pcc_to_project(self):
+        """Summary
+        """
         pcc = helper.input_pcc(self.app_data)
         self.update_ui()
 
     @debug.log_info
     def edit_pcc(self, pcc):
+        """Summary
+
+        Args:
+            pcc (TYPE): Description
+        """
         pcc = helper.edit_pcc(self.app_data, pcc)
         if pcc:
             self.render_pcc_info(pcc)
@@ -2191,6 +2783,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @debug.log_info
     def copy_pcc(self, pcc):
+        """Summary
+
+        Args:
+            pcc (TYPE): Description
+        """
         pcc_copy = pcc.__copy__()
         self.app_data.project.add_pcc(pcc_copy)
         self.update_ui()
@@ -2203,11 +2800,21 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_invoice_to_project(self, sel_job=None):
+        """Summary
+
+        Args:
+            sel_job (None, optional): Description
+        """
         invoice = helper.input_invoice(self.app_data, sel_job=sel_job)
         self.update_ui()
 
     @debug.log_info
     def edit_invoice(self, invoice):
+        """Summary
+
+        Args:
+            invoice (TYPE): Description
+        """
         invoice = helper.edit_invoice(self.app_data, invoice)
         if invoice:
             self.render_invoice_info(invoice)
@@ -2221,11 +2828,18 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_job_to_project(self):
+        """Summary
+        """
         job = helper.input_job(self.app_data)
         self.update_ui()
 
     @debug.log_info
     def edit_job(self, job):
+        """Summary
+
+        Args:
+            job (TYPE): Description
+        """
         job = helper.edit_job(self.app_data, job)
         if job:
             self.render_job_info(job)
@@ -2239,11 +2853,18 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_company_to_project(self):
+        """Summary
+        """
         company = helper.input_company(self.app_data)
         self.update_ui()
 
     @debug.log_info
     def edit_company(self, company):
+        """Summary
+
+        Args:
+            company (TYPE): Description
+        """
         company = helper.edit_company(self.app_data, company)
         if company:
             self.render_company_info(company)
@@ -2257,11 +2878,18 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_trade_to_project(self):
+        """Summary
+        """
         trade = helper.input_trade(self.app_data)
         self.update_ui()
 
     @debug.log_info
     def edit_trade(self, trade):
+        """Summary
+
+        Args:
+            trade (TYPE): Description
+        """
         trade = helper.edit_trade(self.app_data, trade)
         if trade:
             self.render_trade_info(trade)
@@ -2275,11 +2903,18 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_cost_group_to_project(self):
+        """Summary
+        """
         cost_group = helper.input_cost_group(self.app_data)
         self.update_ui()
 
     @debug.log_info
     def edit_cost_group(self, cost_group):
+        """Summary
+
+        Args:
+            cost_group (TYPE): Description
+        """
         cost_group = helper.edit_cost_group(self.app_data, cost_group)
         if cost_group:
             self.reset_cost_group_info()
@@ -2293,11 +2928,18 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def input_person_to_project(self):
+        """Summary
+        """
         person = helper.input_person(self.app_data)
         self.update_ui()
 
     @debug.log_info
     def edit_person(self, person):
+        """Summary
+
+        Args:
+            person (TYPE): Description
+        """
         person = helper.edit_person(self.app_data, person)
         if person:
             self.render_person_info(person)
@@ -2311,12 +2953,16 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     @debug.log_info
     def edit_app_config(self):
+        """Summary
+        """
         config = helper.edit_app_config(self.app_data)
         if config:
             self.update_ui()
 
     @debug.log_info
     def edit_proj_config(self):
+        """Summary
+        """
         config = helper.edit_proj_config(self.app_data)
         if config:
             self.update_ui()
@@ -2330,9 +2976,13 @@ class MainWindow(QtWidgets.QMainWindow):
     #   visually indicate, that an autosaving is in progress
     """
     def start_autosaving(self):
+        """Summary
+        """
         pass
 
     def stop_autosaving(self):
+        """Summary
+        """
         pass
     """
     #
@@ -2342,6 +2992,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @debug.log_info
     @pyqtSlot()
     def button_run_test(self):
+        """Summary
+        """
         if self.app_data.debug_on():
             print("This is a test!")
             self.add_random_jobs()
@@ -2356,6 +3008,8 @@ class MainWindow(QtWidgets.QMainWindow):
     @debug.log_info
     @pyqtSlot()
     def button_debug_add_invoices(self):
+        """Summary
+        """
         if self.app_data.debug_on():
             print("This is a test!")
             self.add_random_invoices()
@@ -2364,6 +3018,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     #       TODO: Move all the testfunctions to the API file
     def add_random_jobs(self, max_jobs=50):
+        """Summary
+
+        Args:
+            max_jobs (int, optional): Description
+        """
         number_of_jobs = random.randint(1, max_jobs)
         for i in range(number_of_jobs):
             company = random.choice(self.app_data.project.companies)
@@ -2382,6 +3041,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.app_data.project.input_new_job(input_job_args)
 
     def add_random_invoices(self, max_invoices=150):
+        """Summary
+
+        Args:
+            max_invoices (int, optional): Description
+        """
         number_of_invoices = random.randint(1, max_invoices)
         for i in range(number_of_invoices):
             invoice_id_length = random.randint(5, 15)
@@ -2415,6 +3079,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.app_data.project.input_new_invoice(input_invoice_args)
 
     def add_random_psds(self, max_psds=600):
+        """Summary
+
+        Args:
+            max_psds (int, optional): Description
+        """
         number_of_psds = random.randint(1, max_psds)
         for i in range(number_of_psds):
             job = random.choice(self.app_data.project.jobs)
@@ -2425,6 +3094,11 @@ class MainWindow(QtWidgets.QMainWindow):
             job.pay_safety_deposit(date, amount, comment)
 
     def add_random_job_additions(self, max_job_additions=600):
+        """Summary
+
+        Args:
+            max_job_additions (int, optional): Description
+        """
         number_of_job_additions = random.randint(1, max_job_additions)
         for i in range(number_of_job_additions):
             job = random.choice(self.app_data.project.jobs)
@@ -2437,6 +3111,11 @@ class MainWindow(QtWidgets.QMainWindow):
             job.add_job_addition(date, name, amount, comment)
 
     def add_random_cost_calculations(self, max_cost_calculations=50):
+        """Summary
+
+        Args:
+            max_cost_calculations (int, optional): Description
+        """
         number_of_cost_calculations = random.randint(1, max_cost_calculations)
         for i in range(number_of_cost_calculations):
 
@@ -2451,6 +3130,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 pcc.add_inventory_item(item)
 
     def random_inventory_item(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         name_length = random.randint(1,10)
         description_length = random.randint(0,350)
         trade = random.choice(self.app_data.project.trades)
@@ -2468,12 +3152,22 @@ class MainWindow(QtWidgets.QMainWindow):
         return proj.InventoryItem(**inventory_item_args)
 
     def add_contact_people(self):
+        """Summary
+        """
         for company in self.app_data.project.companies:
             if company.contact_person is None:
                 random_person = self.random_person()
                 company.add_contact_person(random_person)
 
     def random_person(self, company=None):
+        """Summary
+
+        Args:
+            company (None, optional): Description
+
+        Returns:
+            TYPE: Description
+        """
         first_name_length = random.randint(1,10)
         last_name_length = random.randint(1,10)
 
@@ -2490,6 +3184,11 @@ class MainWindow(QtWidgets.QMainWindow):
         return corp.Person(**person_args)
 
     def random_address(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         address_args = {
             "street": id_generator(size=1, chars=string.ascii_uppercase)+id_generator(size=12, chars=string.ascii_lowercase),
             "house_number": random.randint(1,200),
@@ -2502,11 +3201,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def print_project_info(self):
+        """Summary
+        """
         if self.app_data.project:
             debug.log(self.app_data.project.__dict__)
         else:
             debug.log("No Project yet!")
     def print_invoices(self):
+        """Summary
+        """
         if self.app_data.project.invoices:
             for invoice in self.app_data.project.invoices:
                 debug.log(vars(invoice))
@@ -2518,4 +3221,13 @@ class MainWindow(QtWidgets.QMainWindow):
 #
 """
 def id_generator(size=10, chars=string.ascii_lowercase + string.ascii_uppercase + string.digits):
+    """Summary
+
+    Args:
+        size (int, optional): Description
+        chars (TYPE, optional): Description
+
+    Returns:
+        TYPE: Description
+    """
     return ''.join(random.choice(chars) for _ in range(size))

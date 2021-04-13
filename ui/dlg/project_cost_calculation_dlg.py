@@ -75,6 +75,7 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
 
     def setup_combo_boxes(self):
         self.setup_combo_box_type()
+        self.setup_combo_box_filter_by_active()
         self.setup_combo_box_filter_by_cost_group()
         self.setup_combo_box_filter_by_trade()
 
@@ -83,6 +84,12 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
         self.comboBox_type.addItem("Typ auswählen...", None)
         for type in proj.ProjectCostCalculation.PCC_TYPES:
             self.comboBox_type.addItem(str(type), type)
+
+    def setup_combo_box_filter_by_active(self):
+        self.comboBox_filter_active.clear()
+        self.comboBox_filter_active.addItem("Alle", None)
+        self.comboBox_filter_active.addItem("Nur aktive Items", True)
+        self.comboBox_filter_active.addItem("Nur inaktive Items", False)
 
     def setup_combo_box_filter_by_cost_group(self):
         self.comboBox_filter_cost_group.clear()
@@ -98,7 +105,9 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
 
 
     def activate_reset_filter_button(self):
-        if self.comboBox_filter_cost_group.currentData():
+        if self.comboBox_filter_cost_group.currentData() \
+        or self.comboBox_filter_trade.currentData() \
+        or self.comboBox_filter_active.currentData():
             self.pushButton_reset_filter.setEnabled(True)
         else:
             self.pushButton_reset_filter.setEnabled(False)
@@ -150,6 +159,7 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
         self.comboBox_filter_cost_group.currentIndexChanged.connect(self.setup_combo_box_filter_by_trade)
         self.comboBox_filter_cost_group.currentIndexChanged.connect(self.update_ui)
         self.comboBox_filter_trade.currentIndexChanged.connect(self.update_ui)
+        self.comboBox_filter_active.currentIndexChanged.connect(self.update_ui)
 
     def set_event_handler(self):
         self.keyReleaseEvent = self.eventHandler
@@ -218,7 +228,6 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
     """
     def set_inventory(self, inventory):
         self.treeWidget_inventory.clear()
-        total_price_sum = 0
         for inventory_item in inventory:
             helper.add_item_to_tree(content_item=inventory_item,
                                     parent=self.treeWidget_inventory,
@@ -231,9 +240,17 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
                                         f"{inventory_item.unit_type}",
                                         amount_str(inventory_item.unit_price, self.currency),
                                         amount_str(inventory_item.total_price, self.currency)])
-            total_price_sum += inventory_item.total_price if inventory_item.is_active else 0
-
+        # Number of items
+        self.label_items_all.setText(str(len(inventory)))
+        self.label_items.setText(str(len([i for i in inventory if i.is_active])))
+        self.label_items_deactivated.setText(str(len([i for i in inventory if not i.is_active])))
+        # Total prices sum
+        total_price_sum_all = sum(i.total_price for i in inventory)
+        total_price_sum = sum(i.total_price for i in inventory if i.is_active)
+        total_price_deactivated = total_price_sum_all-total_price_sum
+        self.label_total_price_sum_all.setText(amount_str(total_price_sum_all, self.currency))
         self.label_total_price_sum.setText(amount_str(total_price_sum, self.currency))
+        self.label_total_price_sum_deactivated.setText(amount_str(total_price_deactivated, self.currency))
 
     """
     #
@@ -248,11 +265,14 @@ class ProjectCostCalculationDialog(QtWidgets.QDialog):
     def get_inventory(self):
         cost_group = self.comboBox_filter_cost_group.currentData()
         trade = self.comboBox_filter_trade.currentData()
+        active_state = self.comboBox_filter_active.currentData()
         inventory = self.inventory
         if trade:
-            inventory = [item for item in self.inventory if item.trade is trade]
+            inventory = [item for item in inventory if item.trade is trade]
         elif cost_group:
-            inventory = [item for item in self.inventory if item.cost_group is cost_group or item.cost_group.is_sub_group_of(cost_group)]
+            inventory = [item for item in inventory if item.cost_group is cost_group or item.cost_group.is_sub_group_of(cost_group)]
+        if active_state is not None: #  Only active items
+            inventory = [item for item in inventory if item.is_active == active_state]
         return inventory
 
     def set_labels(self):

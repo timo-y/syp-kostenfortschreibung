@@ -21,11 +21,10 @@ from core.obj import corp, proj, arch
 # maybe stupid
 class AllEncoder(JSONEncoder):
 
-    """ JSON-Encoder for all objects.
-    """
+    """JSON-Encoder for all objects."""
 
     def default(self, o):
-        """ Check the object type and encodes the original object to JSON.
+        """Check the object type and encodes the original object to JSON.
 
         Args:
             o (TYPE): Input object
@@ -35,7 +34,7 @@ class AllEncoder(JSONEncoder):
         """
         if isinstance(o, proj.Project):
             ProjectEncoder.default(o)
-        elif isinstance(o. proj.ProjectData):
+        elif isinstance(o.proj.ProjectData):
             ProjectDataEncoder.default(o)
         elif isinstance(o, corp.Company):
             CompanyEncoder.default(o)
@@ -51,15 +50,14 @@ class AllEncoder(JSONEncoder):
             ArchJobEncoder.default(o)
         elif isinstance(o, corp.Job):
             JobEncoder.default(o)
-        elif isinstance(o. corp.Invoice):
+        elif isinstance(o.corp.Invoice):
             InvoiceEncoder.default(o)
         return JSONEncoder.default(self, o)
 
 
 class ProjectEncoder(JSONEncoder):
 
-    """ JSON-Encoder for Project objects.
-    """
+    """JSON-Encoder for Project objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -82,19 +80,25 @@ class ProjectEncoder(JSONEncoder):
                 "identifier": o.identifier,
                 "address": AddressEncoder().default(o.address) if o.address else None,
                 "client": PersonEncoder().default(o.client) if o.client else None,
-                "project_data": ProjectDataEncoder().default(o.project_data) if o.project_data else None,
-                "commissioned_date": o.commissioned_date.toString() if o.commissioned_date else None,
-                "planning_finished_date": o.planning_finished_date.toString() if o.planning_finished_date else None,
+                "project_data": ProjectDataEncoder().default(o.project_data)
+                if o.project_data
+                else None,
+                "commissioned_date": o.commissioned_date.toString()
+                if o.commissioned_date
+                else None,
+                "planning_finished_date": o.planning_finished_date.toString()
+                if o.planning_finished_date
+                else None,
                 "billed_date": o.billed_date.toString() if o.billed_date else None,
-                "planning_status": o.planning_status
+                "planning_status": o.planning_status,
             }
             return encoded_project
         return JSONEncoder.default(self, o)
 
+
 class ProjectDataEncoder(JSONEncoder):
 
-    """ JSON-Encoder for ProjectData objects.
-    """
+    """JSON-Encoder for ProjectData objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -121,15 +125,20 @@ class ProjectDataEncoder(JSONEncoder):
                 "construction_costs_kg300_400": o.construction_costs_kg300_400,
                 "production_costs": o.production_costs,
                 "contract_fee": o.contract_fee,
-                "execution_period" : (o.execution_period[0].toString(), o.execution_period[1].toString()) if o.execution_period else None
+                "execution_period": (
+                    o.execution_period[0].toString(),
+                    o.execution_period[1].toString(),
+                )
+                if o.execution_period
+                else None,
             }
             return encoded_project_data
         return JSONEncoder.default(self, o)
 
+
 class ProjectCostCalculationEncoder(JSONEncoder):
 
-    """ JSON-Encoder for ProjectCostCalculation objects.
-    """
+    """JSON-Encoder for ProjectCostCalculation objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -150,15 +159,17 @@ class ProjectCostCalculationEncoder(JSONEncoder):
                 "name": o.name,
                 "type": o.type,
                 "date": o.date.toString(),
-                "inventory": [InventoryItemEncoder().default(item) for item in o.inventory]
+                "inventory": [
+                    InventoryItemEncoder().default(item) for item in o.inventory
+                ],
             }
             return encoded_pcc
         return JSONEncoder.default(self, o)
 
+
 class InventoryItemEncoder(JSONEncoder):
 
-    """ JSON-Encoder for InventoryItem objects.
-    """
+    """JSON-Encoder for InventoryItem objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -182,24 +193,23 @@ class InventoryItemEncoder(JSONEncoder):
                 "units": o.units,
                 "unit_type": o.unit_type,
                 "is_active": o.is_active,
-                "cost_group_ref":
-                {
+                "cost_group_ref": {
                     "uid": o.cost_group.uid_to_json(),
-                    "id": o.cost_group.id
-                } if o.cost_group else None,
-                "trade_ref":
-                {
-                    "uid": o.trade.uid_to_json(),
-                    "name": o.trade.name
-                } if o.trade else None,
+                    "id": o.cost_group.id,
+                }
+                if o.cost_group
+                else None,
+                "trade_ref": {"uid": o.trade.uid_to_json(), "name": o.trade.name}
+                if o.trade
+                else None,
             }
             return encoded_inventory_item
         return JSONEncoder.default(self, o)
 
+
 class CompanyEncoder(JSONEncoder):
 
-    """ JSON-Encoder for Company objects.
-    """
+    """JSON-Encoder for Company objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -221,16 +231,17 @@ class CompanyEncoder(JSONEncoder):
                 "service": o.service,
                 "service_type": o.service_type,
                 "budget": o.budget,
-                "contact_person": PersonEncoder().default(o.contact_person) if o.contact_person else None,
-
+                "contact_person": PersonEncoder().default(o.contact_person)
+                if o.contact_person
+                else None,
             }
             return encoded_company
         return JSONEncoder.default(self, o)
 
+
 class TradeEncoder(JSONEncoder):
 
-    """ JSON-Encoder for Trade objects.
-    """
+    """JSON-Encoder for Trade objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -250,15 +261,15 @@ class TradeEncoder(JSONEncoder):
                 #  data
                 "name": o.name,
                 "budget": o.budget,
-                "comment": o.comment
+                "comment": o.comment,
             }
             return encoded_trade
         return JSONEncoder.default(self, o)
 
+
 class CostGroupEncoder(JSONEncoder):
 
-    """ JSON-Encoder for CostGroup objects.
-    """
+    """JSON-Encoder for CostGroup objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -280,19 +291,17 @@ class CostGroupEncoder(JSONEncoder):
                 "name": o.name,
                 "description": o.description,
                 "budget": o.budget,
-                "parent_ref":
-                {
-                    "uid": o.parent.uid_to_json(),
-                    "id": o.parent.id
-                } if o.parent else None,
+                "parent_ref": {"uid": o.parent.uid_to_json(), "id": o.parent.id}
+                if o.parent
+                else None,
             }
             return encoded_cost_group
         return JSONEncoder.default(self, o)
 
+
 class PersonEncoder(JSONEncoder):
 
-    """ JSON-Encoder for Person objects.
-    """
+    """JSON-Encoder for Person objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -317,19 +326,17 @@ class PersonEncoder(JSONEncoder):
                 "fax": o.fax,
                 "mobile": o.mobile,
                 "email": o.email,
-                "company_ref":
-                {
-                    "uid": o.company.uid_to_json(),
-                    "name": o.company.name
-                } if o.company else None,
+                "company_ref": {"uid": o.company.uid_to_json(), "name": o.company.name}
+                if o.company
+                else None,
             }
             return encoded_person
         return JSONEncoder.default(self, o)
 
+
 class AddressEncoder(JSONEncoder):
 
-    """ JSON-Encoder for Address objects.
-    """
+    """JSON-Encoder for Address objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -352,15 +359,15 @@ class AddressEncoder(JSONEncoder):
                 "city": o.city,
                 "state": o.state,
                 "zipcode": o.zipcode,
-                "country": o.country
+                "country": o.country,
             }
             return encoded_address
         return JSONEncoder.default(self, o)
 
+
 class JobEncoder(JSONEncoder):
 
-    """ JSON-Encoder for Job objects.
-    """
+    """JSON-Encoder for Job objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -379,20 +386,18 @@ class JobEncoder(JSONEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "id": o.id,
-                "company_ref":
-                {
-                    "uid": o.company.uid_to_json(),
-                    "name": o.company.name
-                } if o.company else None,
-                "job_sum": o.job_sum
+                "company_ref": {"uid": o.company.uid_to_json(), "name": o.company.name}
+                if o.company
+                else None,
+                "job_sum": o.job_sum,
             }
             return encoded_job
         return JSONEncoder.default(self, o)
 
+
 class ArchJobEncoder(JobEncoder):
 
-    """ JSON-Encoder for ArchJob objects.
-    """
+    """JSON-Encoder for ArchJob objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -411,32 +416,44 @@ class ArchJobEncoder(JobEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "id": o.id,
-                "company_ref":
-                {
-                    "uid": o.company.uid_to_json(),
-                    "name": o.company.name
-                } if o.company else None,
-                "cost_group_ref":
-                {
+                "company_ref": {"uid": o.company.uid_to_json(), "name": o.company.name}
+                if o.company
+                else None,
+                "cost_group_ref": {
                     "uid": o.cost_group.uid_to_json(),
-                    "id": o.cost_group.id
-                } if o.cost_group else None,
+                    "id": o.cost_group.id,
+                }
+                if o.cost_group
+                else None,
                 "job_sum": o.job_sum,
-                "trade_ref":
-                {
-                    "uid": o.trade.uid_to_json(),
-                    "name": o.trade.name
-                } if o.trade else None,
-                "job_additions": [{"date": job_addition["date"].toString(), "name": job_addition["name"], "amount": job_addition["amount"], "comment": job_addition["comment"]} for job_addition in o.job_additions],
-                "paid_safety_deposits": [{"date": psd["date"].toString(), "amount": psd["amount"], "comment": psd["comment"]} for psd in o.paid_safety_deposits],
+                "trade_ref": {"uid": o.trade.uid_to_json(), "name": o.trade.name}
+                if o.trade
+                else None,
+                "job_additions": [
+                    {
+                        "date": job_addition["date"].toString(),
+                        "name": job_addition["name"],
+                        "amount": job_addition["amount"],
+                        "comment": job_addition["comment"],
+                    }
+                    for job_addition in o.job_additions
+                ],
+                "paid_safety_deposits": [
+                    {
+                        "date": psd["date"].toString(),
+                        "amount": psd["amount"],
+                        "comment": psd["comment"],
+                    }
+                    for psd in o.paid_safety_deposits
+                ],
             }
             return encoded_job
         return JobEncoder.default(self, o)
 
+
 class InvoiceEncoder(JSONEncoder):
 
-    """ JSON-Encoder for Invoice objects.
-    """
+    """JSON-Encoder for Invoice objects."""
 
     def default(self, o):
         """Check the object type and encode to JSON.
@@ -455,17 +472,16 @@ class InvoiceEncoder(JSONEncoder):
                 "deleted": o.is_deleted(),
                 #  data
                 "id": o.id,
-                "company_ref":
-                {
-                    "uid": o.company.uid_to_json(),
-                    "name": o.company.name
-                } if o.company else None,
-                "job_ref":
-                {
+                "company_ref": {"uid": o.company.uid_to_json(), "name": o.company.name}
+                if o.company
+                else None,
+                "job_ref": {
                     "uid": o.job.uid_to_json(),
                     "id": o.job.id,
-                    "company.name": o.company.name
-                } if o.job else None,
+                    "company.name": o.company.name,
+                }
+                if o.job
+                else None,
                 "cumulative": o.cumulative,
                 "invoice_date": o.invoice_date.toString() if o.invoice_date else None,
                 "inbox_date": o.inbox_date.toString() if o.inbox_date else None,
@@ -477,13 +493,17 @@ class InvoiceEncoder(JSONEncoder):
                 "reduction_usage_costs": o.reduction_usage_costs,
                 "reduce_prev_invoices": o.reduce_prev_invoices,
                 "prev_invoices_amount": o.prev_invoices_amount,
-                "prev_invoices_uids": [invoice.uid_to_json() for invoice in o.prev_invoices],
+                "prev_invoices_uids": [
+                    invoice.uid_to_json() for invoice in o.prev_invoices
+                ],
                 "VAT": o.VAT,
                 "safety_deposit": o.safety_deposit,
                 "safety_deposit_amount": o._safety_deposit_amount,
                 "discount": o.discount,
                 "due_date": o.due_date.toString(),
-                "due_date_discount": o.due_date_discount.toString() if o.due_date_discount else None
+                "due_date_discount": o.due_date_discount.toString()
+                if o.due_date_discount
+                else None,
             }
             return encoded_invoice
         return JSONEncoder.default(self, o)

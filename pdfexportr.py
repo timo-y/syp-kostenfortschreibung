@@ -5,8 +5,10 @@
 #
 """
 import debug
+
 #   only works on windows !
 import win32com.client
+
 
 class PDFExportr:
 
@@ -24,7 +26,7 @@ class PDFExportr:
         o = win32com.client.Dispatch("Excel.Application")
         o.Visible = False
         wb = o.Workbooks.Open(input_file_path)
-        ws_index_list = [1] #say you want to print these sheets
+        ws_index_list = [1]  # say you want to print these sheets
         wb.WorkSheets(ws_index_list).Select()
         wb.ActiveSheet.ExportAsFixedFormat(0, output_file_path)
         wb.Close(True)

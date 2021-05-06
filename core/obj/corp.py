@@ -11,6 +11,7 @@ DEFAULT_VAT = 0.16
 from core.obj import restore
 from core.obj.uid import IdObject
 
+
 class Company(IdObject):
     """Company object representing a company.
 
@@ -26,7 +27,17 @@ class Company(IdObject):
     If a contact person was set this object needs to restore the link after loading (see: core.obj.restore).
     """
 
-    def __init__(self, name, service, service_type, *, uid=None, deleted=False, budget=0, contact_person=None):
+    def __init__(
+        self,
+        name,
+        service,
+        service_type,
+        *,
+        uid=None,
+        deleted=False,
+        budget=0,
+        contact_person=None,
+    ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.name = name
         self.service = service
@@ -45,6 +56,7 @@ class Company(IdObject):
     #   Fuctions updating a company
     #
     """
+
     @debug.log
     def update(self, name, service, service_type, budget, contact_person):
         self.name = name
@@ -63,6 +75,7 @@ class Company(IdObject):
     #   Generally to restore pointers after loading a project.
     #
     """
+
     @debug.log
     def restore(self, project):
         pass
@@ -74,6 +87,7 @@ class Company(IdObject):
     #   With this restore, we are comparing names, ids and/or other data to set pointers.
     #
     """
+
     @debug.log
     def restore_after_import(self, project):
         pass
@@ -84,12 +98,14 @@ class Company(IdObject):
     #
     #
     """
+
     def __str__(self):
         return str(self.name)
 
     # for importing companies, dont import, if they have the same name
     def __eq__(self):
         return str(self.name)
+
 
 class Person(IdObject):
     """Person object representing a Person.
@@ -109,9 +125,21 @@ class Person(IdObject):
     If a company was set this object needs to restore the link after loading (see: core.obj.restore).
     """
 
-    def __init__(self,*, first_name="", last_name="", uid=None, deleted=False,  address=None,
-                telephone=None, fax=None, mobile=None, email=None, company=None, company_ref=None
-                ):
+    def __init__(
+        self,
+        *,
+        first_name="",
+        last_name="",
+        uid=None,
+        deleted=False,
+        address=None,
+        telephone=None,
+        fax=None,
+        mobile=None,
+        email=None,
+        company=None,
+        company_ref=None,
+    ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.first_name = first_name
         self.last_name = last_name
@@ -132,6 +160,7 @@ class Person(IdObject):
     #
     #
     """
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -141,9 +170,11 @@ class Person(IdObject):
     #   Fuctions updating a person
     #
     """
+
     @debug.log
-    def update(self, first_name, last_name, address,
-                telephone, fax, mobile, email, company):
+    def update(
+        self, first_name, last_name, address, telephone, fax, mobile, email, company
+    ):
         self.first_name = first_name
         self.last_name = last_name
         # kwargs
@@ -162,9 +193,12 @@ class Person(IdObject):
     #
     #
     """
+
     @debug.log
     def restore(self, project):
-        self.company = restore.restore_by(self.company, self._company_ref, project.companies)
+        self.company = restore.restore_by(
+            self.company, self._company_ref, project.companies
+        )
 
     """
     #
@@ -172,6 +206,7 @@ class Person(IdObject):
     #
     #
     """
+
     def __str__(self):
         return " ".join([self.first_name, self.last_name])
 
@@ -179,7 +214,18 @@ class Person(IdObject):
 class Address(IdObject):
     """docstring for Address"""
 
-    def __init__(self, street, house_number, city, state, zipcode, country, *, uid=None, deleted=False):
+    def __init__(
+        self,
+        street,
+        house_number,
+        city,
+        state,
+        zipcode,
+        country,
+        *,
+        uid=None,
+        deleted=False,
+    ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.street = street
         self.house_number = house_number
@@ -198,6 +244,7 @@ class Address(IdObject):
     #   Fuctions updating an address
     #
     """
+
     @debug.log
     def update(self, street, house_number, city, state, zipcode, country):
         self.street = street
@@ -209,10 +256,21 @@ class Address(IdObject):
         """ set edited date """
         self.edited()
 
+
 class Job(IdObject):
     """docstring for Job"""
 
-    def __init__(self, id, *, uid=None, deleted=False,  company=None, job_sum=None, comment="", company_ref=None):
+    def __init__(
+        self,
+        id,
+        *,
+        uid=None,
+        deleted=False,
+        company=None,
+        job_sum=None,
+        comment="",
+        company_ref=None,
+    ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
         self.company = company
@@ -228,6 +286,7 @@ class Job(IdObject):
     #   Fuctions updating a job
     #
     """
+
     @debug.log
     def update(self, id, company, job_sum):
         self.id = id
@@ -242,13 +301,18 @@ class Job(IdObject):
     #
     #
     """
+
     @debug.log
     def restore(self, project):
-        self.company = restore.restore_by(self.company, self._company_ref, project.companies)
+        self.company = restore.restore_by(
+            self.company, self._company_ref, project.companies
+        )
 
     @debug.log
     def restore_after_import(self, project):
-        self.company = restore.restore_by(self.company, self._company_ref, project.companies, by=["name"])
+        self.company = restore.restore_by(
+            self.company, self._company_ref, project.companies, by=["name"]
+        )
 
     """
     #
@@ -256,20 +320,44 @@ class Job(IdObject):
     #
     #
     """
+
     def __str__(self):
         return str(self.id)
+
 
 class Invoice(IdObject):
     """docstring for Invoice"""
 
-    def __init__(self, id="", *, uid=None, deleted=False,  company=None,
-                    job=None, cumulative=True, invoice_date=None, inbox_date=None,
-                    checked_date=None, amount=0, verified_amount=0, rebate=0,
-                    reduction_insurance_costs=0, reduction_usage_costs=0, reduce_prev_invoices=True,
-                    prev_invoices=None, prev_invoices_uids=None, prev_invoices_amount=None,
-                    VAT=DEFAULT_VAT, safety_deposit=0, safety_deposit_amount=None, discount=0,
-                    due_date=None, due_date_discount=None, company_ref=None, job_ref=None
-                    ):
+    def __init__(
+        self,
+        id="",
+        *,
+        uid=None,
+        deleted=False,
+        company=None,
+        job=None,
+        cumulative=True,
+        invoice_date=None,
+        inbox_date=None,
+        checked_date=None,
+        amount=0,
+        verified_amount=0,
+        rebate=0,
+        reduction_insurance_costs=0,
+        reduction_usage_costs=0,
+        reduce_prev_invoices=True,
+        prev_invoices=None,
+        prev_invoices_uids=None,
+        prev_invoices_amount=None,
+        VAT=DEFAULT_VAT,
+        safety_deposit=0,
+        safety_deposit_amount=None,
+        discount=0,
+        due_date=None,
+        due_date_discount=None,
+        company_ref=None,
+        job_ref=None,
+    ):
         super().__init__(self, uid=uid, deleted=deleted)
         self.id = id
         self._company = company
@@ -286,7 +374,11 @@ class Invoice(IdObject):
         self.reduce_prev_invoices = reduce_prev_invoices
         # TODO: maybe introduce self.payments if an invoice is payed by parts
         self._prev_invoices = prev_invoices if prev_invoices is not None else list()
-        self._prev_invoices_amount =  self.get_prev_invoices_amount() if prev_invoices_amount is None else prev_invoices_amount
+        self._prev_invoices_amount = (
+            self.get_prev_invoices_amount()
+            if prev_invoices_amount is None
+            else prev_invoices_amount
+        )
         self.VAT = VAT
         self.safety_deposit = safety_deposit
         self._safety_deposit_amount = safety_deposit_amount
@@ -297,7 +389,9 @@ class Invoice(IdObject):
         """ for restoration only """
         self._company_ref = company_ref
         self._job_ref = job_ref
-        self._prev_invoices_uids = prev_invoices_uids if prev_invoices_uids is not None else list()
+        self._prev_invoices_uids = (
+            prev_invoices_uids if prev_invoices_uids is not None else list()
+        )
 
     """
     #
@@ -305,9 +399,13 @@ class Invoice(IdObject):
     #
     #
     """
+
     @property
     def company(self):
-        return self._company if self._company and self._company.is_not_deleted() else None
+        return (
+            self._company if self._company and self._company.is_not_deleted() else None
+        )
+
     @company.setter
     def company(self, company):
         self._company = company
@@ -315,14 +413,15 @@ class Invoice(IdObject):
     @property
     def job(self):
         return self._job if self._job and self._job.is_not_deleted() else None
+
     @job.setter
     def job(self, job):
         self._job = job
 
-
     """
     #   second level properties
     """
+
     @property
     def trade(self):
         return self.job.trade if self.job else None
@@ -334,6 +433,7 @@ class Invoice(IdObject):
     """
     #   calculated properties
     """
+
     @property
     def amount_VAT_amount(self):
         return self.amount * self.VAT
@@ -351,21 +451,31 @@ class Invoice(IdObject):
         return self.verified_amount + self.verified_amount_VAT_amount
 
     """ previous payments """
+
     @property
     def prev_invoices(self):
         return self._prev_invoices if self.cumulative else list()
+
     @prev_invoices.setter
     def prev_invoices(self, invoices):
-        self._prev_invoices = [invoice for invoice in invoices if self.no_recursion(invoice)]
+        self._prev_invoices = [
+            invoice for invoice in invoices if self.no_recursion(invoice)
+        ]
         if len(self._prev_invoices) != len(invoices):
-           debug.log_warning("setting prev_invoices, there was recursion detected, which has been denied. Some data may be lost if the invoices were not sorted by date before omitting.")
+            debug.log_warning(
+                "setting prev_invoices, there was recursion detected, which has been denied. Some data may be lost if the invoices were not sorted by date before omitting."
+            )
 
     @property
     def prev_invoices_amount(self):
         return self._prev_invoices_amount
+
     @prev_invoices_amount.setter
     def prev_invoices_amount(self, amount):
-        raise Exception("prev_invoices_amount cannot be set. Use the update_prev_invoices_amount() function to set.")
+        raise Exception(
+            "prev_invoices_amount cannot be set. Use the update_prev_invoices_amount() function to set."
+        )
+
     def get_prev_invoices_amount(self):
         if self.prev_invoices and self.reduce_prev_invoices and self.cumulative:
             """
@@ -373,19 +483,34 @@ class Invoice(IdObject):
             #   Find most max date from previous invoices
             #   then filter previous invoices
             """
-            cumulative_prev_invoices = [invoice for invoice in self.prev_invoices if invoice.cumulative]
-            if len(cumulative_prev_invoices)>0:
-                most_recent_invoice_date = max(invoice.invoice_date for invoice in cumulative_prev_invoices)
-                invoices = [invoice for invoice in self.prev_invoices if invoice.invoice_date == most_recent_invoice_date and invoice.cumulative]
-                if len(invoices)>1:
+            cumulative_prev_invoices = [
+                invoice for invoice in self.prev_invoices if invoice.cumulative
+            ]
+            if len(cumulative_prev_invoices) > 0:
+                most_recent_invoice_date = max(
+                    invoice.invoice_date for invoice in cumulative_prev_invoices
+                )
+                invoices = [
+                    invoice
+                    for invoice in self.prev_invoices
+                    if invoice.invoice_date == most_recent_invoice_date
+                    and invoice.cumulative
+                ]
+                if len(invoices) > 1:
                     """
                     #
                     #   If there exist more than one previous invoice with
                     #   this date, look at the date created and take the most recent one
                     #   (this is unique).
                     """
-                    most_recent_created_date = max(invoice.uid.created_date for invoice in invoices)
-                    invoices = [invoice for invoice in invoices if invoice.uid.created_date is most_recent_created_date]
+                    most_recent_created_date = max(
+                        invoice.uid.created_date for invoice in invoices
+                    )
+                    invoices = [
+                        invoice
+                        for invoice in invoices
+                        if invoice.uid.created_date is most_recent_created_date
+                    ]
                 return [invoice.verified_amount for invoice in invoices][0]
         return 0
 
@@ -397,6 +522,7 @@ class Invoice(IdObject):
         return self.verified_amount - self.prev_invoices_amount
 
     """ reductions """
+
     @property
     def rebate_amount(self):
         return self.amount_wout_prev_payments * self.rebate
@@ -419,7 +545,12 @@ class Invoice(IdObject):
 
     @property
     def amount_a_reductions_amount(self):
-        return self.amount_wout_prev_payments - self.rebate_amount - self.reduction_insurance_costs_amount - self.reduction_usage_costs_amount
+        return (
+            self.amount_wout_prev_payments
+            - self.rebate_amount
+            - self.reduction_insurance_costs_amount
+            - self.reduction_usage_costs_amount
+        )
 
     @property
     def amount_a_reductions_amount_VAT_amount(self):
@@ -427,12 +558,19 @@ class Invoice(IdObject):
 
     @property
     def amount_a_reductions_amount_w_VAT(self):
-        return self.amount_a_reductions_amount+self.amount_a_reductions_amount_VAT_amount
+        return (
+            self.amount_a_reductions_amount + self.amount_a_reductions_amount_VAT_amount
+        )
 
     """ approved amount """
+
     @property
     def safety_deposit_amount(self):
-        safety_deposit_amount = self._safety_deposit_amount if self._safety_deposit_amount is not None else self.amount_a_reductions_amount_w_VAT * self.safety_deposit
+        safety_deposit_amount = (
+            self._safety_deposit_amount
+            if self._safety_deposit_amount is not None
+            else self.amount_a_reductions_amount_w_VAT * self.safety_deposit
+        )
         return safety_deposit_amount
 
     @property
@@ -453,17 +591,33 @@ class Invoice(IdObject):
     #   Fuctions updating an invoice
     #
     """
+
     @debug.log
-    def update(self, *, id, company, job,
-                cumulative, invoice_date, inbox_date,
-                checked_date, amount, verified_amount,
-                rebate, reduction_insurance_costs,
-                reduction_usage_costs, reduce_prev_invoices,
-                prev_invoices_amount=None,
-                prev_invoices, VAT,
-                safety_deposit, safety_deposit_amount=None,
-                discount, due_date, due_date_discount
-                ):
+    def update(
+        self,
+        *,
+        id,
+        company,
+        job,
+        cumulative,
+        invoice_date,
+        inbox_date,
+        checked_date,
+        amount,
+        verified_amount,
+        rebate,
+        reduction_insurance_costs,
+        reduction_usage_costs,
+        reduce_prev_invoices,
+        prev_invoices_amount=None,
+        prev_invoices,
+        VAT,
+        safety_deposit,
+        safety_deposit_amount=None,
+        discount,
+        due_date,
+        due_date_discount,
+    ):
         self.id = id
         self.company = company
         self.job = job
@@ -477,7 +631,11 @@ class Invoice(IdObject):
         self.reduction_insurance_costs = reduction_insurance_costs
         self.reduction_usage_costs = reduction_usage_costs
         self.reduce_prev_invoices = reduce_prev_invoices
-        self._prev_invoices_amount = self.get_prev_invoices_amount() if prev_invoices_amount is None else prev_invoices_amount
+        self._prev_invoices_amount = (
+            self.get_prev_invoices_amount()
+            if prev_invoices_amount is None
+            else prev_invoices_amount
+        )
         self.prev_invoices = prev_invoices
         self.VAT = VAT
         self.safety_deposit = safety_deposit
@@ -489,18 +647,23 @@ class Invoice(IdObject):
         self.edited()
 
     """ prev invoices """
+
     @debug.log
     def add_prev_invoice(self, invoice):
-        if not(self._prev_invoices):
+        if not (self._prev_invoices):
             if isinstance(invoice, Invoice):
                 if self.no_recursion(invoice):
                     self.prev_invoices.append(invoice)
                 else:
-                    raise Exception("Invoices cant be prev_invoices of each other (recursion will go infinite)!")
+                    raise Exception(
+                        "Invoices cant be prev_invoices of each other (recursion will go infinite)!"
+                    )
             else:
                 raise TypeError("Invoice is not a corp.Invoice object.")
         else:
-            raise Exception("Restore the previous invoices first (restore_prev_invoices())!")
+            raise Exception(
+                "Restore the previous invoices first (restore_prev_invoices())!"
+            )
 
     @debug.log
     def remove_prev_invoice(self, invoice):
@@ -511,7 +674,7 @@ class Invoice(IdObject):
 
     @debug.log
     def clear_prev_invoices(self):
-        self.prev_invoices=list()
+        self.prev_invoices = list()
 
     """
     #
@@ -519,22 +682,33 @@ class Invoice(IdObject):
     #
     #
     """
+
     @debug.log
     def restore(self, project):
         self.restore_prev_invoices(project.invoices)
-        self.company = restore.restore_by(self.company, self._company_ref, project.companies)
+        self.company = restore.restore_by(
+            self.company, self._company_ref, project.companies
+        )
         self.job = restore.restore_by(self.job, self._job_ref, project.jobs)
 
     @debug.log
     def restore_after_import(self, project):
-        self.company = restore.restore_by(self.company, self._company_ref, project.companies, by=["name"])
-        self.job = restore.restore_by(self.job, self._job_ref, project.jobs, by=["id", "company.name"])
+        self.company = restore.restore_by(
+            self.company, self._company_ref, project.companies, by=["name"]
+        )
+        self.job = restore.restore_by(
+            self.job, self._job_ref, project.jobs, by=["id", "company.name"]
+        )
 
     def restore_prev_invoices(self, invoices):
-        if self._prev_invoices_uids and len(self.prev_invoices)==0:
-            self.prev_invoices = [invoice for invoice in invoices if invoice.uid in self._prev_invoices_uids]
+        if self._prev_invoices_uids and len(self.prev_invoices) == 0:
+            self.prev_invoices = [
+                invoice
+                for invoice in invoices
+                if invoice.uid in self._prev_invoices_uids
+            ]
             self._prev_invoices_uids = None
-        elif self._prev_invoices_uids and len(self.prev_invoices)>0 :
+        elif self._prev_invoices_uids and len(self.prev_invoices) > 0:
             raise Exception("Cannot restore invoices, prev_invoices is non-empty!")
 
     """
@@ -543,6 +717,7 @@ class Invoice(IdObject):
     #
     #
     """
+
     @debug.log
     def no_recursion(self, invoice):
         if self.uid is invoice.uid:
@@ -559,5 +734,6 @@ class Invoice(IdObject):
     #
     #
     """
+
     def __str__(self):
         return str(self.id)

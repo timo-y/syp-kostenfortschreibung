@@ -6,6 +6,7 @@
 """
 from PyQt5 import QtWidgets, uic
 
+
 class AboutDialog(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
@@ -20,5 +21,6 @@ class AboutDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def initialize_ui(self):
-        uic.loadUi('ui/dlg/about_dialog.ui', self)
+        uic.loadUi("ui/dlg/about_dialog.ui", self)

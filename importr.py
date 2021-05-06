@@ -22,8 +22,9 @@ from core.obj import proj, arch, corp
 
 from PyQt5.QtCore import QDate
 
+
 class KFImporter:
-    """ Import *-Kostenfortschreibung.xlsx files/projects.
+    """Import *-Kostenfortschreibung.xlsx files/projects.
 
     Attributes:
         companies (list): List of Company objects
@@ -38,6 +39,7 @@ class KFImporter:
         trades_args (list):  List of dicts
         wb (openpyxl.Workbook): Excel workbook
     """
+
     def __init__(self, file_path):
         """Initilize KFImporter.
 
@@ -61,31 +63,28 @@ class KFImporter:
         self.companies = list()
 
     def import_data(self):
-        """Do the import.
-        """
+        """Do the import."""
         self.import_trades_args()
         self.import_companies_args()
         self.import_jobs_args()
         self.import_invoices_args()
 
     def import_trades_args(self):
-        """Improt the trades from the worksheet.
-        """
+        """Improt the trades from the worksheet."""
         ws = self.wb["Gewerke"]
-        for i in range(2, len(ws['A'])):
+        for i in range(2, len(ws["A"])):
             args = {
                 "name": ws[f"A{i}"].value,
                 "budget": ws[f"C{i}"].value if ws[f"C{i}"].value else 0,
-                "comment": ws[f"E{i}"].value if ws[f"E{i}"].value else ""
+                "comment": ws[f"E{i}"].value if ws[f"E{i}"].value else "",
             }
             if args["name"]:
                 self.trades_args.append(args)
 
     def import_companies_args(self):
-        """Improt the companies from the worksheet.
-        """
+        """Improt the companies from the worksheet."""
         ws = self.wb["Firmen"]
-        for i in range(2, len(ws['A'])):
+        for i in range(2, len(ws["A"])):
             args = {
                 "name": ws[f"A{i}"].value,
                 "service": ws[f"B{i}"].value,
@@ -95,41 +94,34 @@ class KFImporter:
                 self.companies_args.append(args)
 
     def import_jobs_args(self):
-        """Improt the jobs from the worksheet.
-        """
+        """Improt the jobs from the worksheet."""
         ws = self.wb["Aufträge"]
-        for i in range(2, len(ws['A'])):
+        for i in range(2, len(ws["A"])):
             args = {
                 "id": int(ws[f"A{i}"].value.split(" ")[1]) if ws[f"A{i}"].value else 0,
-                "company_ref":
-                {
-                    "name": ws[f"B{i}"].value
-                },
-                "cost_group_ref":
-                {
+                "company_ref": {"name": ws[f"B{i}"].value},
+                "cost_group_ref": {
                     "id": str(ws[f"D{i}"].value),
                 },
-                "trade_ref":
-                {
-                    "name": ws[f"C{i}"].value
-                },
+                "trade_ref": {"name": ws[f"C{i}"].value},
                 "job_sum": float(ws[f"E{i}"].value) if ws[f"E{i}"].value else 0,
                 "comment": ws[f"G{i}"].value if ws[f"G{i}"].value else "",
             }
-            if args["id"]!=0:
+            if args["id"] != 0:
                 self.jobs_args.append(args)
 
     def import_invoices_args(self):
-        """Improt the invoices from the worksheet.
-        """
+        """Improt the invoices from the worksheet."""
         ws = self.wb["Kostenfortschreibung"]
-        for i in range(7, len(ws['A'])):
-            invoice_date = ws[f"H{i}"].value if ws[f"H{i}"].value else str2date("01.07.2020")
+        for i in range(7, len(ws["A"])):
+            invoice_date = (
+                ws[f"H{i}"].value if ws[f"H{i}"].value else str2date("01.07.2020")
+            )
             start_vat_reduction_date = str2date("01.07.2020")
             end_vat_reduction_date = str2date("31.12.2020")
-            VAT =  ws[f"V{i}"].value
+            VAT = ws[f"V{i}"].value
             if VAT == 1:
-                if start_vat_reduction_date<=invoice_date<=end_vat_reduction_date:
+                if start_vat_reduction_date <= invoice_date <= end_vat_reduction_date:
                     VAT = 0.16
                 else:
                     VAT = 0.19
@@ -137,35 +129,52 @@ class KFImporter:
             args = {
                 "id": ws[f"A{i}"].value,
                 "cumulative": ws[f"C{i}"].value,
-                "company_ref":
-                {
+                "company_ref": {
                     "name": ws[f"D{i}"].value,
                 },
-                "job_ref":
-                {
-                    "id": int(ws[f"G{i}"].value.split(" ")[1]) if ws[f"G{i}"].value else "",
+                "job_ref": {
+                    "id": int(ws[f"G{i}"].value.split(" ")[1])
+                    if ws[f"G{i}"].value
+                    else "",
                     "company.name": ws[f"D{i}"].value if ws[f"D{i}"].value else "",
                 },
-                "invoice_date": QDate(invoice_date.year, invoice_date.month, invoice_date.day) if invoice_date else None,
-                "inbox_date": QDate(ws[f"I{i}"].value.year, ws[f"I{i}"].value.month, ws[f"I{i}"].value.day) if ws[f"I{i}"].value else None,
-                "checked_date": QDate(ws[f"J{i}"].value.year, ws[f"J{i}"].value.month, ws[f"J{i}"].value.day) if ws[f"J{i}"].value else None,
+                "invoice_date": QDate(
+                    invoice_date.year, invoice_date.month, invoice_date.day
+                )
+                if invoice_date
+                else None,
+                "inbox_date": QDate(
+                    ws[f"I{i}"].value.year,
+                    ws[f"I{i}"].value.month,
+                    ws[f"I{i}"].value.day,
+                )
+                if ws[f"I{i}"].value
+                else None,
+                "checked_date": QDate(
+                    ws[f"J{i}"].value.year,
+                    ws[f"J{i}"].value.month,
+                    ws[f"J{i}"].value.day,
+                )
+                if ws[f"J{i}"].value
+                else None,
                 "amount": ws[f"K{i}"].value if ws[f"K{i}"].value else 0,
                 "verified_amount": ws[f"L{i}"].value if ws[f"L{i}"].value else 0,
                 "rebate": ws[f"N{i}"].value if ws[f"N{i}"].value else 0,
-                "reduction_insurance_costs": ws[f"P{i}"].value if ws[f"P{i}"].value else 0,
+                "reduction_insurance_costs": ws[f"P{i}"].value
+                if ws[f"P{i}"].value
+                else 0,
                 "reduction_usage_costs": ws[f"R{i}"].value if ws[f"R{i}"].value else 0,
                 "VAT": VAT,
                 "safety_deposit": ws[f"Y{i}"].value if ws[f"Y{i}"].value else 0,
                 "discount": ws[f"AB{i}"].value if ws[f"AB{i}"].value else 0,
-                "due_date": QDate(1,1,1),
-                "due_date_discount": QDate(1,1,1) if ws[f"AB{i}"].value else None
+                "due_date": QDate(1, 1, 1),
+                "due_date_discount": QDate(1, 1, 1) if ws[f"AB{i}"].value else None,
             }
             if args["id"]:
                 self.invoices_args.append(args)
 
     def create_objects(self):
-        """Create the ojects from the imported args.
-        """
+        """Create the ojects from the imported args."""
         for trade_args in self.trades_args:
             trade = arch.Trade(**trade_args)
             self.trades.append(trade)
@@ -183,7 +192,6 @@ class KFImporter:
             self.invoices.append(invoice)
 
 
-
 def str2date(date_str):
     """Convert String to Date.
 
@@ -194,6 +202,7 @@ def str2date(date_str):
         datetime.datetime.Date: Output
     """
     return datetime.strptime(date_str, DATE_FORMAT)
+
 
 def date2str(date):
     """Convert Date to String.

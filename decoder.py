@@ -25,8 +25,7 @@ from core.obj import corp, proj, arch, uid
 # maybe stupid
 class AllDecoder(JSONDecoder):
 
-    """ Decoder for all objects.
-    """
+    """Decoder for all objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -68,8 +67,7 @@ class AllDecoder(JSONDecoder):
 
 class UIDDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded UID objects.
-    """
+    """Decoder for JSON-encoded UID objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -86,17 +84,19 @@ class UIDDecoder(JSONDecoder):
         if "UID" in dct:
             args = {
                 "class_name": dct["class_name"],
-                "uid":  uuid.UUID(dct["uid"]),
+                "uid": uuid.UUID(dct["uid"]),
                 "created_date": datetime.fromisoformat(dct["created_date"]),
-                "edited_date":  datetime.fromisoformat(dct["edited_date"]) if dct["edited_date"] else None
+                "edited_date": datetime.fromisoformat(dct["edited_date"])
+                if dct["edited_date"]
+                else None,
             }
             return uid.UID(**args)
         return dct
 
+
 class ProjectDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded Project objects.
-    """
+    """Decoder for JSON-encoded Project objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -117,21 +117,35 @@ class ProjectDecoder(JSONDecoder):
                 "config": dct["config"],
                 "identifier": dct["identifier"],
                 "construction_scheme": dct["construction_scheme"],
-                "address": AddressDecoder().object_hook(dct["address"]) if dct["address"] else None,
-                "client": PersonDecoder().object_hook(dct["client"]) if dct["client"] else None,
-                "project_data": ProjectDataDecoder().object_hook(dct["project_data"]) if dct["project_data"] else None,
-                "commissioned_date": QDate.fromString(dct["commissioned_date"]) if dct["commissioned_date"] else None,
-                "planning_finished_date": QDate.fromString(dct["planning_finished_date"]) if dct["planning_finished_date"] else None,
-                "billed_date": QDate.fromString(dct["billed_date"]) if dct["billed_date"] else None,
-                "planning_status": dct["planning_status"]
+                "address": AddressDecoder().object_hook(dct["address"])
+                if dct["address"]
+                else None,
+                "client": PersonDecoder().object_hook(dct["client"])
+                if dct["client"]
+                else None,
+                "project_data": ProjectDataDecoder().object_hook(dct["project_data"])
+                if dct["project_data"]
+                else None,
+                "commissioned_date": QDate.fromString(dct["commissioned_date"])
+                if dct["commissioned_date"]
+                else None,
+                "planning_finished_date": QDate.fromString(
+                    dct["planning_finished_date"]
+                )
+                if dct["planning_finished_date"]
+                else None,
+                "billed_date": QDate.fromString(dct["billed_date"])
+                if dct["billed_date"]
+                else None,
+                "planning_status": dct["planning_status"],
             }
             return proj.Project(**args)
         return dct
 
+
 class ProjectDataDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded ProjectData objects.
-    """
+    """Decoder for JSON-encoded ProjectData objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -153,20 +167,27 @@ class ProjectDataDecoder(JSONDecoder):
                 "property_size": dct["property_size"],
                 "usable_floor_space_nuf": dct["usable_floor_space_nuf"],
                 "usable_floor_space_bgf": dct["usable_floor_space_bgf"],
-                "rental_space": dct["rental_space"] if "rental_space" in dct.keys() else 0,
+                "rental_space": dct["rental_space"]
+                if "rental_space" in dct.keys()
+                else 0,
                 "building_class": dct["building_class"],
                 "construction_costs_kg300_400": dct["construction_costs_kg300_400"],
                 "production_costs": dct["production_costs"],
                 "contract_fee": dct["contract_fee"],
-                "execution_period" : (QDate.fromString(dct["execution_period"][0]), QDate.fromString(dct["execution_period"][1])) if dct["execution_period"] else None
+                "execution_period": (
+                    QDate.fromString(dct["execution_period"][0]),
+                    QDate.fromString(dct["execution_period"][1]),
+                )
+                if dct["execution_period"]
+                else None,
             }
             return proj.ProjectData(**args)
         return dct
 
+
 class ProjectCostCalculationDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded ProjectCostCalculation objects.
-    """
+    """Decoder for JSON-encoded ProjectCostCalculation objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -187,15 +208,18 @@ class ProjectCostCalculationDecoder(JSONDecoder):
                 "name": dct["name"],
                 "type": dct["type"] if "type" in dct else None,
                 "date": QDate.fromString(dct["date"]),
-                "inventory": [InventoryItemDecoder().object_hook(item) for item in dct["inventory"]]
+                "inventory": [
+                    InventoryItemDecoder().object_hook(item)
+                    for item in dct["inventory"]
+                ],
             }
             return proj.ProjectCostCalculation(**args)
         return dct
 
+
 class InventoryItemDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded InventoryItem objects.
-    """
+    """Decoder for JSON-encoded InventoryItem objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -215,28 +239,32 @@ class InventoryItemDecoder(JSONDecoder):
                 "deleted": dct["deleted"],
                 "name": dct["name"],
                 "description": dct["description"],
-                "unit_price": dct["unit_price"] if "unit_price" in dct else dct["price_per_unit"],
+                "unit_price": dct["unit_price"]
+                if "unit_price" in dct
+                else dct["price_per_unit"],
                 "units": dct["units"],
                 "unit_type": dct["unit_type"],
                 "is_active": dct["is_active"],
-                "cost_group_ref":
-                {
+                "cost_group_ref": {
                     "uid": UIDDecoder().object_hook(dct["cost_group_ref"]["uid"]),
-                    "id": dct["cost_group_ref"]["id"]
-                } if dct["cost_group_ref"] else None,
-                "trade_ref":
-                {
+                    "id": dct["cost_group_ref"]["id"],
+                }
+                if dct["cost_group_ref"]
+                else None,
+                "trade_ref": {
                     "uid": UIDDecoder().object_hook(dct["trade_ref"]["uid"]),
-                    "name": dct["trade_ref"]["name"]
-                } if dct["trade_ref"] else None
+                    "name": dct["trade_ref"]["name"],
+                }
+                if dct["trade_ref"]
+                else None,
             }
             return proj.InventoryItem(**args)
         return dct
 
+
 class CompanyDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded Company objects.
-    """
+    """Decoder for JSON-encoded Company objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -258,15 +286,17 @@ class CompanyDecoder(JSONDecoder):
                 "service": dct["service"],
                 "service_type": dct["service_type"],
                 "budget": dct["budget"],
-                "contact_person": PersonDecoder().object_hook(dct["contact_person"]) if dct["contact_person"] else None,
+                "contact_person": PersonDecoder().object_hook(dct["contact_person"])
+                if dct["contact_person"]
+                else None,
             }
             return corp.Company(**args)
         return dct
 
+
 class TradeDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded Trade objects.
-    """
+    """Decoder for JSON-encoded Trade objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -286,15 +316,15 @@ class TradeDecoder(JSONDecoder):
                 "deleted": dct["deleted"],
                 "name": dct["name"],
                 "budget": dct["budget"],
-                "comment": dct["comment"]
+                "comment": dct["comment"],
             }
             return arch.Trade(**args)
         return dct
 
+
 class CostGroupDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded CostGroup objects.
-    """
+    """Decoder for JSON-encoded CostGroup objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -316,19 +346,20 @@ class CostGroupDecoder(JSONDecoder):
                 "name": dct["name"],
                 "description": dct["description"],
                 "budget": dct["budget"],
-                "parent_ref":
-                {
+                "parent_ref": {
                     "uid": UIDDecoder().object_hook(dct["parent_ref"]["uid"]),
-                    "id": dct["parent_ref"]["id"]
-                } if dct["parent_ref"] else None
+                    "id": dct["parent_ref"]["id"],
+                }
+                if dct["parent_ref"]
+                else None,
             }
             return arch.CostGroup(**args)
         return dct
 
+
 class PersonDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded Person objects.
-    """
+    """Decoder for JSON-encoded Person objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -348,24 +379,27 @@ class PersonDecoder(JSONDecoder):
                 "deleted": dct["deleted"],
                 "first_name": dct["first_name"],
                 "last_name": dct["last_name"],
-                "address": AddressDecoder().object_hook(dct["address"]) if dct["address"] else None,
+                "address": AddressDecoder().object_hook(dct["address"])
+                if dct["address"]
+                else None,
                 "telephone": dct["telephone"],
                 "fax": dct["fax"],
                 "mobile": dct["mobile"],
                 "email": dct["email"],
-                "company_ref":
-                {
+                "company_ref": {
                     "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
                     "name": dct["company_ref"]["name"],
-                } if dct["company_ref"] else None,
+                }
+                if dct["company_ref"]
+                else None,
             }
             return corp.Person(**args)
         return dct
 
+
 class AddressDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded Address objects.
-    """
+    """Decoder for JSON-encoded Address objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -388,15 +422,15 @@ class AddressDecoder(JSONDecoder):
                 "city": dct["city"],
                 "state": dct["state"],
                 "zipcode": dct["zipcode"],
-                "country": dct["country"]
+                "country": dct["country"],
             }
             return corp.Address(**args)
         return dct
 
+
 class JobDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded Job objects.
-    """
+    """Decoder for JSON-encoded Job objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -415,20 +449,21 @@ class JobDecoder(JSONDecoder):
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "id": dct["id"],
-                "company_ref":
-                {
+                "company_ref": {
                     "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
-                    "name": dct["company_ref"]["name"]
-                } if dct["company_ref"] else None,
-                "job_sum": dct["job_sum"]
+                    "name": dct["company_ref"]["name"],
+                }
+                if dct["company_ref"]
+                else None,
+                "job_sum": dct["job_sum"],
             }
             return corp.Job(**args)
         return dct
 
+
 class ArchJobDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded ArchJob objects.
-    """
+    """Decoder for JSON-encoded ArchJob objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -447,41 +482,50 @@ class ArchJobDecoder(JSONDecoder):
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "id": dct["id"],
-                "company_ref":
-                {
+                "company_ref": {
                     "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
-                    "name": dct["company_ref"]["name"]
-                } if dct["company_ref"] else None,
+                    "name": dct["company_ref"]["name"],
+                }
+                if dct["company_ref"]
+                else None,
                 "job_sum": dct["job_sum"],
-                "trade_ref":
-                {
+                "trade_ref": {
                     "uid": UIDDecoder().object_hook(dct["trade_ref"]["uid"]),
-                    "name": dct["trade_ref"]["name"]
-                } if dct["trade_ref"] else None,
-                "cost_group_ref":
-                {
+                    "name": dct["trade_ref"]["name"],
+                }
+                if dct["trade_ref"]
+                else None,
+                "cost_group_ref": {
                     "uid": UIDDecoder().object_hook(dct["cost_group_ref"]["uid"]),
-                    "id": dct["cost_group_ref"]["id"]
-                } if "cost_group_ref" in dct.keys() and dct["cost_group_ref"] else None,
-                "job_additions": [{
-                    "date": QDate.fromString(job_addition["date"]),
-                    "name": job_addition["name"],
-                    "amount": job_addition["amount"],
-                    "comment": job_addition["comment"]
-                    } for job_addition in dct["job_additions"]],
-                "paid_safety_deposits": [{
-                    "date": QDate.fromString(psd["date"]),
-                    "amount": psd["amount"],
-                    "comment": psd["comment"]
-                    } for psd in dct["paid_safety_deposits"]]
+                    "id": dct["cost_group_ref"]["id"],
+                }
+                if "cost_group_ref" in dct.keys() and dct["cost_group_ref"]
+                else None,
+                "job_additions": [
+                    {
+                        "date": QDate.fromString(job_addition["date"]),
+                        "name": job_addition["name"],
+                        "amount": job_addition["amount"],
+                        "comment": job_addition["comment"],
+                    }
+                    for job_addition in dct["job_additions"]
+                ],
+                "paid_safety_deposits": [
+                    {
+                        "date": QDate.fromString(psd["date"]),
+                        "amount": psd["amount"],
+                        "comment": psd["comment"],
+                    }
+                    for psd in dct["paid_safety_deposits"]
+                ],
             }
             return arch.ArchJob(**args)
         return dct
 
+
 class InvoiceDecoder(JSONDecoder):
 
-    """ Decoder for JSON-encoded Invoice objects.
-    """
+    """Decoder for JSON-encoded Invoice objects."""
 
     def __init__(self):
         JSONDecoder.__init__(self, object_hook=self.dict_to_object)
@@ -500,35 +544,53 @@ class InvoiceDecoder(JSONDecoder):
                 "uid": UIDDecoder().object_hook(dct["uid"]),
                 "deleted": dct["deleted"],
                 "id": dct["id"],
-                "company_ref":
-                {
+                "company_ref": {
                     "uid": UIDDecoder().object_hook(dct["company_ref"]["uid"]),
-                    "name": dct["company_ref"]["name"]
-                } if dct["company_ref"] else None,
-                "job_ref":
-                {
+                    "name": dct["company_ref"]["name"],
+                }
+                if dct["company_ref"]
+                else None,
+                "job_ref": {
                     "uid": UIDDecoder().object_hook(dct["job_ref"]["uid"]),
                     "id": dct["job_ref"]["id"],
-                    "company.name": dct["job_ref"]["company.name"]
-                } if dct["job_ref"] else None,
+                    "company.name": dct["job_ref"]["company.name"],
+                }
+                if dct["job_ref"]
+                else None,
                 "cumulative": dct["cumulative"],
-                "invoice_date": QDate.fromString(dct["invoice_date"]) if dct["invoice_date"] else None,
-                "inbox_date": QDate.fromString(dct["inbox_date"]) if dct["inbox_date"] else None,
-                "checked_date": QDate.fromString(dct["checked_date"]) if dct["checked_date"] else None,
+                "invoice_date": QDate.fromString(dct["invoice_date"])
+                if dct["invoice_date"]
+                else None,
+                "inbox_date": QDate.fromString(dct["inbox_date"])
+                if dct["inbox_date"]
+                else None,
+                "checked_date": QDate.fromString(dct["checked_date"])
+                if dct["checked_date"]
+                else None,
                 "amount": dct["amount"],
                 "verified_amount": dct["verified_amount"],
                 "rebate": dct["rebate"],
                 "reduction_insurance_costs": dct["reduction_insurance_costs"],
                 "reduction_usage_costs": dct["reduction_usage_costs"],
                 "reduce_prev_invoices": dct["reduce_prev_invoices"],
-                "prev_invoices_uids": [UIDDecoder().object_hook(uid) for uid in dct["prev_invoices_uids"]] if dct["prev_invoices_uids"] else None,
+                "prev_invoices_uids": [
+                    UIDDecoder().object_hook(uid) for uid in dct["prev_invoices_uids"]
+                ]
+                if dct["prev_invoices_uids"]
+                else None,
                 "prev_invoices_amount": dct["prev_invoices_amount"],
                 "VAT": dct["VAT"],
                 "safety_deposit": dct["safety_deposit"],
-                "safety_deposit_amount": dct["safety_deposit_amount"] if dct["safety_deposit_amount"] else None,
+                "safety_deposit_amount": dct["safety_deposit_amount"]
+                if dct["safety_deposit_amount"]
+                else None,
                 "discount": dct["discount"],
-                "due_date": QDate.fromString(dct["due_date"]) if dct["due_date"] else None,
-                "due_date_discount": QDate.fromString(dct["due_date_discount"]) if dct["due_date_discount"] else None
+                "due_date": QDate.fromString(dct["due_date"])
+                if dct["due_date"]
+                else None,
+                "due_date_discount": QDate.fromString(dct["due_date_discount"])
+                if dct["due_date_discount"]
+                else None,
             }
             return corp.Invoice(**args)
         return dct

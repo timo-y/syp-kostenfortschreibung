@@ -6,7 +6,8 @@
 """
 
 from PyQt5 import QtWidgets, uic
-from core.obj import (proj, corp)
+from core.obj import proj, corp
+
 
 class AddressDialog(QtWidgets.QDialog):
     def __init__(self, loaded_address=None):
@@ -15,7 +16,11 @@ class AddressDialog(QtWidgets.QDialog):
 
         self.initialize_ui()
         """ set title """
-        dialog_title = f"Adresse ({loaded_address.street}, {loaded_address.house_number}) bearbeiten..." if loaded_address else "Neue Adresse"
+        dialog_title = (
+            f"Adresse ({loaded_address.street}, {loaded_address.house_number}) bearbeiten..."
+            if loaded_address
+            else "Neue Adresse"
+        )
         self.setWindowTitle(dialog_title)
         """ fixed window size """
         # self.setFixedSize(self.size())
@@ -30,8 +35,9 @@ class AddressDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def initialize_ui(self):
-        uic.loadUi('ui/dlg/address_dialog.ui', self) # Load the .ui file
+        uic.loadUi("ui/dlg/address_dialog.ui", self)  # Load the .ui file
 
     def set_input(self, street, house_number, city, state, zipcode, country):
         self.lineEdit_street.setText(street),
@@ -48,8 +54,8 @@ class AddressDialog(QtWidgets.QDialog):
             "city": self.lineEdit_city.text(),
             "state": self.lineEdit_state.text(),
             "zipcode": self.lineEdit_zipcode.text(),
-            "country": self.lineEdit_country.text()
-            }
+            "country": self.lineEdit_country.text(),
+        }
         return args
 
     """
@@ -58,6 +64,7 @@ class AddressDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def exec_(self):
         ok = super().exec_()
         if ok:

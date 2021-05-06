@@ -33,6 +33,8 @@ from core.obj import proj
 #   PROJECT
 #
 """
+
+
 def input_new_project(app_data):
     """Open a dialog and create project with default companies and trades.
 
@@ -43,7 +45,9 @@ def input_new_project(app_data):
     if input_project_args:
         app_data.new_project(input_project_args)
         """ logging """
-        debug.log(f"New project created: {app_data.project.identifier}, {str(app_data.project.uid)}")
+        debug.log(
+            f"New project created: {app_data.project.identifier}, {str(app_data.project.uid)}"
+        )
 
 
 def edit_project(app_data):
@@ -53,11 +57,16 @@ def edit_project(app_data):
         app_data (api.AppData): Application data containing the project data
     """
     if app_data.project:
-        input_project_args = dlg.open_project_dialog(app_data=app_data, loaded_project=app_data.project)
+        input_project_args = dlg.open_project_dialog(
+            app_data=app_data, loaded_project=app_data.project
+        )
         if input_project_args:
             app_data.project.update(**input_project_args)
             """ logging """
-            debug.log(f"Project edited: {app_data.project.identifier}, {str(app_data.project.uid)}")
+            debug.log(
+                f"Project edited: {app_data.project.identifier}, {str(app_data.project.uid)}"
+            )
+
 
 def load_project(mainwindow, app_data):
     """Open a dialog to find a *.project file and load it as a project.
@@ -68,11 +77,14 @@ def load_project(mainwindow, app_data):
     """
     save_dir_path = app_data.get_save_dir()
     f_dialog = QtWidgets.QFileDialog(directory=str(save_dir_path))
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Projekt öffnen...",  "", "Project saves (*.project);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(
+        mainwindow, "Projekt öffnen...", "", "Project saves (*.project);;All Files (*)"
+    )
     if file_path:
         app_data.load_project(file_path)
         """ logging """
-        debug.log(f"Project loaded: \"{app_data.project.identifier}\"")
+        debug.log(f'Project loaded: "{app_data.project.identifier}"')
+
 
 def save_project(mainwindow, app_data):
     """Save a project. If it hasn't been saved, do save_project_as.
@@ -87,11 +99,12 @@ def save_project(mainwindow, app_data):
             if save_path and os.path.isfile(save_path):
                 app_data.save_project(save_path)
                 """ logging """
-                debug.log(f"Project saved: \"{app_data.project.identifier}\"")
+                debug.log(f'Project saved: "{app_data.project.identifier}"')
             else:
                 save_project_as(mainwindow, app_data)
         else:
             save_project_as(mainwindow, app_data)
+
 
 def save_project_as(mainwindow, app_data):
     """Open a dialog to save a project to a *.project file.
@@ -101,19 +114,26 @@ def save_project_as(mainwindow, app_data):
         app_data (api.AppData): Application data containing the project data
     """
     if app_data.project:
-        save_dir_path = os.path.join(app_data.get_save_dir(), app_data.project.identifier+".project")
+        save_dir_path = os.path.join(
+            app_data.get_save_dir(), app_data.project.identifier + ".project"
+        )
         f_dialog = QtWidgets.QFileDialog()
-        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Speichern...", save_dir_path, "Project save (*.project)")
+        save_path, _ = f_dialog.getSaveFileName(
+            mainwindow, "Speichern...", save_dir_path, "Project save (*.project)"
+        )
         if save_path:
             app_data.save_project(os.path.normpath(save_path))
             """ logging """
-            debug.log(f"Project saved: \"{app_data.project.identifier}\" as {save_path}")
+            debug.log(f'Project saved: "{app_data.project.identifier}" as {save_path}')
+
 
 """ i,a&e
 #
 #   EXPORT
 #
 """
+
+
 def export_companies(mainwindow, app_data):
     """Open a dialog to export the list of companies to a JSON file.
 
@@ -125,11 +145,17 @@ def export_companies(mainwindow, app_data):
         filename = f"{today_str()}-{app_data.project.identifier}-companies.json"
         save_dir_path = app_data.get_save_dir() / filename
         f_dialog = QtWidgets.QFileDialog()
-        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Firmenverzeichniss exportieren...", str(save_dir_path), "Company-JSON (*.json)")
+        save_path, _ = f_dialog.getSaveFileName(
+            mainwindow,
+            "Firmenverzeichniss exportieren...",
+            str(save_dir_path),
+            "Company-JSON (*.json)",
+        )
         if save_path:
             app_data.export_companies(save_path)
             """ logging """
             debug.log(f"Companies exported to {save_path}")
+
 
 def export_trades(mainwindow, app_data):
     """Open a dialog to export the list of trades to a JSON file.
@@ -142,11 +168,17 @@ def export_trades(mainwindow, app_data):
         filename = f"{today_str()}-{app_data.project.identifier}-trades.json"
         save_dir_path = app_data.get_save_dir() / filename
         f_dialog = QtWidgets.QFileDialog()
-        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Gewerkeverzeichniss exportieren...", str(save_dir_path), "Trade-JSON (*.json)")
+        save_path, _ = f_dialog.getSaveFileName(
+            mainwindow,
+            "Gewerkeverzeichniss exportieren...",
+            str(save_dir_path),
+            "Trade-JSON (*.json)",
+        )
         if save_path:
             app_data.export_trades(save_path)
             """ logging """
             debug.log(f"Trades exported to {save_path}")
+
 
 def export_cost_groups(mainwindow, app_data):
     """Open a dialog to export the list of cost groups to a JSON file.
@@ -159,17 +191,25 @@ def export_cost_groups(mainwindow, app_data):
         filename = f"{today_str()}-{app_data.project.identifier}-cost_groups.json"
         save_dir_path = app_data.get_save_dir() / filename
         f_dialog = QtWidgets.QFileDialog()
-        save_path, _ = f_dialog.getSaveFileName(mainwindow,"Kostengruppen exportieren...", str(save_dir_path), "Kostengruppen-JSON (*.json)")
+        save_path, _ = f_dialog.getSaveFileName(
+            mainwindow,
+            "Kostengruppen exportieren...",
+            str(save_dir_path),
+            "Kostengruppen-JSON (*.json)",
+        )
         if save_path:
             app_data.export_cost_groups(save_path)
             """ logging """
             debug.log(f"CostGroups exported to {save_path}")
+
 
 """ i,a&e
 #
 #   IMPORT
 #
 """
+
+
 def import_project(mainwindow, app_data):
     """Open a dialog to import a project from a *-Kostenfortschreibung_import.xlsm file.
 
@@ -180,11 +220,17 @@ def import_project(mainwindow, app_data):
     filename = "*-Kostenfortschreibung_import.xlsm"
     save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Projekt importieren...",  str(save_dir_path), "Kostenfortschreibung-Excelmappe (*.xlsm);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(
+        mainwindow,
+        "Projekt importieren...",
+        str(save_dir_path),
+        "Kostenfortschreibung-Excelmappe (*.xlsm);;All Files (*)",
+    )
     if file_path:
         app_data.import_project(file_path)
         """ logging """
         debug.log(f"Project successfully imported")
+
 
 def import_companies(mainwindow, app_data):
     """Open a dialog to import the list of companies from a JSON file.
@@ -196,11 +242,17 @@ def import_companies(mainwindow, app_data):
     filename = "companies.json"
     save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Firmenverzeichniss importieren...",  str(save_dir_path), "Company-JSONs (*.json);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(
+        mainwindow,
+        "Firmenverzeichniss importieren...",
+        str(save_dir_path),
+        "Company-JSONs (*.json);;All Files (*)",
+    )
     if file_path:
         app_data.import_companies(file_path)
         """ logging """
         debug.log(f"Companies successfully imported")
+
 
 def import_trades(mainwindow, app_data):
     """Open a dialog to import the list of trades from a JSON file.
@@ -212,11 +264,17 @@ def import_trades(mainwindow, app_data):
     filename = "trades.json"
     save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Gewerkeverzeichniss importieren...",  str(save_dir_path), "Trade-JSONs (*.json);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(
+        mainwindow,
+        "Gewerkeverzeichniss importieren...",
+        str(save_dir_path),
+        "Trade-JSONs (*.json);;All Files (*)",
+    )
     if file_path:
         app_data.import_trades(file_path)
         """ logging """
         debug.log(f"Trades successfully imported")
+
 
 def import_cost_groups(mainwindow, app_data):
     """Open a dialog to import the list of cost groups1 from a JSON file.
@@ -228,17 +286,25 @@ def import_cost_groups(mainwindow, app_data):
     filename = "cost_groups.json"
     save_dir_path = app_data.get_save_dir() / filename
     f_dialog = QtWidgets.QFileDialog()
-    file_path, _ = f_dialog.getOpenFileName(mainwindow,"Kostengruppen importieren...",  str(save_dir_path), "Kostengruppen-JSONs (*.json);;All Files (*)")
+    file_path, _ = f_dialog.getOpenFileName(
+        mainwindow,
+        "Kostengruppen importieren...",
+        str(save_dir_path),
+        "Kostengruppen-JSONs (*.json);;All Files (*)",
+    )
     if file_path:
         app_data.import_cost_groups(file_path)
         """ logging """
         debug.log(f"CostGroups successfully imported")
+
 
 """ i,a&e
 #
 #   PROJECT COST CALCULATION
 #
 """
+
+
 def input_pcc(app_data):
     """Open a dialog to input a new project cost calculation.
 
@@ -255,6 +321,7 @@ def input_pcc(app_data):
         debug.log(f"ProjectCostCalculation added: {pcc.name}")
         return pcc
 
+
 def edit_pcc(app_data, pcc):
     """Open a dialog to edit a project cost calculation.
 
@@ -265,23 +332,32 @@ def edit_pcc(app_data, pcc):
     Returns:
         proj.ProjectCostCalculation: Edited project cost calculation
     """
-    pcc_args = dlg.open_project_cost_calculation_dialog(app_data=app_data, loaded_pcc=pcc)
+    pcc_args = dlg.open_project_cost_calculation_dialog(
+        app_data=app_data, loaded_pcc=pcc
+    )
     if pcc_args:
         if pcc_args == "delete":
             app_data.project.delete_pcc(pcc)
             """ logging """
-            debug.log(f"ProjectCostCalculation deleted: {pcc.name}, from the {pcc.date.toPyDate()}")
+            debug.log(
+                f"ProjectCostCalculation deleted: {pcc.name}, from the {pcc.date.toPyDate()}"
+            )
         else:
             pcc.update(**pcc_args)
             """ logging """
-            debug.log(f"Existing ProjectCostCalculation edited: {pcc.name}, from the {pcc.date.toPyDate()}")
+            debug.log(
+                f"Existing ProjectCostCalculation edited: {pcc.name}, from the {pcc.date.toPyDate()}"
+            )
         return pcc
+
 
 """ i,a&e
 #
 #   INVENTORY ITEM
 #
 """
+
+
 def input_inventory_item(app_data):
     """Open a dialog to input a new inventory item.
 
@@ -296,6 +372,7 @@ def input_inventory_item(app_data):
         input_inventory_item = proj.InventoryItem(**input_inventory_item_args)
         return input_inventory_item
 
+
 def edit_inventory_item(app_data, inventory_item):
     """Open a dialog to edit a inventory item.
 
@@ -306,7 +383,9 @@ def edit_inventory_item(app_data, inventory_item):
     Returns:
         proj.InventoryItem: Edited inventory item
     """
-    inventory_item_args = dlg.open_inventory_item_dialog(app_data=app_data, loaded_inventory_item=inventory_item)
+    inventory_item_args = dlg.open_inventory_item_dialog(
+        app_data=app_data, loaded_inventory_item=inventory_item
+    )
     if inventory_item_args:
         if inventory_item_args == "delete":
             inventory_item.delete()
@@ -318,11 +397,14 @@ def edit_inventory_item(app_data, inventory_item):
             debug.log(f"Existing InventoryItem edited: {inventory_item.name}")
         return inventory_item
 
+
 """ i,a&e
 #
 #   PERSON
 #
 """
+
+
 def input_person(app_data):
     """Open a dialog to input a new person.
 
@@ -338,6 +420,7 @@ def input_person(app_data):
         """ logging """
         debug.log(f"New person returned: {person.first_name}, {person.last_name}")
         return person
+
 
 def edit_person(app_data, person):
     """Open a dialog to edit a person.
@@ -358,14 +441,19 @@ def edit_person(app_data, person):
         else:
             person.update(**person_args, company=person.company)
             """ logging """
-            debug.log(f"Existing Person edited: {person.first_name}, {person.last_name}")
+            debug.log(
+                f"Existing Person edited: {person.first_name}, {person.last_name}"
+            )
         return person
+
 
 """ i,a&e
 #
 #   INVOICE
 #
 """
+
+
 @debug.log
 def input_invoice(app_data, sel_job=None):
     """Open a dialog to input a new invoice.
@@ -383,6 +471,7 @@ def input_invoice(app_data, sel_job=None):
         """ logging """
         debug.log(f"New Invoice added: {invoice.id}, {invoice.uid}")
         return invoice
+
 
 @debug.log
 def edit_invoice(app_data, invoice):
@@ -408,11 +497,14 @@ def edit_invoice(app_data, invoice):
             debug.log(f"Existing Invoice edited: {invoice.id}, {invoice.uid}")
         return invoice
 
+
 """ i,a&e
 #
 #   JOB
 #
 """
+
+
 @debug.log
 def input_job(app_data, sel_company=None):
     """Open a dialog to input a new job.
@@ -432,6 +524,7 @@ def input_job(app_data, sel_company=None):
         company_name = job.company.name if job.company else "-"
         debug.log(f"New Job added: {company_name}, {job.id}, {job.uid}")
         return job
+
 
 @debug.log
 def edit_job(app_data, job):
@@ -457,6 +550,7 @@ def edit_job(app_data, job):
             debug.log(f"Existing Job edited: {company_name}, {job.id}, {job.uid}")
         return job
 
+
 @debug.log
 def pay_safety_deposit(job):
     """Open a dialog to input a new safety deposite for a job.
@@ -468,6 +562,7 @@ def pay_safety_deposit(job):
     if paid_safety_deposit_args:
         job.pay_safety_deposit(**paid_safety_deposit_args)
 
+
 @debug.log
 def add_job_addition(job):
     """Open a dialog to input a new job addition for a job.
@@ -478,11 +573,15 @@ def add_job_addition(job):
     job_addition_args = dlg.open_add_job_addition_dialog()
     if job_addition_args:
         job.add_job_addition(**job_addition_args)
+
+
 """ i,a&e
 #
 #   COMPANY
 #
 """
+
+
 @debug.log
 def input_company(app_data):
     """Open a dialog to input a new company.
@@ -501,6 +600,7 @@ def input_company(app_data):
         company_name = company.name if company.name else "-"
         debug.log(f"New Company added: {company_name}")
         return company
+
 
 @debug.log
 def edit_company(app_data, company):
@@ -526,11 +626,14 @@ def edit_company(app_data, company):
             debug.log(f"Existing Company edited: {company_name}")
         return company
 
+
 """ i,a&e
 #
 #   TRADE
 #
 """
+
+
 @debug.log
 def input_trade(app_data):
     """Open a dialog to input a new trade.
@@ -549,6 +652,7 @@ def input_trade(app_data):
         trade_name = trade.name if trade.name else "-"
         debug.log(f"New Trade added: {trade_name}")
         return trade
+
 
 @debug.log
 def edit_trade(app_data, trade):
@@ -569,18 +673,25 @@ def edit_trade(app_data, trade):
         if trade_args == "delete":
             app_data.project.delete_trade(trade)
             """ logging """
-            debug.log(f"Trade deleted: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}")
+            debug.log(
+                f"Trade deleted: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}"
+            )
         else:
             trade.update(**trade_args)
             """ logging """
-            debug.log(f"Existing Trade edited: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}")
+            debug.log(
+                f"Existing Trade edited: {trade_name}, cost_group {trade_cost_group}, budget {trade_budget} {app_data.get_currency()}"
+            )
         return trade
+
 
 """ i,a&e
 #
 #   COST GROUP
 #
 """
+
+
 @debug.log
 def input_cost_group(app_data):
     """Open a dialog to input a new cost group.
@@ -599,6 +710,7 @@ def input_cost_group(app_data):
         debug.log(f"New CostGroup added: {cost_group.id}")
         return cost_group
 
+
 @debug.log
 def edit_cost_group(app_data, cost_group):
     """Open a dialog to edit a cost group.
@@ -610,24 +722,33 @@ def edit_cost_group(app_data, cost_group):
     Returns:
         arch.CostGroup: Edited cost group
     """
-    cost_group_args = dlg.open_cost_group_dialog(app_data=app_data, loaded_cost_group=cost_group)
+    cost_group_args = dlg.open_cost_group_dialog(
+        app_data=app_data, loaded_cost_group=cost_group
+    )
     if cost_group_args:
         cost_group_budget = cost_group.budget if cost_group.budget else "-"
         if cost_group_args == "delete":
             app_data.project.delete_cost_group(cost_group)
             """ logging """
-            debug.log(f"CostGroup deleted: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}")
+            debug.log(
+                f"CostGroup deleted: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}"
+            )
         else:
             cost_group.update(**cost_group_args)
             """ logging """
-            debug.log(f"Existing CostGroup edited: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}")
+            debug.log(
+                f"Existing CostGroup edited: {cost_group.id}, {cost_group.name}, description {cost_group.description}, budget {cost_group_budget} {app_data.get_currency()}"
+            )
         return cost_group
+
 
 """ i,a&e
 #
 #   CONFIG
 #
 """
+
+
 @debug.log
 def edit_app_config(app_data):
     """Open a dialog to edit the app config.
@@ -640,13 +761,16 @@ def edit_app_config(app_data):
     """
     loaded_config = app_data.config
     default_config = app_data.get_default_config()
-    loaded_config_args = dlg.open_config_dialog(loaded_config=loaded_config, default_config=default_config)
+    loaded_config_args = dlg.open_config_dialog(
+        loaded_config=loaded_config, default_config=default_config
+    )
     if loaded_config_args:
         app_data.config = loaded_config_args["config"]
         app_data.save_app_config()
         """ logging """
         debug.log(f"app_data.config has been changed: {loaded_config_args}")
         return loaded_config_args["config"]
+
 
 @debug.log
 def edit_proj_config(app_data):
@@ -666,6 +790,7 @@ def edit_proj_config(app_data):
         debug.log(f"project.config has been changed: {loaded_config_args}")
         return loaded_config_args["config"]
 
+
 """
 #
 #   OUTPUT
@@ -675,6 +800,8 @@ def edit_proj_config(app_data):
 """
 #   INVOICE CHECK
 """
+
+
 @debug.log
 def invoice_check(app_data, invoice, curr_job_only):
     """Create invoice_check.pdf and company_ov.pdf (of the job if selected) at the
@@ -695,12 +822,12 @@ def invoice_check(app_data, invoice, curr_job_only):
     #
     """
     xlsx_files = [
-        app_data.output_invoice_check(invoice=invoice,
-                                create_at_path=create_at_path),
-        app_data.output_ov_of_company(company=invoice.company,
-                              create_at_path=create_at_path,
-                              selected_job=invoice.job if curr_job_only else None
-                              )
+        app_data.output_invoice_check(invoice=invoice, create_at_path=create_at_path),
+        app_data.output_ov_of_company(
+            company=invoice.company,
+            create_at_path=create_at_path,
+            selected_job=invoice.job if curr_job_only else None,
+        ),
     ]
     """
     #
@@ -723,7 +850,9 @@ def invoice_check(app_data, invoice, curr_job_only):
         shutil.copy(file[0], os.path.join(inv_check_path, file[1]))
 
     #   Correspondence path
-    correspondence_path = os.path.join(app_data.get_client_correspondence_dir(), folder_name)
+    correspondence_path = os.path.join(
+        app_data.get_client_correspondence_dir(), folder_name
+    )
 
     # create directory if non-existing
     if not os.path.exists(correspondence_path):
@@ -735,9 +864,12 @@ def invoice_check(app_data, invoice, curr_job_only):
     """
     debug.log(f"Invoice check file written for the Invoice {invoice}")
 
+
 """
 #   TRADES OVERVIEW
 """
+
+
 @debug.log
 def trades_ov(app_data):
     """Create an overview of the trades as a PDF and Xlsx files in the
@@ -753,9 +885,7 @@ def trades_ov(app_data):
     #   Create xlsx files
     #
     """
-    xlsx_files = [
-        app_data.output_ov_by_trades(create_at_path=create_at_path)
-    ]
+    xlsx_files = [app_data.output_ov_by_trades(create_at_path=create_at_path)]
     """
     #
     #   Convert to PDF
@@ -767,9 +897,12 @@ def trades_ov(app_data):
     """
     debug.log(f"Trades OV file written")
 
+
 """
 #   COST GROUPS OVERVIEW
 """
+
+
 @debug.log
 def cost_groups_ov(app_data):
     """Create an overview of the cost groups as a PDF and Xlsx files in the
@@ -785,9 +918,7 @@ def cost_groups_ov(app_data):
     #   Create xlsx files
     #
     """
-    xlsx_files = [
-        app_data.output_ov_by_cost_groups(create_at_path=create_at_path)
-    ]
+    xlsx_files = [app_data.output_ov_by_cost_groups(create_at_path=create_at_path)]
     """
     #
     #   Convert to PDF
@@ -799,9 +930,12 @@ def cost_groups_ov(app_data):
     """
     debug.log(f"Trades OV file written")
 
+
 """
 #   COMPANY OVERVIEW
 """
+
+
 @debug.log
 def company_ov(app_data, company, selected_job=None):
     """Create an overview of the jobs of a company as a PDF and Xlsx files in the
@@ -820,10 +954,9 @@ def company_ov(app_data, company, selected_job=None):
     #
     """
     xlsx_files = [
-        app_data.output_ov_of_company(company=company,
-                              create_at_path=create_at_path,
-                              selected_job=selected_job
-                              )
+        app_data.output_ov_of_company(
+            company=company, create_at_path=create_at_path, selected_job=selected_job
+        )
     ]
     """
     #
@@ -836,9 +969,12 @@ def company_ov(app_data, company, selected_job=None):
     """
     debug.log(f"Company OV file written for the company {company.name}")
 
+
 """
 #   PCC OVERVIEW
 """
+
+
 @debug.log
 def pcc_overviews(app_data, pcc):
     """Create overviews of a project cost calculation as a PDF and Xlsx files in the
@@ -859,16 +995,19 @@ def pcc_overviews(app_data, pcc):
     filename_1 = f"{date}-costcalculation_overview-main-{app_data.project.identifier}"
     filename_2 = f"{date}-costcalculation_overview-all-{app_data.project.identifier}"
     xlsx_files = [
-        app_data.output_pcc_ov_cost_groups(pcc=pcc,
-                                        cost_groups=app_data.project.main_cost_groups,
-                                        create_at_path=create_at_path,
-                                        filename=filename_1),
-        app_data.output_pcc_ov_cost_groups(pcc=pcc,
-                                        cost_groups=app_data.project.cost_groups,
-                                        create_at_path=create_at_path,
-                                        filename=filename_2),
-        app_data.output_pcc_ov_trades(pcc=pcc,
-                                        create_at_path=create_at_path)
+        app_data.output_pcc_ov_cost_groups(
+            pcc=pcc,
+            cost_groups=app_data.project.main_cost_groups,
+            create_at_path=create_at_path,
+            filename=filename_1,
+        ),
+        app_data.output_pcc_ov_cost_groups(
+            pcc=pcc,
+            cost_groups=app_data.project.cost_groups,
+            create_at_path=create_at_path,
+            filename=filename_2,
+        ),
+        app_data.output_pcc_ov_trades(pcc=pcc, create_at_path=create_at_path),
     ]
     """
     #
@@ -882,13 +1021,25 @@ def pcc_overviews(app_data, pcc):
     """
     debug.log(f"ProjectCostCalculation overview written for the pcc {pcc.name}")
 
+
 """
 #
 #   RENDER TO WIDGET
 #
 #
 """
-def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], currency="€", set_width=False):
+
+
+def render_to_table(
+    content,
+    table,
+    cols,
+    titles,
+    date_cols=[],
+    amount_cols=[],
+    currency="€",
+    set_width=False,
+):
     """Render some content to a QTable.
 
     Args:
@@ -901,15 +1052,19 @@ def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], 
         currency (str, optional): Currency abbreviation
         set_width (bool, optional): If True, the col width will be set
     """
-    sel_item = table.currentItem().data(1) if table.currentItem() else None # to restore the selection
+    sel_item = (
+        table.currentItem().data(1) if table.currentItem() else None
+    )  # to restore the selection
     table.clear()
 
-    table.setSortingEnabled(False) # disable sorting when filling the table (to abvoid bugs with da data field)
+    table.setSortingEnabled(
+        False
+    )  # disable sorting when filling the table (to abvoid bugs with da data field)
     table.setRowCount(len(content))
     # set columns of table to the list app_data.invoice_cols
-    table.setColumnCount(len(cols)+1)
+    table.setColumnCount(len(cols) + 1)
     # set column titles
-    header_labels = ["UID"]+[titles[col["title"]] for col in cols]
+    header_labels = ["UID"] + [titles[col["title"]] for col in cols]
     table.setHorizontalHeaderLabels(header_labels)
     # set title height
     table.horizontalHeader().setFixedHeight(50)
@@ -920,18 +1075,29 @@ def render_to_table(content, table, cols, titles, date_cols=[], amount_cols=[], 
     table.setColumnHidden(0, True)
     if set_width:
         for i in range(len(cols)):
-            table.setColumnWidth(i+1, cols[i]["width"])
+            table.setColumnWidth(i + 1, cols[i]["width"])
 
     row = 0
     for content_item in content:
-        add_item_to_table(content_item=content_item, table=table, cols=cols, row=row, date_cols=date_cols, amount_cols=amount_cols, currency=currency)
+        add_item_to_table(
+            content_item=content_item,
+            table=table,
+            cols=cols,
+            row=row,
+            date_cols=date_cols,
+            amount_cols=amount_cols,
+            currency=currency,
+        )
         row += 1
-    table.setSortingEnabled(True) # enable sorting once the table is filled
+    table.setSortingEnabled(True)  # enable sorting once the table is filled
     # set selection again
     if sel_item:
         select_table_item(table, sel_item)
 
-def add_item_to_table(content_item, table, cols, row, date_cols=[], amount_cols=[], currency="€"):
+
+def add_item_to_table(
+    content_item, table, cols, row, date_cols=[], amount_cols=[], currency="€"
+):
     """Render some item to a row of a QTable.
 
     Args:
@@ -960,16 +1126,24 @@ def add_item_to_table(content_item, table, cols, row, date_cols=[], amount_cols=
             date = getattr(content_item, attr)
             cell_content = qdate_to_str(date) if date else "-"
             sorting_key = date.toJulianDay() if date else float("inf")
-            table_item = customqt.DateTableWidgetItem(cell_content, sorting_key=sorting_key)
+            table_item = customqt.DateTableWidgetItem(
+                cell_content, sorting_key=sorting_key
+            )
         elif attr in amount_cols:
-            table_item = customqt.AmountTableWidgetItem(amount_str(getattr(content_item, attr), currency), sorting_key=getattr(content_item, attr))
+            table_item = customqt.AmountTableWidgetItem(
+                amount_str(getattr(content_item, attr), currency),
+                sorting_key=getattr(content_item, attr),
+            )
         else:
             table_item = QtWidgets.QTableWidgetItem(str(getattr(content_item, attr)))
         table_item.setData(1, content_item)
-        table_item.setFlags(QtCore.Qt.ItemIsSelectable |  QtCore.Qt.ItemIsEnabled) # make selectable but not editable
+        table_item.setFlags(
+            QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled
+        )  # make selectable but not editable
         table.setItem(row, col, table_item)
         col += 1
     return table_item
+
 
 def add_item_to_list(content_item, item_date, item_id, list_widget, tooltip=None):
     """Render some item to a QList.
@@ -1004,11 +1178,14 @@ def add_item_to_tree(content_item, parent, cols, tooltip=None):
     Returns:
         TYPE: Description
     """
-    item_node = customqt.TreeWidgetItem(parent, cols) #QtWidgets.QTreeWidgetItem(parent, cols)
+    item_node = customqt.TreeWidgetItem(
+        parent, cols
+    )  # QtWidgets.QTreeWidgetItem(parent, cols)
     item_node.setData(1, QtCore.Qt.UserRole, content_item)
     if tooltip:
         item_node.setToolTip(1, tooltip)
     return item_node
+
 
 def select_table_item(table, content_item):
     """Select a row in a table corresponding to a given object.
@@ -1021,27 +1198,38 @@ def select_table_item(table, content_item):
     for selected_range in table.selectedRanges():
         table.setRangeSelected(selected_range, False)
 
-    uid_item = table.findItems(str(content_item.uid), QtCore.Qt.MatchExactly)[0] if len(table.findItems(str(content_item.uid), QtCore.Qt.MatchExactly))>0 else None
+    uid_item = (
+        table.findItems(str(content_item.uid), QtCore.Qt.MatchExactly)[0]
+        if len(table.findItems(str(content_item.uid), QtCore.Qt.MatchExactly)) > 0
+        else None
+    )
     if uid_item:
         row = uid_item.row()
         # select content_item row
-        item_range = QtWidgets.QTableWidgetSelectionRange(row, 0, row, table.columnCount()-1)
+        item_range = QtWidgets.QTableWidgetSelectionRange(
+            row, 0, row, table.columnCount() - 1
+        )
         table.setRangeSelected(item_range, True)
         table.setCurrentItem(uid_item)
+
+
 """
 #
 #   FORMAT WIDGETS
 #
 #
 """
+
+
 def resize_tree_columns(treewidget):
     """Resize the columns of a QTreeWidget to fit the headers.
 
     Args:
         treewidget (QTreeWidget): QTreeWidget to resize
     """
-    for i in range(1,treewidget.columnCount()):
+    for i in range(1, treewidget.columnCount()):
         treewidget.resizeColumnToContents(i)
+
 
 """
 #
@@ -1053,6 +1241,8 @@ def resize_tree_columns(treewidget):
 #   WANT TO SAVE?
 #   Open a prompt asking if you want to save.
 """
+
+
 def save_curr_project_prompt(dialog, app_data):
     """Open a dialog asking user if they want to save and,
     if confirmed, save the project.
@@ -1071,10 +1261,13 @@ def save_curr_project_prompt(dialog, app_data):
         return False
     return True
 
+
 """
 #   ARE YOU SURE?
 #   Open a prompt asking if sure to do action.
 """
+
+
 def u_sure_prompt(dialog):
     """Open a dialog asking user if they are sure to proceed.
 
@@ -1089,11 +1282,14 @@ def u_sure_prompt(dialog):
         return True
     return False
 
+
 """
 #   DELETE
 #       This function is called within the a dialo from ui.dlg.
 #       Ask first via prompt, if yes close dialog and return signal -1.
 """
+
+
 def delete(dialog, object):
     """Open a dialog to confirm the deletion.
 
@@ -1116,12 +1312,15 @@ def delete(dialog, object):
     else:
         return False
 
+
 """
 #
 #   CONVERSION
 #       Convert data, files etc.
 #
 """
+
+
 def from_json_file(file_path, *, decoder=json.JSONDecoder):
     """Import a *.json file.
 
@@ -1137,6 +1336,7 @@ def from_json_file(file_path, *, decoder=json.JSONDecoder):
         output = json.load(file, object_hook=decoder().object_hook)
     return output
 
+
 def to_json_file(data, save_path, *, encoder=json.JSONEncoder):
     """Export data to a *.json file.
 
@@ -1147,6 +1347,7 @@ def to_json_file(data, save_path, *, encoder=json.JSONEncoder):
     """
     with open(save_path, "w") as file:
         json.dump(data, file, cls=encoder, indent=4)
+
 
 def xlsx2pdf(input_path, filename):
     """Export PDF from xlsx-file.
@@ -1165,13 +1366,13 @@ def xlsx2pdf(input_path, filename):
     return pdf_save_path, pdf_filename
 
 
-
 """
 #
 #   INPUT MANAGEMENT
 #   Functions for QDialog input-output management
 #
 """
+
 
 def to_lex(cost_group_id):
     """Convert an ID containing letters into a number to order the table cell.
@@ -1183,12 +1384,15 @@ def to_lex(cost_group_id):
         int: Corresponding ordinal number
     """
     # add 1000 to make the id be listed after the last regular cost group
-    id = 1000+int("".join([f"{ord(char)}" for char in cost_group_id]))
+    id = 1000 + int("".join([f"{ord(char)}" for char in cost_group_id]))
     return id
+
 
 """
 #   input amounts
 """
+
+
 def input_to_float(input_1):
     """Convert the text of an QLineEdit to a float.
 
@@ -1203,6 +1407,7 @@ def input_to_float(input_1):
         return str_to_float(input_1.text())
     else:
         return float(0)
+
 
 def two_inputs_to_float(input_1, input_2):
     """Convert the texts of two QLineEdits where the decimals are in a seperated to a float.
@@ -1219,6 +1424,7 @@ def two_inputs_to_float(input_1, input_2):
     amount = ".".join([input_1, input_2])
     return str_to_float(amount)
 
+
 def str_to_float(string):
     """Convert a string to float.
 
@@ -1228,11 +1434,14 @@ def str_to_float(string):
     Returns:
         float: Number rounded to two decimals
     """
-    return rnd(float(string.replace(",",".")))
+    return rnd(float(string.replace(",", ".")))
+
 
 """
 #   output amounts
 """
+
+
 def amount_str(float, currency=""):
     """Generate a amount string from a float.
 
@@ -1243,18 +1452,26 @@ def amount_str(float, currency=""):
     Returns:
         str: Nicely formatted amount string
     """
-    if len(currency)>0:
+    if len(currency) > 0:
         currency = f" {currency}"
 
-    if rnd(float)!=0:
-        amount = "{:,.2f}".format(rnd(float)).replace(".","X").replace(",",".").replace("X",",")
+    if rnd(float) != 0:
+        amount = (
+            "{:,.2f}".format(rnd(float))
+            .replace(".", "X")
+            .replace(",", ".")
+            .replace("X", ",")
+        )
         return f"{amount}{currency}"
     else:
         return f"-{currency}"
 
+
 """
 #   output percent string
 """
+
+
 def percent_str(float):
     """Generate a percent string from a float.
 
@@ -1264,10 +1481,11 @@ def percent_str(float):
     Returns:
         str: Nicely formatted percent string
     """
-    if rnd(float)!=0:
-        return "{:.1f}".format(rnd(float)).replace(".",",")
+    if rnd(float) != 0:
+        return "{:.1f}".format(rnd(float)).replace(".", ",")
     else:
         return "-"
+
 
 def percent_str_w_sign(float):
     """Generate a percent string with the percent sign ("%") from a float.
@@ -1278,11 +1496,14 @@ def percent_str_w_sign(float):
     Returns:
         str: Nicely formatted percent string
     """
-    return " ".join([percent_str(float),"%"])
+    return " ".join([percent_str(float), "%"])
+
 
 """
 #   handle numbers
 """
+
+
 def rnd(amount):
     """Round a number to two decimals.
 
@@ -1294,9 +1515,12 @@ def rnd(amount):
     """
     return float(round(amount, 2))
 
+
 """
 #   QDate to String
 """
+
+
 def qdate_to_str(qdate, format="%d.%m.%Y"):
     """Convert a QDate to a datetime.Date.
 
@@ -1313,6 +1537,8 @@ def qdate_to_str(qdate, format="%d.%m.%Y"):
 """
 #   datetime.now() string
 """
+
+
 def now_str(format="%Y-%m-%d_%H%M%S"):
     """Get a string of the current timestamp.
 
@@ -1323,6 +1549,7 @@ def now_str(format="%Y-%m-%d_%H%M%S"):
         str: String of the timestamp
     """
     return datetime.datetime.now().strftime(format)
+
 
 def today_str(format="%Y-%m-%d"):
     """Get a string of the current date.

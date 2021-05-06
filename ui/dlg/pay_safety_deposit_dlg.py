@@ -7,6 +7,7 @@
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QDate
 
+
 class PaySafetyDepositDialog(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
@@ -21,37 +22,41 @@ class PaySafetyDepositDialog(QtWidgets.QDialog):
         # TODO: set suffix of input to €
         self.set_date_today()
 
-
     """
     #
     #   INITIALIZE, EN/-DISABLE & UPDATE THE GUI
     #
     #
     """
+
     def initialize_ui(self):
-        uic.loadUi('ui/dlg/pay_safety_deposit_dialog.ui', self) # Load the .ui file
+        uic.loadUi("ui/dlg/pay_safety_deposit_dialog.ui", self)  # Load the .ui file
 
     def set_date_today(self):
         self.dateEdit_date.setDate(QDate.currentDate())
+
     """
     #
     #   UTILITY FUNCTIONS
     #
     #
     """
+
     def get_input(self):
         args = {
-                "date": self.dateEdit_date.date(),
-                "amount": self.doubleSpinBox_amount.value(),
-                "comment": self.textEdit_comment.toPlainText(),
-            }
+            "date": self.dateEdit_date.date(),
+            "amount": self.doubleSpinBox_amount.value(),
+            "comment": self.textEdit_comment.toPlainText(),
+        }
         return args
+
     """
     #
     #   EXEC
     #
     #
     """
+
     def exec_(self):
         ok = super().exec_()
         if ok:

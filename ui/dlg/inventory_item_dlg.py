@@ -12,6 +12,7 @@ from ui import dlg, helper
 from ui.helper import amount_str
 from core.obj import proj
 
+
 class InventoryItemDialog(QtWidgets.QDialog):
     def __init__(self, *, app_data, loaded_inventory_item=None):
         super().__init__()
@@ -38,7 +39,7 @@ class InventoryItemDialog(QtWidgets.QDialog):
         self.set_event_handler()
 
         if self.loaded_inventory_item:
-            """ load trade data to input """
+            """load trade data to input"""
             loaded_args = vars(self.loaded_inventory_item).copy()
             self.checkBox_is_active.setChecked(self.loaded_inventory_item.is_active)
             self.set_input(**loaded_args)
@@ -55,8 +56,9 @@ class InventoryItemDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def initialize_ui(self):
-        uic.loadUi('ui/dlg/inventory_item_dialog.ui', self)
+        uic.loadUi("ui/dlg/inventory_item_dialog.ui", self)
 
     def setup_combo_boxes(self):
         self.setup_combo_box_cost_groups()
@@ -83,7 +85,7 @@ class InventoryItemDialog(QtWidgets.QDialog):
 
     def activate_ok_button(self):
         args = self.get_input()
-        if len(args["name"])>0 and args["cost_group"] and args["trade"]:
+        if len(args["name"]) > 0 and args["cost_group"] and args["trade"]:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
         else:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
@@ -100,26 +102,31 @@ class InventoryItemDialog(QtWidgets.QDialog):
     #   catch the signals from the mainwindow and set functions to them
     #
     """
+
     def set_button_actions(self):
         self.pushButton_add_cost_group.clicked.connect(self.button_add_cost_group)
         self.pushButton_add_trade.clicked.connect(self.button_add_trade)
         """ delete button """
-        self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_inventory_item))
+        self.pushButton_delete.clicked.connect(
+            lambda: helper.delete(self, self.loaded_inventory_item)
+        )
 
     def set_spin_box_actions(self):
-        """ spinbox update """
+        """spinbox update"""
         self.doubleSpinBox_units.valueChanged.connect(self.update_ui)
         self.doubleSpinBox_unit_price.valueChanged.connect(self.update_ui)
 
     def set_combo_box_actions(self):
-        """ ok button """
+        """ok button"""
         self.comboBox_cost_group.currentIndexChanged.connect(self.activate_ok_button)
         self.comboBox_trade.currentIndexChanged.connect(self.activate_ok_button)
 
     def set_event_handler(self):
         self.keyReleaseEvent = self.eventHandler
         self.mouseReleaseEvent = self.eventHandler
+
     """ add event handler """
+
     def eventHandler(self, event):
         self.update_ui()
 
@@ -129,6 +136,7 @@ class InventoryItemDialog(QtWidgets.QDialog):
     #   functions to that get connected to the widget signals (some might also be directly used and not in this section)
     #
     """
+
     def button_add_cost_group(self):
         cost_group = helper.input_cost_group(self.app_data)
         if cost_group:
@@ -147,13 +155,18 @@ class InventoryItemDialog(QtWidgets.QDialog):
     #   Functions that let the dialog do something
     #
     """
+
     def add_new_inventory_item(self):
         input_inventory_item_args = dlg.open_inventory_item_dialog(self.app_data)
         if input_inventory_item_args:
-            input_inventory_item = self.app_data.project.input_new_trade(input_trade_args)
+            input_inventory_item = self.app_data.project.input_new_trade(
+                input_trade_args
+            )
 
     def edit_inventory_item(self, inventory_item):
-        inventory_item_args = dlg.open_inventory_item_dialog(self.app_data, inventory_item)
+        inventory_item_args = dlg.open_inventory_item_dialog(
+            self.app_data, inventory_item
+        )
         if inventory_item_args:
             inventory_item.update(**inventory_item_args)
 
@@ -163,16 +176,21 @@ class InventoryItemDialog(QtWidgets.QDialog):
     #   functions to render the objects to the respective widgets
     #
     """
+
     def set_inventory(self, inventory):
         self.treeView_inventory.clear()
         total_price_sum = 0
         for inventory_item in inventory:
-            helper.add_item_to_tree(content_item=inventory_item,
-                                    cost_group=self.treeView_inventory,
-                                    cols=[inventory_item.name,
-                                        f"{inventory_item.units} {inventory_item.unit_type}",
-                                        amount_str(inventory_item.unit_price, self.currency),
-                                        amount_str(inventory_item.total_price, self.currency)])
+            helper.add_item_to_tree(
+                content_item=inventory_item,
+                cost_group=self.treeView_inventory,
+                cols=[
+                    inventory_item.name,
+                    f"{inventory_item.units} {inventory_item.unit_type}",
+                    amount_str(inventory_item.unit_price, self.currency),
+                    amount_str(inventory_item.total_price, self.currency),
+                ],
+            )
             total_price_sum += inventory_item.total_price
 
         self.label_total_price_sum.setText(amount_str(total_price_sum, self.currency))
@@ -183,13 +201,14 @@ class InventoryItemDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def set_cost_group_to(self, cost_group):
         index = self.comboBox_cost_group.findData(cost_group)
         self.comboBox_cost_group.setCurrentIndex(index)
 
     def set_trade_to(self, trade):
         index = self.comboBox_trade.findData(trade)
-        if index<0:
+        if index < 0:
             index = 0
         self.comboBox_trade.setCurrentIndex(index)
 
@@ -198,15 +217,25 @@ class InventoryItemDialog(QtWidgets.QDialog):
         self.comboBox_unit_type.setCurrentIndex(index)
 
     def set_labels(self, total_price):
-        """ total price """
+        """total price"""
         total_price_VAT_amount = total_price * self.vat
         total_price_w_VAT = total_price + total_price_VAT_amount
         self.label_total_price.setText(amount_str(total_price))
         self.label_total_price_w_VAT.setText(amount_str(total_price_w_VAT))
         self.label_total_price_VAT_amount.setText(amount_str(total_price_VAT_amount))
 
-    def set_input(self, *, _uid=None, name, ordinal_number, unit_price, units, description, **kwargs):
-        """ meta data """
+    def set_input(
+        self,
+        *,
+        _uid=None,
+        name,
+        ordinal_number,
+        unit_price,
+        units,
+        description,
+        **kwargs,
+    ):
+        """meta data"""
         self.label_uid.setText(_uid.labelize() if _uid else "-")
 
         self.lineEdit_name.setText(name)
@@ -217,16 +246,16 @@ class InventoryItemDialog(QtWidgets.QDialog):
 
     def get_input(self):
         args = {
-                "name": self.lineEdit_name.text(),
-                "ordinal_number": self.lineEdit_ordinal_number.text(),
-                "unit_price": self.doubleSpinBox_unit_price.value(),
-                "units": self.doubleSpinBox_units.value(),
-                "unit_type": self.comboBox_unit_type.currentData(),
-                "is_active": self.checkBox_is_active.isChecked(),
-                "cost_group": self.comboBox_cost_group.currentData(),
-                "trade": self.comboBox_trade.currentData(),
-                "description": self.textEdit_description.toPlainText(),
-            }
+            "name": self.lineEdit_name.text(),
+            "ordinal_number": self.lineEdit_ordinal_number.text(),
+            "unit_price": self.doubleSpinBox_unit_price.value(),
+            "units": self.doubleSpinBox_units.value(),
+            "unit_type": self.comboBox_unit_type.currentData(),
+            "is_active": self.checkBox_is_active.isChecked(),
+            "cost_group": self.comboBox_cost_group.currentData(),
+            "trade": self.comboBox_trade.currentData(),
+            "description": self.textEdit_description.toPlainText(),
+        }
         return args
 
     """
@@ -235,6 +264,7 @@ class InventoryItemDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def exec_(self):
         ok = super().exec_()
         if ok:

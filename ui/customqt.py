@@ -14,6 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 #   usage:  QTabWidget.setTabBar(TabBar(self))
 #           QTabWidget.setTabPosition(QtWidgets.QTabWidget.West)
 """
+
+
 class TabBar(QtWidgets.QTabBar):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,14 +44,16 @@ class TabBar(QtWidgets.QTabBar):
             painter.translate(c)
             painter.rotate(90)
             painter.translate(-c)
-            painter.drawControl(QtWidgets.QStyle.CE_TabBarTabLabel, opt);
+            painter.drawControl(QtWidgets.QStyle.CE_TabBarTabLabel, opt)
             painter.restore()
+
 
 class TabWidget(QtWidgets.QTabWidget):
     def __init__(self, *args, **kwargs):
         QtWidgets.QTabWidget.__init__(self, *args, **kwargs)
         self.setTabBar(TabBar(self))
         self.setTabPosition(QtWidgets.QTabWidget.West)
+
 
 class PushButton(QtWidgets.QPushButton):
     def __init__(self, parent=None):
@@ -100,23 +104,28 @@ class PushButton(QtWidgets.QPushButton):
         self._animation.start()
         super().leaveEvent(event)
 
+
 class DateTableWidgetItem(QtWidgets.QTableWidgetItem):
-    def __init__(self, *args, sorting_key,**kwargs):
-        #call custom constructor with UserType item type
+    def __init__(self, *args, sorting_key, **kwargs):
+        # call custom constructor with UserType item type
         super().__init__(*args, **kwargs)
         self.sorting_key = sorting_key
-    #Qt uses a simple < check for sorting items, override this to use the sortKey
+
+    # Qt uses a simple < check for sorting items, override this to use the sortKey
     def __lt__(self, other):
         return self.sorting_key < other.sorting_key
 
+
 class AmountTableWidgetItem(QtWidgets.QTableWidgetItem):
-    def __init__(self, *args, sorting_key,**kwargs):
-        #call custom constructor with UserType item type
+    def __init__(self, *args, sorting_key, **kwargs):
+        # call custom constructor with UserType item type
         super().__init__(*args, **kwargs)
         self.sorting_key = sorting_key
-    #Qt uses a simple < check for sorting items, override this to use the sortKey
+
+    # Qt uses a simple < check for sorting items, override this to use the sortKey
     def __lt__(self, other):
         return self.sorting_key < other.sorting_key
+
 
 class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
     def __init__(self, *args, **kwargs):
@@ -133,11 +142,13 @@ class TreeWidgetItem(QtWidgets.QTreeWidgetItem):
         """
         column = self.treeWidget().sortColumn()
         text = self.text(column)
-        amount_str = text.split(" ")[0].replace(".","").replace(",",".")
-        if amount_str.replace(".","").isnumeric() or amount_str == "-":
+        amount_str = text.split(" ")[0].replace(".", "").replace(",", ".")
+        if amount_str.replace(".", "").isnumeric() or amount_str == "-":
             amount = float(amount_str) if amount_str != "-" else 0
-            other_amount_str = otherItem.text(column).split(" ")[0].replace(".","").replace(",",".")
-            if other_amount_str.replace(".","").isnumeric() or other_amount_str == "-":
+            other_amount_str = (
+                otherItem.text(column).split(" ")[0].replace(".", "").replace(",", ".")
+            )
+            if other_amount_str.replace(".", "").isnumeric() or other_amount_str == "-":
                 other_amount = float(other_amount_str) if other_amount_str != "-" else 0
                 return amount < other_amount
         return text < otherItem.text(column)

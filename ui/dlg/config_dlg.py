@@ -7,6 +7,7 @@
 import json
 from PyQt5 import QtWidgets, uic
 
+
 class ConfigDialog(QtWidgets.QDialog):
     def __init__(self, loaded_config=None, default_config=None):
         super().__init__()
@@ -26,20 +27,20 @@ class ConfigDialog(QtWidgets.QDialog):
 
         self.update()
 
-
     """
     #
     #   INITIALIZE, EN/-DISABLE & UPDATE THE GUI
     #
     #
     """
+
     def initialize_ui(self):
-        uic.loadUi('ui/dlg/config_dialog.ui', self)
+        uic.loadUi("ui/dlg/config_dialog.ui", self)
 
     def update(self):
         args_raw = self.get_input_raw()
         if self.default_config:
-            default_config_str = self.dct_to_str(self.default_config).encode('utf8')
+            default_config_str = self.dct_to_str(self.default_config).encode("utf8")
             if args_raw["config"] != default_config_str:
                 self.pushButton_reset_to_default.setEnabled(True)
             else:
@@ -53,8 +54,9 @@ class ConfigDialog(QtWidgets.QDialog):
     #   catch the signals from the mainwindow and set functions to them
     #
     """
+
     def set_button_actions(self):
-        """ reset to default config """
+        """reset to default config"""
         self.pushButton_reset_to_default.clicked.connect(self.reset_to_default)
 
     def set_update_trigger(self):
@@ -64,7 +66,9 @@ class ConfigDialog(QtWidgets.QDialog):
     def set_event_handler(self):
         self.keyReleaseEvent = self.eventHandler
         self.mouseReleaseEvent = self.eventHandler
+
     """ add event handler """
+
     def eventHandler(self, event):
         self.update()
 
@@ -74,6 +78,7 @@ class ConfigDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def reset_to_default(self):
         if self.default_config:
             default_config_str = self.dct_to_str(self.default_config)
@@ -85,27 +90,26 @@ class ConfigDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def set_input(self, config_str):
         self.textEdit_config.setText(config_str)
 
     def get_input(self):
-        args = {
-            "config": json.loads(self.textEdit_config.toPlainText().encode('utf8'))
-        }
+        args = {"config": json.loads(self.textEdit_config.toPlainText().encode("utf8"))}
         return args
 
     def get_input_raw(self):
-        args = {
-            "config": self.textEdit_config.toPlainText().encode('utf8')
-        }
+        args = {"config": self.textEdit_config.toPlainText().encode("utf8")}
         return args
 
     def dct_to_str(self, dct):
-        json_string = json.dumps(dct, indent=4, ensure_ascii=False).encode('utf8').decode('utf8')
+        json_string = (
+            json.dumps(dct, indent=4, ensure_ascii=False).encode("utf8").decode("utf8")
+        )
         return json_string
 
     def str_to_dct(self, str):
-        json_dct = json.loads(str.encode('utf8'))
+        json_dct = json.loads(str.encode("utf8"))
         return json_dct
 
     """
@@ -114,6 +118,7 @@ class ConfigDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def exec_(self):
         ok = super().exec_()
         if ok:

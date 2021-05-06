@@ -8,7 +8,8 @@
 from PyQt5 import QtWidgets, uic
 
 from ui import helper
-from core.obj import (proj, corp)
+from core.obj import proj, corp
+
 
 class PersonDialog(QtWidgets.QDialog):
     def __init__(self, loaded_person=None):
@@ -20,14 +21,18 @@ class PersonDialog(QtWidgets.QDialog):
 
         self.initialize_ui()
         """ set title """
-        dialog_title = f"Person ({loaded_person.first_name}, {loaded_person.last_name}) bearbeiten..." if loaded_person else "Neuer Person"
+        dialog_title = (
+            f"Person ({loaded_person.first_name}, {loaded_person.last_name}) bearbeiten..."
+            if loaded_person
+            else "Neuer Person"
+        )
         self.setWindowTitle(dialog_title)
         """ fixed window size """
         # self.setFixedSize(self.size())
         """ activate UI """
         self.set_button_actions()
         if self.loaded_person:
-            """ activate delete button """
+            """activate delete button"""
             self.pushButton_delete.setEnabled(True)
             """ load person data to input """
             loaded_args = self.loaded_person.__dict__.copy()
@@ -39,8 +44,9 @@ class PersonDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def initialize_ui(self):
-        uic.loadUi('ui/dlg/person_dialog.ui', self)
+        uic.loadUi("ui/dlg/person_dialog.ui", self)
 
     """
     #
@@ -48,9 +54,12 @@ class PersonDialog(QtWidgets.QDialog):
     #   catch the signals from the mainwindow and set functions to them
     #
     """
+
     def set_button_actions(self):
-        """ delete button """
-        self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_person))
+        """delete button"""
+        self.pushButton_delete.clicked.connect(
+            lambda: helper.delete(self, self.loaded_person)
+        )
 
     """
     #
@@ -58,8 +67,21 @@ class PersonDialog(QtWidgets.QDialog):
     #
     #
     """
-    def set_input(self, *, _uid=None, first_name="", last_name="", telephone="", fax="", mobile="", email="", address=None, **kwargs):
-        """ data """
+
+    def set_input(
+        self,
+        *,
+        _uid=None,
+        first_name="",
+        last_name="",
+        telephone="",
+        fax="",
+        mobile="",
+        email="",
+        address=None,
+        **kwargs,
+    ):
+        """data"""
         self.label_uid.setText(_uid.labelize())
         """ person attributes """
         self.lineEdit_first_name.setText(first_name)
@@ -79,13 +101,13 @@ class PersonDialog(QtWidgets.QDialog):
 
     def get_input(self):
         address = {
-                "street": self.lineEdit_street.text(),
-                "house_number": self.lineEdit_house_number.text(),
-                "city": self.lineEdit_city.text(),
-                "state": self.lineEdit_state.text(),
-                "zipcode": self.lineEdit_zipcode.text(),
-                "country": self.lineEdit_country.text()
-            }
+            "street": self.lineEdit_street.text(),
+            "house_number": self.lineEdit_house_number.text(),
+            "city": self.lineEdit_city.text(),
+            "state": self.lineEdit_state.text(),
+            "zipcode": self.lineEdit_zipcode.text(),
+            "country": self.lineEdit_country.text(),
+        }
         args = {
             "first_name": self.lineEdit_first_name.text(),
             "last_name": self.lineEdit_last_name.text(),
@@ -94,7 +116,7 @@ class PersonDialog(QtWidgets.QDialog):
             "mobile": self.lineEdit_mobile.text(),
             "email": self.lineEdit_email.text(),
             "address": corp.Address(**address),
-            }
+        }
         return args
 
     """
@@ -103,6 +125,7 @@ class PersonDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def exec_(self):
         ok = super().exec_()
         if ok:

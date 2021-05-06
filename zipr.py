@@ -12,8 +12,8 @@ import json
 import zipfile
 import encoder, decoder
 
-class Zipr(object):
 
+class Zipr(object):
     def __enter__(self):
         # Makes this thing a context manager
         return self
@@ -25,22 +25,25 @@ class Zipr(object):
     def close(self):
         self.zobj.close()
 
-class ZipArchive(Zipr):
 
+class ZipArchive(Zipr):
     def __init__(self, path, mode="r"):
         self.zobj = zipfile.ZipFile(
-            path, mode, compression=zipfile.ZIP_STORED,
-            allowZip64=True, compresslevel=None
+            path,
+            mode,
+            compression=zipfile.ZIP_STORED,
+            allowZip64=True,
+            compresslevel=None,
         )
         self.root, _ = os.path.splitext(os.path.basename(path))
 
-    def open(self, path, mode='r'):
+    def open(self, path, mode="r"):
         # Write into a directory instead of the root of the zip file
         path = os.path.join(self.root, path)
         return ZipArchiveFile(self.zobj.open(path, mode))
 
-class ZipArchiveFile(Zipr):
 
+class ZipArchiveFile(Zipr):
     def __init__(self, zobj, encoding="utf-8"):
         self.zobj = zobj
         self.encoding = encoding
@@ -49,6 +52,7 @@ class ZipArchiveFile(Zipr):
         if isinstance(data, str):
             data = data.encode(self.encoding)
         self.zobj.write(data)
+
 
 @debug.log
 def save_project(path, app_data):
@@ -118,35 +122,49 @@ def open_project(path):
         root, _ = os.path.splitext(os.path.basename(path))
 
         # project config
-        with z.open(root+"/proj_config.json", "r") as file:
+        with z.open(root + "/proj_config.json", "r") as file:
             loaded_args["project_config"] = json.load(file)
 
         # project
-        with z.open(root+"/project.json", "r") as file:
-            loaded_args["project"] = json.load(file, object_hook=decoder.ProjectDecoder().object_hook)
+        with z.open(root + "/project.json", "r") as file:
+            loaded_args["project"] = json.load(
+                file, object_hook=decoder.ProjectDecoder().object_hook
+            )
 
         # cost groups
-        with z.open(root+"/project_cost_calculations.json", "r") as file:
-            loaded_args["project_cost_calculations"] = json.load(file, object_hook=decoder.ProjectCostCalculationDecoder().object_hook)
+        with z.open(root + "/project_cost_calculations.json", "r") as file:
+            loaded_args["project_cost_calculations"] = json.load(
+                file, object_hook=decoder.ProjectCostCalculationDecoder().object_hook
+            )
 
         # companies
-        with z.open(root+"/companies.json", "r") as file:
-            loaded_args["companies"] = json.load(file, object_hook=decoder.CompanyDecoder().object_hook)
+        with z.open(root + "/companies.json", "r") as file:
+            loaded_args["companies"] = json.load(
+                file, object_hook=decoder.CompanyDecoder().object_hook
+            )
 
         # trades
-        with z.open(root+"/trades.json", "r") as file:
-            loaded_args["trades"] = json.load(file, object_hook=decoder.TradeDecoder().object_hook)
+        with z.open(root + "/trades.json", "r") as file:
+            loaded_args["trades"] = json.load(
+                file, object_hook=decoder.TradeDecoder().object_hook
+            )
 
         # invoices
-        with z.open(root+"/invoices.json", "r") as file:
-            loaded_args["invoices"] = json.load(file, object_hook=decoder.InvoiceDecoder().object_hook)
+        with z.open(root + "/invoices.json", "r") as file:
+            loaded_args["invoices"] = json.load(
+                file, object_hook=decoder.InvoiceDecoder().object_hook
+            )
 
         # jobs
-        with z.open(root+"/jobs.json", "r") as file:
-            loaded_args["jobs"] = json.load(file, object_hook=decoder.ArchJobDecoder().object_hook)
+        with z.open(root + "/jobs.json", "r") as file:
+            loaded_args["jobs"] = json.load(
+                file, object_hook=decoder.ArchJobDecoder().object_hook
+            )
 
         # cost groups
-        with z.open(root+"/cost_groups.json", "r") as file:
-            loaded_args["cost_groups"] = json.load(file, object_hook=decoder.CostGroupDecoder().object_hook)
+        with z.open(root + "/cost_groups.json", "r") as file:
+            loaded_args["cost_groups"] = json.load(
+                file, object_hook=decoder.CostGroupDecoder().object_hook
+            )
 
     return loaded_args

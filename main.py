@@ -24,8 +24,9 @@ from ui import mainwindow
 APP_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 from core import api
 
+
 class Application(QtWidgets.QApplication):
-    """ Application widget.
+    """Application widget.
 
     Attributes:
         app_data (api.AppData): Application data containing config and project
@@ -33,7 +34,8 @@ class Application(QtWidgets.QApplication):
         logger (TYPE): Logger
         window (mainwindow.MainWindow): Main window of the application
     """
-    def __init__(self, *args, project_file = None, **kwargs):
+
+    def __init__(self, *args, project_file=None, **kwargs):
         """Initialize application.
 
         Args:
@@ -65,12 +67,12 @@ class Application(QtWidgets.QApplication):
     #   Load QSS file
     #
     """
+
     @debug.log
     def initialize_style(self):
-        """Initialize stylesheet.
-        """
-        stylesheet_path = os.path.join("qss","style.qss")
-        with open(stylesheet_path,"r") as file:
+        """Initialize stylesheet."""
+        stylesheet_path = os.path.join("qss", "style.qss")
+        with open(stylesheet_path, "r") as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 
@@ -80,24 +82,22 @@ class Application(QtWidgets.QApplication):
     #
     #
     """
+
     @debug.log_info
     def initialize_autosaver(self):
-        """Initilize autosave timer.
-        """
+        """Initilize autosave timer."""
         self.autosave_timer = QTimer()
         self.autosave_timer.timeout.connect(self.autosave_project)
 
     @debug.log_info
     def start_autosaving(self):
-        """Start repeated autosaving.
-        """
+        """Start repeated autosaving."""
         autosave_time = self.app_data.config["autosave_time"]
         self.autosave_timer.start(autosave_time)
 
     @debug.log_info
     def autosave_project(self):
-        """Save project with autosave name including a timestamp.
-        """
+        """Save project with autosave name including a timestamp."""
         debug.info_msg("Checking whether the file has already been saved...")
         if self.app_data.project and self.app_data.project.has_been_saved():
             debug.info_msg("Yes! Autosaving...")
@@ -117,16 +117,17 @@ class Application(QtWidgets.QApplication):
     #   Catch exceptions and let the programm continue to run
     #
     """
+
     @debug.log_error
     def exception_hook(self, exctype, value, tb):
-        """Custom exception hook, handling errors.
-        """
+        """Custom exception hook, handling errors."""
         traceback_formated = traceback.format_exception(exctype, value, tb)
         traceback_string = "".join(traceback_formated)
         debug.error_msg(traceback_string)
         self.show_exception_box(traceback_string)
         # activate this, if the application should exit after an exception
         # QtWidgets.QApplication.quit()
+
     @debug.log
     def show_exception_box(self, log_msg):
         """Open a popup window with an error message.
@@ -134,7 +135,11 @@ class Application(QtWidgets.QApplication):
         Args:
             log_msg (str): Error message
         """
-        errorbox = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Critical, "Oops... Error!", f"Oops. An unexpected error occured:\n{log_msg}")
+        errorbox = QtWidgets.QMessageBox(
+            QtWidgets.QMessageBox.Critical,
+            "Oops... Error!",
+            f"Oops. An unexpected error occured:\n{log_msg}",
+        )
         errorbox.exec_()
 
     """
@@ -143,15 +148,16 @@ class Application(QtWidgets.QApplication):
     #
     #
     """
+
     def initialize_logger(self):
-        """Initilize a logger from the logging.conf file.
-        """
-        logging.config.fileConfig('logging.conf')
+        """Initilize a logger from the logging.conf file."""
+        logging.config.fileConfig("logging.conf")
 
         # create logger
         self.logger = logging.getLogger()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app = Application(sys.argv)
     app.window.show()
     sys.exit(app.exec_())

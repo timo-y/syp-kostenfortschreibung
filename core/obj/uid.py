@@ -11,6 +11,7 @@ import debug
 import uuid, collections
 from datetime import datetime
 
+
 class UID:
 
     """UID class object is like a nametag with some additional info like date created and modified.
@@ -45,6 +46,7 @@ class UID:
     #
     #
     """
+
     def to_json(self):
         """This works like a JSON-encoder for the UID class.
 
@@ -52,11 +54,11 @@ class UID:
             dict: A dict of the UID object
         """
         return {
-        "UID": True,
-        "class_name":self.class_name,
-        "uid": str(self.uid),
-        "created_date": self.created_date.isoformat(),
-        "edited_date": self.edited_date.isoformat() if self.edited_date else None
+            "UID": True,
+            "class_name": self.class_name,
+            "uid": str(self.uid),
+            "created_date": self.created_date.isoformat(),
+            "edited_date": self.edited_date.isoformat() if self.edited_date else None,
         }
 
     """
@@ -65,6 +67,7 @@ class UID:
     #   Used in the dialogs to display the UID data
     #
     """
+
     def labelize(self):
         """Create a string that can be used for the GUI.
 
@@ -82,9 +85,9 @@ class UID:
     #   Get a new UID, in case of importing, so it is always unique
     #
     """
+
     def reset_uid(self):
-        """Reset the UID.
-        """
+        """Reset the UID."""
         created_date = datetime.now()
         edited_date = None
         self.uid = uuid.uuid4()
@@ -97,18 +100,24 @@ class UID:
     #
     #
     """
+
     def __str__(self):
-        return "<UID"+str({
-        "class_name":self.class_name,
-        "uid": str(self.uid)
-        }).replace("{","(").replace("}",")")+">"
+        return (
+            "<UID"
+            + str({"class_name": self.class_name, "uid": str(self.uid)})
+            .replace("{", "(")
+            .replace("}", ")")
+            + ">"
+        )
 
     def __eq__(self, other):
-        """Define two UID objects to be the same, if the uid is the same
-
-        """
-        if (isinstance(other, UID)):
-            if self.class_name == other.class_name and self.uid == other.uid and self.created_date == other.created_date:
+        """Define two UID objects to be the same, if the uid is the same"""
+        if isinstance(other, UID):
+            if (
+                self.class_name == other.class_name
+                and self.uid == other.uid
+                and self.created_date == other.created_date
+            ):
                 if self.edited_date is not None and other.edited_date is not None:
                     if self.edited_date < other.edited_date:
                         print("left side uid is older!")
@@ -126,8 +135,7 @@ class UID:
 
 class IdObject:
 
-    """Class of objects having an UID.
-    """
+    """Class of objects having an UID."""
 
     def __init__(self, o, uid=None, deleted=False):
         """Initialize IdObject.
@@ -142,7 +150,7 @@ class IdObject:
         # unique ID
         if uid is None:
             self._uid = UID(class_name=o.__class__.__name__)
-        elif isinstance(uid, UID) :
+        elif isinstance(uid, UID):
             self._uid = uid
         else:
             raise Exception("UID could not be restored!")
@@ -155,9 +163,11 @@ class IdObject:
     #
     #
     """
+
     @property
     def uid(self):
         return self._uid
+
     @uid.setter
     def uid(self, input):
         """Prevent the change of the UID.
@@ -176,13 +186,13 @@ class IdObject:
         return self.uid.to_json()
 
     def edited(self):
-        """Call this function upon editing the object to catch the timestamp.
-        """
+        """Call this function upon editing the object to catch the timestamp."""
         self.uid.edited_date = datetime.now()
 
     """
     #   boolean properties
     """
+
     def is_deleted(self):
         """Check if deleted.
 
@@ -190,13 +200,14 @@ class IdObject:
             bool: True, if deleted
         """
         return self._deleted
+
     def is_not_deleted(self):
         """Check if not deleted.
 
         Returns:
             bool: True, if not deleted
         """
-        return not(self._deleted)
+        return not (self._deleted)
 
     def delete(self):
         """Delete object.

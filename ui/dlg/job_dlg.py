@@ -10,7 +10,8 @@ from PyQt5.QtWidgets import QDialogButtonBox
 
 from ui import dlg, helper
 from ui.helper import two_inputs_to_float, amount_str, rnd
-from core.obj import (proj, corp, arch)
+from core.obj import proj, corp, arch
+
 
 class JobDialog(QtWidgets.QDialog):
     def __init__(self, *, app_data, sel_company=None, loaded_job=None):
@@ -28,8 +29,12 @@ class JobDialog(QtWidgets.QDialog):
         """ set title """
         dialog_title = "Neuer Auftrag"
         if loaded_job:
-            loaded_job_company_name = loaded_job.company.name if loaded_job.company else "-"
-            dialog_title = f"Auftrag ({loaded_job_company_name}, {loaded_job.id}) bearbeiten..."
+            loaded_job_company_name = (
+                loaded_job.company.name if loaded_job.company else "-"
+            )
+            dialog_title = (
+                f"Auftrag ({loaded_job_company_name}, {loaded_job.id}) bearbeiten..."
+            )
         self.setWindowTitle(dialog_title)
         """ fixed window size """
         # self.setFixedSize(self.size())
@@ -44,7 +49,7 @@ class JobDialog(QtWidgets.QDialog):
         self.set_default_labels()
         self.set_to_max_job_number()
         if self.loaded_job:
-            """ dont let the job be another """
+            """dont let the job be another"""
             self.deactivate_input()
             """ activate delete button """
             self.pushButton_delete.setEnabled(True)
@@ -64,12 +69,17 @@ class JobDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def initialize_ui(self):
-        uic.loadUi('ui/dlg/job_dialog.ui', self)
+        uic.loadUi("ui/dlg/job_dialog.ui", self)
         """ TODO: figure out where to put this """
-        tree_view_cols = ["date", "amount"] # maybe put on top of file
-        self.treeWidget_paid_safety_deposits.setHeaderLabels([self.app_data.titles[col] for col in tree_view_cols])
-        self.treeWidget_safety_deposits_of_invoices.setHeaderLabels([self.app_data.titles[col] for col in tree_view_cols])
+        tree_view_cols = ["date", "amount"]  # maybe put on top of file
+        self.treeWidget_paid_safety_deposits.setHeaderLabels(
+            [self.app_data.titles[col] for col in tree_view_cols]
+        )
+        self.treeWidget_safety_deposits_of_invoices.setHeaderLabels(
+            [self.app_data.titles[col] for col in tree_view_cols]
+        )
 
     def deactivate_input(self):
         self.comboBox_company.setEnabled(False)
@@ -107,7 +117,11 @@ class JobDialog(QtWidgets.QDialog):
     def enable_set_max_job_nr_button(self):
         self.pushButton_determine_job_nr.setEnabled(False)
         args = self.get_input()
-        if self.loaded_job is None and args["company"] and args["id"] != self.get_max_job_number()+1:
+        if (
+            self.loaded_job is None
+            and args["company"]
+            and args["id"] != self.get_max_job_number() + 1
+        ):
             self.pushButton_determine_job_nr.setEnabled(True)
 
     def set_validators(self):
@@ -128,27 +142,37 @@ class JobDialog(QtWidgets.QDialog):
 
     def activate_ok_button(self):
         args = self.get_input()
-        if self.loaded_job is not None or (args["trade"] and args["company"] and args["cost_group"] and not(self.app_data.project.job_exists(id=args["id"], company=args["company"]))):
+        if self.loaded_job is not None or (
+            args["trade"]
+            and args["company"]
+            and args["cost_group"]
+            and not (
+                self.app_data.project.job_exists(id=args["id"], company=args["company"])
+            )
+        ):
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(True)
         else:
             self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(False)
 
     def update_ui(self):
-        """ update set_max_job_nr button """
+        """update set_max_job_nr button"""
         self.enable_set_max_job_nr_button()
-        #""" update the values of the labels """#
+        # """ update the values of the labels """#
         args = self.get_input()
 
         """ job exists """
-        if self.loaded_job is None and self.app_data.project.job_exists(id=args["id"], company=args["company"]):
+        if self.loaded_job is None and self.app_data.project.job_exists(
+            id=args["id"], company=args["company"]
+        ):
             self.label_job_exists.setText("Auftrag existiert bereits!")
         else:
             self.label_job_exists.setText("")
 
         tmp_job = arch.ArchJob(**args)
-        self.set_labels(job_sum_w_VAT=tmp_job.job_sum*(1+self.default_vat),
-            job_sum_VAT_amount=tmp_job.job_sum*self.default_vat
-            )
+        self.set_labels(
+            job_sum_w_VAT=tmp_job.job_sum * (1 + self.default_vat),
+            job_sum_VAT_amount=tmp_job.job_sum * self.default_vat,
+        )
         self.set_paid_safety_deposits(self.paid_safety_deposits)
         invoices = self.app_data.project.get_invoices_of_job(self.loaded_job)
         self.set_safety_deposits_of_invoices(invoices)
@@ -161,8 +185,11 @@ class JobDialog(QtWidgets.QDialog):
     #   catch the signals from the mainwindow and set functions to them
     #
     """
+
     def set_widget_actions(self):
-        self.treeWidget_safety_deposits_of_invoices.itemDoubleClicked.connect(self.double_click_invoice_tree)
+        self.treeWidget_safety_deposits_of_invoices.itemDoubleClicked.connect(
+            self.double_click_invoice_tree
+        )
         self.treeWidget_paid_safety_deposits.clicked.connect(self.activate_psd_buttons)
 
     def set_button_actions(self):
@@ -171,9 +198,13 @@ class JobDialog(QtWidgets.QDialog):
         self.pushButton_add_trade.clicked.connect(self.add_new_trade)
         self.pushButton_add_cost_group.clicked.connect(self.add_new_cost_group)
         self.pushButton_add_paid_safety_deposit.clicked.connect(self.pay_safety_deposit)
-        self.pushButton_remove_paid_safety_deposit.clicked.connect(self.button_remove_psd)
+        self.pushButton_remove_paid_safety_deposit.clicked.connect(
+            self.button_remove_psd
+        )
         """ delete button """
-        self.pushButton_delete.clicked.connect(lambda:helper.delete(self, self.loaded_job))
+        self.pushButton_delete.clicked.connect(
+            lambda: helper.delete(self, self.loaded_job)
+        )
 
     def set_combo_box_actions(self):
         # update ui when combobox is activated
@@ -190,7 +221,9 @@ class JobDialog(QtWidgets.QDialog):
     def set_event_handler(self):
         self.keyReleaseEvent = self.eventHandler
         self.mouseReleaseEvent = self.eventHandler
+
     """ add event handler """
+
     def eventHandler(self, event):
         self.update_ui()
 
@@ -200,8 +233,11 @@ class JobDialog(QtWidgets.QDialog):
     #   functions to that get connected to the widget signals (some might also be directly used and not in this section)
     #
     """
+
     def button_remove_psd(self):
-        psd = self.treeWidget_paid_safety_deposits.currentItem().data(1, QtCore.Qt.UserRole)
+        psd = self.treeWidget_paid_safety_deposits.currentItem().data(
+            1, QtCore.Qt.UserRole
+        )
         reply = helper.delete_prompt(self)
         if reply:
             self.remove_psd(psd)
@@ -216,6 +252,7 @@ class JobDialog(QtWidgets.QDialog):
     #   Functions that let the dialog do something
     #
     """
+
     def add_new_company(self):
         input_company_args = dlg.open_company_dialog(self.app_data)
         if input_company_args:
@@ -236,7 +273,9 @@ class JobDialog(QtWidgets.QDialog):
         if input_cost_group:
             self.setup_combo_boxes()
             self.set_cost_group_to(input_cost_group)
-            print(f"New cost_group added: {input_cost_group.id}, {input_cost_group.uid}")
+            print(
+                f"New cost_group added: {input_cost_group.id}, {input_cost_group.uid}"
+            )
 
     def pay_safety_deposit(self):
         paid_safety_deposit_args = dlg.open_pay_safety_deposit_dialog()
@@ -258,13 +297,19 @@ class JobDialog(QtWidgets.QDialog):
     #   functions to render the objects to the respective widgets
     #
     """
+
     def set_safety_deposits_of_invoices(self, invoices):
         self.treeWidget_safety_deposits_of_invoices.clear()
         sd_sum = 0
         for invoice in invoices:
-            helper.add_item_to_tree(content_item=invoice,
-                                    parent=self.treeWidget_safety_deposits_of_invoices,
-                                    cols=[str(invoice.invoice_date.toPyDate()), amount_str(invoice.safety_deposit_amount, self.currency)])
+            helper.add_item_to_tree(
+                content_item=invoice,
+                parent=self.treeWidget_safety_deposits_of_invoices,
+                cols=[
+                    str(invoice.invoice_date.toPyDate()),
+                    amount_str(invoice.safety_deposit_amount, self.currency),
+                ],
+            )
             sd_sum += invoice.safety_deposit_amount
         self.label_safety_deposits_of_invoices_sum.setText(amount_str(sd_sum))
 
@@ -272,9 +317,14 @@ class JobDialog(QtWidgets.QDialog):
         self.treeWidget_paid_safety_deposits.clear()
         psd_sum = 0
         for psd in paid_safety_deposits:
-            helper.add_item_to_tree(content_item=psd,
-                                    parent=self.treeWidget_paid_safety_deposits,
-                                    cols=[str(psd["date"].toPyDate()), amount_str(psd["amount"], self.currency)])
+            helper.add_item_to_tree(
+                content_item=psd,
+                parent=self.treeWidget_paid_safety_deposits,
+                cols=[
+                    str(psd["date"].toPyDate()),
+                    amount_str(psd["amount"], self.currency),
+                ],
+            )
             psd_sum += psd["amount"]
         self.label_paid_safety_deposits_sum.setText(amount_str(psd_sum))
 
@@ -284,8 +334,9 @@ class JobDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def set_to_max_job_number(self):
-        self.set_job_id_to(self.get_max_job_number()+1)
+        self.set_job_id_to(self.get_max_job_number() + 1)
 
     def get_max_job_number(self):
         company = self.comboBox_company.currentData()
@@ -301,24 +352,35 @@ class JobDialog(QtWidgets.QDialog):
 
     def set_trade_to(self, trade):
         index = self.comboBox_trade.findData(trade)
-        if index<0:
+        if index < 0:
             index = 0
         self.comboBox_trade.setCurrentIndex(index)
 
     def set_cost_group_to(self, cost_group):
         index = self.comboBox_cost_group.findData(cost_group)
-        if index<0:
+        if index < 0:
             index = 0
         self.comboBox_cost_group.setCurrentIndex(index)
 
     def set_labels(self, *, job_sum_w_VAT, job_sum_VAT_amount):
-        """ amounts """
+        """amounts"""
         self.label_job_sum_w_VAT.setText(amount_str(job_sum_w_VAT))
         self.label_job_sum_VAT_amount.setText(amount_str(job_sum_VAT_amount))
 
     """ set input fields """
-    def set_input(self, *, _uid="-", company=None, id=0, trade=None, cost_group=None, job_sum=0, **kwargs):
-        """ combo boxes first, since they might trigger updates """
+
+    def set_input(
+        self,
+        *,
+        _uid="-",
+        company=None,
+        id=0,
+        trade=None,
+        cost_group=None,
+        job_sum=0,
+        **kwargs,
+    ):
+        """combo boxes first, since they might trigger updates"""
         if company:
             self.set_company_to(company)
         if trade:
@@ -329,18 +391,24 @@ class JobDialog(QtWidgets.QDialog):
         self.set_job_id_to(id)
         self.label_uid.setText(_uid.labelize())
         """ amounts """
-        self.lineEdit_job_sum_1.setText(str(int(job_sum)) if int(job_sum)>0 else "")
-        self.lineEdit_job_sum_2.setText(f"{int(rnd(job_sum-int(job_sum))*100):02d}" if job_sum-int(job_sum)>0 else "")
+        self.lineEdit_job_sum_1.setText(str(int(job_sum)) if int(job_sum) > 0 else "")
+        self.lineEdit_job_sum_2.setText(
+            f"{int(rnd(job_sum-int(job_sum))*100):02d}"
+            if job_sum - int(job_sum) > 0
+            else ""
+        )
 
     def get_input(self):
         args = {
-                "id": self.spinBox_id.value(),
-                "company": self.comboBox_company.currentData(),
-                "trade": self.comboBox_trade.currentData(),
-                "cost_group": self.comboBox_cost_group.currentData(),
-                "job_sum": two_inputs_to_float(self.lineEdit_job_sum_1, self.lineEdit_job_sum_2),
-                "paid_safety_deposits": self.paid_safety_deposits
-            }
+            "id": self.spinBox_id.value(),
+            "company": self.comboBox_company.currentData(),
+            "trade": self.comboBox_trade.currentData(),
+            "cost_group": self.comboBox_cost_group.currentData(),
+            "job_sum": two_inputs_to_float(
+                self.lineEdit_job_sum_1, self.lineEdit_job_sum_2
+            ),
+            "paid_safety_deposits": self.paid_safety_deposits,
+        }
         return args
 
     """
@@ -349,6 +417,7 @@ class JobDialog(QtWidgets.QDialog):
     #
     #
     """
+
     def exec_(self):
         ok = super().exec_()
         if ok:
